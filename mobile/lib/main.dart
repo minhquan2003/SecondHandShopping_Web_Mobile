@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screen1.dart';
+import 'components/Product/product_list.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,13 +14,11 @@ class MyApp extends StatelessWidget {
       title: 'Navigation Example',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.blue,
+        // dialogBackgroundColor: Colors.yellow
       ),
-      home: const Screen1(),
-      debugShowCheckedModeBanner: false, // Tắt biểu ngữ debug
-      routes: {
-        '/screen1': (context) => const Screen1(),
-        // Bạn có thể thêm các màn hình khác ở đây
-      },
+      home: const ProductList(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
