@@ -4,7 +4,7 @@ import 'dart:convert'; // Để chuyển đổi JSON
 import 'product_card.dart';
 
 class ProductList extends StatefulWidget {
-  const ProductList({Key? key}) : super(key: key);
+  const ProductList({super.key});
 
   @override
   _ProductListState createState() => _ProductListState();

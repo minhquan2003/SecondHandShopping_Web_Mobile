@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
 class Screen2 extends StatelessWidget {
-  const Screen2({super.key});
+  final String productName;
+
+  const Screen2({super.key, required this.productName});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Màn Hình 2'),
+        title: Text(productName),
       ),
       body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text('Chuyển qua Màn Hình 1'),
+        child: Text(
+          'Chi tiết sản phẩm: $productName',
+          style: TextStyle(fontSize: 24),
         ),
       ),
     );
