@@ -21,7 +21,7 @@ class _ProductListState extends State<ProductList> {
   }
 
   Future<void> fetchProducts() async {
-    final response = await http.get(Uri.parse('http://192.168.1.76:5555/products/'));
+    final response = await http.get(Uri.parse('http://192.168.1.248:5555/products/'));
     
     if (response.statusCode == 200) {
       setState(() {
@@ -42,13 +42,13 @@ class _ProductListState extends State<ProductList> {
       body: isLoading 
           ? const Center(child: CircularProgressIndicator()) 
           : Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(8.0),
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   childAspectRatio: 0.8,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
                 ),
                 itemCount: products.length,
                 itemBuilder: (context, index) {
