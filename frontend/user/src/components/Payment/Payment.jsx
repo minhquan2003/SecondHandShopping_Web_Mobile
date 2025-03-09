@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { IP } from '../../config';
 
 const PaymentForm = () => {
     const [amount, setAmount] = useState(0);
@@ -7,7 +8,7 @@ const PaymentForm = () => {
 
     const handlePayment = async () => {
         try {
-            const response = await axios.post('http://localhost:5555/payment/momo', {
+            const response = await axios.post(`http://${IP}:5555/payment/momo`, {
                 amount,
                 orderInfo,
             });

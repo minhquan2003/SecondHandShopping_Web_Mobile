@@ -1,8 +1,9 @@
 import React from 'react';
 import { updateNotification } from '../../hooks/Notifications';
 import io from 'socket.io-client';
+import { IP } from '../../config';
 
-const socket = io('http://localhost:5555');
+const socket = io(`http://localhost:5555`);
 
 const NotificationPopup = ({ notifications, onClose }) => {
 

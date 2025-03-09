@@ -6,8 +6,9 @@ import { getProductById } from '../../hooks/Products';
 import { updateStatusOrder } from '../../hooks/Orders';
 import { createNotification } from '../../hooks/Notifications';
 import io from 'socket.io-client';
+import { IP } from '../../config';
 
-const socket = io('http://localhost:5555'); // Đảm bảo cổng đúng
+const socket = io(`http://localhost:5555`); // Đảm bảo cổng đúng
 
 const SalesOrder = () => {
     const { orderId } = useParams();
@@ -27,13 +28,13 @@ const SalesOrder = () => {
     useEffect(() => {
         const fetchOrderData = async () => {
             try {
-                const orderResponse = await axios.get(`http://localhost:5555/orders/${orderId}`);
+                const orderResponse = await axios.get(`http://${IP}:5555/orders/${orderId}`);
                 setOrder(orderResponse.data.data);
 
-                const paymentRe = await axios.get(`http://localhost:5555/payments/order/${orderId}`);
+                const paymentRe = await axios.get(`http://${IP}:5555/payments/order/${orderId}`);
                 setPayment(paymentRe.data.data);
 
-                const detailsResponse = await axios.get(`http://localhost:5555/orderDetails/order/${orderId}`);
+                const detailsResponse = await axios.get(`http://${IP}:5555/orderDetails/order/${orderId}`);
                 const detailsData = detailsResponse.data.data;
 
                 if (detailsData.length > 0) {

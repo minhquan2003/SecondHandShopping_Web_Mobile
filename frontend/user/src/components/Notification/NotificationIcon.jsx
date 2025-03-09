@@ -3,8 +3,9 @@ import axios from 'axios';
 import { FiBell } from 'react-icons/fi';
 import NotificationPopup from './NotificationPopup.jsx'; // Đường dẫn đến NotificationPopup
 import io from 'socket.io-client';
+import { IP } from '../../config.js';
 
-const socket = io('http://localhost:5555'); // Đảm bảo cổng đúng
+const socket = io(`http://localhost:5555`); // Đảm bảo cổng đúng
 
 const NotificationIcon = ({ userId }) => {
     const userInfoString = sessionStorage.getItem('userInfo');
@@ -31,7 +32,7 @@ const NotificationIcon = ({ userId }) => {
 
     const fetchNotifications = async (userId) => {
         try {
-            const response = await axios.get(`http://localhost:5555/notifications/user/${userId}`);
+            const response = await axios.get(`http://${IP}:5555/notifications/user/${userId}`);
             const data = response.data;
 
             // Sắp xếp thông báo theo thứ tự gần nhất

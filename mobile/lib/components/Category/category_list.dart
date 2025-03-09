@@ -4,7 +4,12 @@ import 'dart:convert';
 import 'category_card.dart';
 
 class CategoryList extends StatefulWidget {
-  const CategoryList({super.key});
+  final String urlBase;
+
+  const CategoryList({
+    super.key,
+    required this.urlBase,
+  });
 
   @override
   _CategoryListState createState() => _CategoryListState();
@@ -21,7 +26,7 @@ class _CategoryListState extends State<CategoryList> {
   }
 
   Future<void> fetchProducts() async {
-    final response = await http.get(Uri.parse('http://192.168.1.248:5555/categories/'));
+    final response = await http.get(Uri.parse(widget.urlBase));
     
     if (response.statusCode == 200) {
       setState(() {
@@ -54,6 +59,7 @@ Widget build(BuildContext context) {
                         child: CategoryCard(
                           name: category['category_name'],
                           imageUrl: category['image_url'],
+                          id: category['_id'],
                         ),
                       ),
                     );

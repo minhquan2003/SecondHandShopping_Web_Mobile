@@ -3,6 +3,7 @@ import { useAuth } from '../../hooks/auth'; // Đảm bảo đường dẫn đú
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { updateProfile } from '../../hooks/Users';
+import { IP } from '../../config';
 
 const ReGetPassword = () => {
     const [email, setEmail] = useState('');
@@ -16,7 +17,7 @@ const ReGetPassword = () => {
     // Hàm kiểm tra người dùng
     const checkUser = async () => {
         try {
-            const response = await axios.post("http://localhost:5555/users/email", { email });
+            const response = await axios.post(`http://${IP}:5555/users/email`, { email });
             if (response.data._id) {
                 setUserId(response.data._id); // Lưu ID người dùng
             } else {

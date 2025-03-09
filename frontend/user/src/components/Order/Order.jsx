@@ -21,10 +21,10 @@ const Order = () => {
                 const userInfoString = sessionStorage.getItem('userInfo');
                 const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
 
-                const sellResponse = await axios.get(`http://localhost:5555/orders/seller/${userInfo._id}`);
+                const sellResponse = await axios.get(`http://${IP}:5555/orders/seller/${userInfo._id}`);
                 setSellOrders(sellResponse.data.data);
 
-                const buyResponse = await axios.get(`http://localhost:5555/orders/buyer/${userInfo._id}`);
+                const buyResponse = await axios.get(`http://${IP}:5555/orders/buyer/${userInfo._id}`);
                 setBuyOrders(buyResponse.data.data);
             } catch (error) {
                 console.error('Error fetching orders:', error);

@@ -3,8 +3,9 @@ import { FiMessageCircle } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import io from 'socket.io-client';
+import { IP } from "../../config";
 
-const socket = io('http://localhost:5555');
+const socket = io(`http://localhost:5555`);
 
 const MessageIcon = () => {
     const userInfoString = sessionStorage.getItem('userInfo');
@@ -26,7 +27,7 @@ const MessageIcon = () => {
 
     const unReadMess = async (idConver, user) => {
         try {
-            const response = await axios.get(`http://localhost:5555/messages/${idConver}`);
+            const response = await axios.get(`http://${IP}:5555/messages/${idConver}`);
             const messages = response.data;
 
             const count = messages.reduce((acc, mess) => {
@@ -42,7 +43,7 @@ const MessageIcon = () => {
 
     const fetchConversations = async () => {
         try {
-            const response = await axios.get(`http://localhost:5555/conversations/${userInfo._id}`);
+            const response = await axios.get(`http://${IP}:5555/conversations/${userInfo._id}`);
             const conversa = await Promise.all(response.data.map(async (conversation) => {
                 const unRead = await unReadMess(conversation._id, userInfo._id);
                 return {

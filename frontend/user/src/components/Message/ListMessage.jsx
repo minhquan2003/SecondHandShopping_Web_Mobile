@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
+import { IP } from '../../config';
 
-const socket = io('http://localhost:5555');
+const socket = io(`http://localhost:5555`);
 
 const ListMessage = ({ userId }) => {
     const [conversations, setConversations] = useState([]);
@@ -22,7 +23,7 @@ const ListMessage = ({ userId }) => {
     };
 
     const unReadMess = async (idConver, user) => {
-        const response = await axios.get(`http://localhost:5555/messages/${idConver}`);
+        const response = await axios.get(`http://${IP}:5555/messages/${idConver}`);
         const messages = response.data; // Lấy dữ liệu tin nhắn
 
         // Sử dụng reduce để đếm số tin nhắn có trạng thái 'sent'
@@ -48,7 +49,7 @@ const ListMessage = ({ userId }) => {
 
     const fetchConversations = async () => {
             try {
-                const response = await axios.get(`http://localhost:5555/conversations/${userId}`);
+                const response = await axios.get(`http://${IP}:5555/conversations/${userId}`);
                 
 
                 const conversa = await Promise.all(response.data.map(async (conversation) => {
@@ -67,7 +68,7 @@ const ListMessage = ({ userId }) => {
                 );
 
                 // Gọi API để lấy thông tin người dùng
-                const userPromises = participantIds.map(id => axios.get(`http://localhost:5555/users/${id}`));
+                const userPromises = participantIds.map(id => axios.get(`http://${IP}:5555/users/${id}`));
                 const userResponses = await Promise.all(userPromises);
 
                 // Lưu thông tin người dùng vào mảng
@@ -82,7 +83,7 @@ const ListMessage = ({ userId }) => {
         const userSend = conversation.participant1 === userId ? conversation.participant2 : conversation.participant1;
         const senderId = userSend;
         const id = conversation._id
-        const aa = await axios.post(`http://localhost:5555/messages/read/${id}`, {senderId});
+        const aa = await axios.post(`http://${IP}:5555/messages/read/${id}`, {senderId});
         // Chuyển hướng đến đường dẫn mới với mã cuộc trò chuyện
         navigate(`/message/${userId}/${conversation._id}`);
     };

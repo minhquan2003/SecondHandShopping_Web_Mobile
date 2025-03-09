@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { IP } from '../config';
 
 const updateProfile = async (id, info) => {
     try {
-        const response = await axios.put(`http://localhost:5555/users/${id}`, info);
+        const response = await axios.put(`http://${IP}:5555/users/${id}`, info);
         const data = response.data;
         return data;
     } catch (error) {
@@ -18,7 +19,7 @@ const useUserById = (id) => {
     useEffect(() => {
         const fetchSellerInfo = async () => {
             try {
-                const response = await axios.get(`http://localhost:5555/users/${id}`);
+                const response = await axios.get(`http://${IP}:5555/users/${id}`);
                 setSellerInfo(response.data);
             } catch (error) {
                 console.error('Error fetching user data:', error);

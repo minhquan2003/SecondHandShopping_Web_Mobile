@@ -3,8 +3,9 @@ import axios from 'axios';
 import { addMessage } from '../../hooks/Message';
 import { useParams } from 'react-router-dom';
 import io from 'socket.io-client';
+import { IP } from '../../config';
 
-const socket = io('http://localhost:5555');
+const socket = io(`http://localhost:5555`);
 
 const Chat = ({ conversation, user }) => {
     const { userId } = useParams();
@@ -22,7 +23,7 @@ const Chat = ({ conversation, user }) => {
     const fetchMessages = async () => {
         if (conversation) {
             try {
-                const response = await axios.get(`http://localhost:5555/messages/${conversation._id}`);
+                const response = await axios.get(`http://${IP}:5555/messages/${conversation._id}`);
                 setMessages(response.data);
             } catch (error) {
                 console.error('Error fetching messages:', error);
@@ -50,7 +51,7 @@ const Chat = ({ conversation, user }) => {
             const userSend = conversation.participant1 === userId ? conversation.participant2 : conversation.participant1;
             senderId = userSend;
             const id = conversation._id
-            const aa = await axios.post(`http://localhost:5555/messages/read/${id}`, {senderId});
+            const aa = await axios.post(`http://${IP}:5555/messages/read/${id}`, {senderId});
         }
     };
 

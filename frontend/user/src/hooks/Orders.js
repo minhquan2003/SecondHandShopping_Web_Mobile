@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { IP } from '../config';
 
 const createOrder = async (info) => {
     try {
-        const response = await axios.post(`http://localhost:5555/orders`, info);
+        const response = await axios.post(`http://${IP}:5555/orders`, info);
         const data = response.data;
         return data;
     } catch (error) {
@@ -13,7 +14,7 @@ const createOrder = async (info) => {
 
 const updateStatusOrder = async (id, status_order) => {
     try {
-        const response = await axios.put(`http://localhost:5555/orders/${id}`, {status_order});
+        const response = await axios.put(`http://${IP}:5555/orders/${id}`, {status_order});
         const data = response.data;
         return data;
     } catch (error) {
@@ -24,7 +25,7 @@ const updateStatusOrder = async (id, status_order) => {
 
 const updateOrder = async (id, order) => {
     try {
-        const response = await axios.put(`http://localhost:5555/orders/${id}`, order);
+        const response = await axios.put(`http://${IP}:5555/orders/${id}`, order);
         const data = response.data;
         return data;
     } catch (error) {

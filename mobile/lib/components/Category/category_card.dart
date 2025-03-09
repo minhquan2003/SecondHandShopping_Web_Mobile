@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import '/screen2.dart';
+import '../Product/product_by_category.dart';
 
 class CategoryCard extends StatelessWidget {
   final String imageUrl;
   final String name;
+  final String id;
 
   const CategoryCard({
     super.key,
     required this.imageUrl,
     required this.name,
+    required this.id,
   });
 
   @override
@@ -19,7 +21,7 @@ class CategoryCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => Screen2(productName: name),
+            builder: (context) => ProductByCategory(id: id, name: name,),
           ),
         );
       },

@@ -8,8 +8,9 @@ import { updateProduct } from '../../hooks/Products';
 import {removeFromCart} from '../../hooks/Carts';
 import { createNotification } from '../../hooks/Notifications';
 import io from 'socket.io-client';
+import { IP } from '../../config';
 
-const socket = io('http://localhost:5555');
+const socket = io(`http://localhost:5555`);
 
 const Checkout = () => {
     const userInfoString = sessionStorage.getItem('userInfo');

@@ -10,8 +10,9 @@ import { useUserById } from '../../hooks/Users';
 import io from 'socket.io-client';
 import axios from 'axios';
 import { addConversation, addMessage } from '../../hooks/Message';
+import { IP } from '../../config';
 
-const socket = io('http://localhost:5555');
+const socket = io(`http://localhost:5555`);
 
 const ProductDisplay = () => {
     const userInfoString = sessionStorage.getItem('userInfo');
@@ -66,7 +67,7 @@ const ProductDisplay = () => {
         }
     
         // Lấy danh sách các cuộc hội thoại
-        const response = await axios.get(`http://localhost:5555/conversations/${userInfo._id}`);
+        const response = await axios.get(`http://${IP}:5555/conversations/${userInfo._id}`);
         const conversations = response.data;
     
         // Kiểm tra xem đã có cuộc hội thoại nào giữa userInfo._id và product.user_id chưa

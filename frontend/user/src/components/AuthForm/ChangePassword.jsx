@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { IP } from "../../config";
 
 const ChangePassword = () => {
     const [oldPassword, setOldPassword] = useState('');
@@ -31,13 +32,13 @@ const ChangePassword = () => {
         }
 
         try {
-            const response = await axios.post("http://localhost:5555/users/comparePassword", {
+            const response = await axios.post(`http://${IP}:5555/users/comparePassword`, {
                 id: userInfo._id,
                 password: oldPassword
             });
 
             if (response.data.valid) {
-                await axios.put(`http://localhost:5555/users/${userInfo._id}`, {
+                await axios.put(`http://${IP}:5555/users/${userInfo._id}`, {
                     password: newPassword
                 });
                 setSuccess("Mật khẩu đã được cập nhật thành công!");

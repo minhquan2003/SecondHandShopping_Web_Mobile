@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { IP } from "../config";
 
 const getCategories = () => {
     const [categories, setCategories] = useState([]);
@@ -9,7 +10,7 @@ const getCategories = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await axios.get("http://localhost:5555/categories");
+                const response = await axios.get(`http://${IP}:5555/categories`);
                 setCategories(response.data);
             } catch (err) {
                 console.error("Error fetching products:", err);

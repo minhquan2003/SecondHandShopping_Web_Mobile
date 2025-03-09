@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { IP } from "../config";
 
 const getProducts = () => {
     const [products, setProducts] = useState([]);
@@ -9,7 +10,7 @@ const getProducts = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await axios.get("http://localhost:5555/products");
+                const response = await axios.get(`http://${IP}:5555/products`);
                 setProducts(response.data);
             } catch (err) {
                 console.error("Error fetching products:", err);
@@ -33,7 +34,7 @@ const getProductsByIdSeller = (idSeller) => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await axios.get(`http://localhost:5555/products/user/${idSeller}`);
+                const response = await axios.get(`http://${IP}:5555/products/user/${idSeller}`);
                 setProducts(response.data);
             } catch (err) {
                 console.error("Error fetching products:", err);
@@ -57,7 +58,7 @@ const getProductsNotApproveByIdSeller = (idSeller) => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await axios.get(`http://localhost:5555/products/notapprove/user/${idSeller}`);
+                const response = await axios.get(`http://${IP}:5555/products/notapprove/user/${idSeller}`);
                 setProducts(response.data);
             } catch (err) {
                 setError("Không có sản phẩm nào.");
@@ -80,7 +81,7 @@ const getProductsSoldOutByIdSeller = (idSeller) => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await axios.get(`http://localhost:5555/products/soldout/user/${idSeller}`);
+                const response = await axios.get(`http://${IP}:5555/products/soldout/user/${idSeller}`);
                 setProducts(response.data);
             } catch (err) {
                 setError("Không có sản phẩm nào.");
@@ -104,7 +105,7 @@ const useProduct = (id) => {
         const fetchProduct = async () => {
             setLoading(true); // Bắt đầu loading
             try {
-                const response = await axios.get(`http://localhost:5555/products/${id}`);
+                const response = await axios.get(`http://${IP}:5555/products/${id}`);
                 setProduct(response.data);
             } catch (err) {
                 console.error("Error fetching product:", err);
@@ -122,7 +123,7 @@ const useProduct = (id) => {
 
 const updateProduct = async ({id, quanlity}) => {
     try {
-        const response = await axios.put(`http://localhost:5555/products/quanlity`, {id, quanlity});
+        const response = await axios.put(`http://${IP}:5555/products/quanlity`, {id, quanlity});
         const data = response.data;
         return data;
     } catch (error) {
@@ -133,7 +134,7 @@ const updateProduct = async ({id, quanlity}) => {
 
 const updateOneProduct = async (id, product) => {
     try {
-        const response = await axios.put(`http://localhost:5555/products/${id}`, product);
+        const response = await axios.put(`http://${IP}:5555/products/${id}`, product);
         const data = response.data;
         return data;
     } catch (error) {
@@ -144,7 +145,7 @@ const updateOneProduct = async (id, product) => {
 
 const addProduct = async (product) => {
     try {
-        const response = await axios.post(`http://localhost:5555/products`, product);
+        const response = await axios.post(`http://${IP}:5555/products`, product);
         const data = response.data;
         return data;
     } catch (error) {
@@ -161,7 +162,7 @@ const getProductByCategory = (id) => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await axios.get(`http://localhost:5555/products/category/${id}`);
+                const response = await axios.get(`http://${IP}:5555/products/category/${id}`);
                 setProducts(response.data);
             } catch (err) {
                 console.error("Error fetching products:", err);
@@ -179,7 +180,7 @@ const getProductByCategory = (id) => {
 
 const getProductById = async (id) => {
     try {
-        const response = await axios.get(`http://localhost:5555/products/${id}`);
+        const response = await axios.get(`http://${IP}:5555/products/${id}`);
         const product = response.data
         return product; // Trả về sản phẩm
     } catch (err) {
@@ -190,7 +191,7 @@ const getProductById = async (id) => {
 
 const deleteProductById = async (id) => {
     try {
-        const response = await axios.delete(`http://localhost:5555/products/${id}`);
+        const response = await axios.delete(`http://${IP}:5555/products/${id}`);
         const product = response.data
         return product; // Trả về sản phẩm
     } catch (err) {
@@ -208,7 +209,7 @@ const getProductByName = (product) => {
         console.log("Fetching products for:", product); // Ghi nhận giá trị của product
         const fetchProducts = async () => {
             try {
-                const response = await axios.get(`http://localhost:5555/products/search`, { params: { name: product } });
+                const response = await axios.get(`http://${IP}:5555/products/search`, { params: { name: product } });
                 setProducts(response.data.data); // Đảm bảo rằng response.data.data là chính xác
             } catch (err) {
                 console.error("Error fetching products:", err);
@@ -239,7 +240,7 @@ const useSearchProducts = (brand, categoryId) => {
 
             try {
                 // Tạo URL tìm kiếm với query parameters
-                const response = await axios.get('http://localhost:5555/products/product/search', {
+                const response = await axios.get(`http://${IP}:5555/products/product/search`, {
                     params: {
                         brand,
                         category_id: categoryId

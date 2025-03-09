@@ -7,8 +7,9 @@ import { addReview } from '../../hooks/Review';
 import { updateStatusOrder } from '../../hooks/Orders';
 import { createNotification } from '../../hooks/Notifications';
 import io from 'socket.io-client';
+import { IP } from '../../config';
 
-const socket = io('http://localhost:5555');
+const socket = io(`http://localhost:5555`);
 
 const PurchaseOrder = () => {
     const { orderId } = useParams(); // Lấy mã đơn hàng từ URL
@@ -75,17 +76,17 @@ const PurchaseOrder = () => {
         const fetchOrderData = async () => {
             try {
                 // Lấy thông tin đơn hàng
-                const orderResponse = await axios.get(`http://localhost:5555/orders/${orderId}`);
+                const orderResponse = await axios.get(`http://${IP}:5555/orders/${orderId}`);
                 setOrder(orderResponse.data.data);
 
-                const sellerResponse = await axios.get(`http://localhost:5555/users/${orderResponse.data.data.user_id_seller}`);
+                const sellerResponse = await axios.get(`http://${IP}:5555/users/${orderResponse.data.data.user_id_seller}`);
                 setSeller(sellerResponse.data);
 
-                const paymentRe = await axios.get(`http://localhost:5555/payments/order/${orderId}`);
+                const paymentRe = await axios.get(`http://${IP}:5555/payments/order/${orderId}`);
                 setPayment(paymentRe.data.data);
 
                 // Lấy thông tin chi tiết đơn hàng
-                const detailsResponse = await axios.get(`http://localhost:5555/orderDetails/order/${orderId}`);
+                const detailsResponse = await axios.get(`http://${IP}:5555/orderDetails/order/${orderId}`);
                 const detailsData = detailsResponse.data.data;
 
                 // Nếu có dữ liệu, lấy sản phẩm đầu tiên

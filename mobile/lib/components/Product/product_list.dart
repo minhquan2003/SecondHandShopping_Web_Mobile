@@ -4,7 +4,11 @@ import 'dart:convert'; // Để chuyển đổi JSON
 import 'product_card.dart';
 
 class ProductList extends StatefulWidget {
-  const ProductList({super.key});
+  final String urlBase;
+  const ProductList({
+    super.key,
+    required this.urlBase,
+    });
 
   @override
   _ProductListState createState() => _ProductListState();
@@ -14,6 +18,7 @@ class _ProductListState extends State<ProductList> {
   List<dynamic> products = [];
   bool isLoading = true;
 
+
   @override
   void initState() {
     super.initState();
@@ -21,7 +26,7 @@ class _ProductListState extends State<ProductList> {
   }
 
   Future<void> fetchProducts() async {
-    final response = await http.get(Uri.parse('http://192.168.1.248:5555/products/'));
+    final response = await http.get(Uri.parse(widget.urlBase));
     
     if (response.statusCode == 200) {
       setState(() {
@@ -35,32 +40,26 @@ class _ProductListState extends State<ProductList> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('Product List'),
-      // ),
-      body: isLoading 
-          ? const Center(child: CircularProgressIndicator()) 
-          : Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.8,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                ),
-                itemCount: products.length,
-                itemBuilder: (context, index) {
-                  final product = products[index];
-                  return ProductCard(
-                    name: product['name'],
-                    price: '${product['price']} VNĐ',
-                    imageUrl: product['image_url'],
-                  );
-                },
+    return isLoading 
+        ? const Center(child: CircularProgressIndicator())
+        : Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.8,
+                crossAxisSpacing: 4,
+                mainAxisSpacing: 4,
               ),
+              itemCount: products.length,
+              physics: const NeverScrollableScrollPhysics(), // Ngăn GridView cuộn độc lập
+              itemBuilder: (context, index) {
+                final product = products[index];
+                return ProductCard(
+                  product: product, // Truyền toàn bộ đối tượng sản phẩm
+                );
+              },
             ),
-    );
+          );
   }
 }

@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { IP } from '../config';
 
 const getCartItemsByUserId = async (user_id) => {
     try {
-        const response = await axios.get(`http://localhost:5555/carts/${user_id}`);
+        const response = await axios.get(`http://${IP}:5555/carts/${user_id}`);
         const data = response.data;
         return data;
     } catch (error) {
@@ -13,7 +14,7 @@ const getCartItemsByUserId = async (user_id) => {
 
 const addToCart = async (product) => {
     try {
-        const response = await axios.post(`http://localhost:5555/carts`, product);
+        const response = await axios.post(`http://${IP}:5555/carts`, product);
     } catch (error) {
         console.error('Error fetching cart items:', error);
         throw error;
@@ -22,7 +23,7 @@ const addToCart = async (product) => {
 
 const removeFromCart = async (id) => {
     try {
-        const response = await axios.delete(`http://localhost:5555/carts/${id}`);
+        const response = await axios.delete(`http://${IP}:5555/carts/${id}`);
     } catch (error) {
         console.error('Error fetching cart items:', error);
         throw error;
