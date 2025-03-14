@@ -29,7 +29,7 @@ class ProductCard extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.red,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(5),
           boxShadow: [
             BoxShadow(
@@ -48,7 +48,7 @@ class ProductCard extends StatelessWidget {
                 imageUrl,
                 width: double.infinity,
                 height: 170,
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
               ),
             ),
             Padding(
