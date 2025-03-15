@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../screen2.dart';
 import 'home.dart';
 import '../Login/login.dart';
+import '../Cart/cart.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -13,14 +14,14 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 2;
 
   final List<Widget> _pages = [
     Home(), // Màn hình Home chứa ProductList
     Screen2(productName: 'Sản phẩm'),
     Home(),
-    Screen2(productName: 'Sản phẩm'),
     Home(), // Màn hình Screen2
+    Screen2(productName: 'Sản phẩm'),
   ];
 
   void _onItemTapped(int index) {
@@ -31,54 +32,69 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loginInfo = Provider.of<LoginInfo>(context); // Lấy thông tin đăng nhập
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Product List'),
+        title: Row(
+          children: [
+            Image.network(
+              'https://res.cloudinary.com/dd6pnq2is/image/upload/v1741941433/logo_w30ahh.png',
+              height: 40, // Điều chỉnh chiều cao hình ảnh
+            ),
+            SizedBox(width: 8), // Khoảng cách giữa logo và văn bản
+          ],
+        ),
         backgroundColor: const Color.fromARGB(255, 255, 238, 84),
-        
         actions: [
           IconButton(
-            icon: const Icon(Icons.login), // Icon hình đăng nhập
+            // icon: Icon(loginInfo.name == null ? null : Icons.shopping_cart),
+            icon: Icon(Icons.shopping_cart),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Login())
-              );
+              if(loginInfo.name == null){
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Hãy đăng nhập để có trải nghiệm tốt hơn')),
+                );
+              }else{
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Cart()),
+                );
+              }
             },
           ),
           IconButton(
-            icon: const Icon(Icons.logout), // Icon hình đăng nhập
+            icon: Icon(loginInfo.name == null ? Icons.login : Icons.logout), // Thay đổi icon theo trạng thái đăng nhập
             onPressed: () {
-              Provider.of<LoginInfo>(context, listen: false).logout();
+              if (loginInfo.name == null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Login()),
+                );
+              } else {
+                Provider.of<LoginInfo>(context, listen: false).logout();
+              }
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.person), // Icon hình profile
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text('Profile'),
-                    content: Text('one two'),
-                    actions: [
-                      TextButton(
-                        child: Text('Close'),
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Đóng dialog
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.menu), // Icon menu
+            onSelected: (String value) {
+              // Xử lý lựa chọn menu ở đây
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Bạn đã chọn: $value')));
+            },
+            itemBuilder: (BuildContext context) {
+              return {'Một', 'Hai', 'Ba', 'Bốn'}.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
             },
           ),
         ],
       ),
       body: _pages[_selectedIndex], // Hiển thị màn hình dựa trên _selectedIndex
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color.fromARGB(255, 255, 238, 84),
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -90,21 +106,24 @@ class _MainScreenState extends State<MainScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile', // Mục cho Screen2
+            label: 'Trang chủ',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Tài khoản', // Mục cho Screen2
+          ),
         ],
-        unselectedItemColor: Colors.grey,
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
+        selectedItemColor: Colors.blue, // Màu sắc icon đã chọn
+        unselectedItemColor: Colors.grey, // Màu sắc icon chưa chọn
+        currentIndex: _selectedIndex, 
         onTap: _onItemTapped,
+        selectedLabelStyle: TextStyle(color: Colors.black), // Màu sắc chữ cho mục đã chọn
+        unselectedLabelStyle: TextStyle(color: Colors.black), // Màu sắc chữ cho mục chưa chọn
+        type: BottomNavigationBarType.fixed,
       ),
     );
   }
