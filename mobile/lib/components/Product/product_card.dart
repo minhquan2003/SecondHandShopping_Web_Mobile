@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'product_detail.dart'; // Import màn hình mới
+import '../../utils/convert.dart';
 
 class ProductCard extends StatelessWidget {
   final Map<String, dynamic> product;
@@ -13,9 +14,8 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // Lấy các thuộc tính từ đối tượng product
     final String name = product['name'];
-    final String price = "${product['price']} đ"; // Chuyển giá thành chuỗi với đơn vị
+    final String price = "${formatPrice(product['price'])} đ"; // Chuyển giá thành chuỗi với đơn vị
     final String imageUrl = product['image_url'];
-    // final String description = product['description'] ?? 'Không có mô tả'; // Mô tả sản phẩm
 
     return GestureDetector(
       onTap: () {
@@ -54,28 +54,27 @@ class ProductCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(4.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start, // Căn trái
                 children: [
-                  Text(
-                    name,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,),
+                  Align(
+                    alignment: Alignment.centerLeft, // Đảm bảo căn trái
+                    child: Text(
+                      name,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                       maxLines: 1, // Giới hạn số dòng là 1
                       overflow: TextOverflow.ellipsis, // Sử dụng ba chấm khi vượt quá chiều dài
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     price,
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.green),
+                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.red),
                   ),
                   const SizedBox(height: 4),
-                  // Text(
-                  //   description,
-                  //   style: const TextStyle(fontSize: 5, color: Colors.black54),
-                  // ),
-                  // const SizedBox(height: 4),
                 ],
               ),
             ),
