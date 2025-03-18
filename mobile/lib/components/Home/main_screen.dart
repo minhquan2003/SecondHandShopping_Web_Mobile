@@ -48,7 +48,6 @@ class _MainScreenState extends State<MainScreen> {
         backgroundColor: const Color.fromARGB(255, 255, 238, 84),
         actions: [
           IconButton(
-            // icon: Icon(loginInfo.name == null ? null : Icons.shopping_cart),
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
               if(loginInfo.name == null){

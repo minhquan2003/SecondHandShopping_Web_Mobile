@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Link } from 'react-router-dom';
-import { FaCheckCircle } from 'react-icons/fa'; // Import biểu tượng check từ react-icons
+import { FaCheckCircle } from 'react-icons/fa';
 
 const ProductCard = ({ id, name, description, price, quantity, image_url, partner }) => {
     return (
@@ -16,7 +16,7 @@ const ProductCard = ({ id, name, description, price, quantity, image_url, partne
                     />
                 </div>
                 <div className="w-full h-[45%] p-4 overflow-y-auto">
-                    <h2 className="text-xl font-semibold text-gray-800">{name}</h2>
+                <h2 className="text-xl font-semibold text-gray-800 line-clamp-2">{name}</h2>
                     {String(partner) === "true" ? (  // So sánh partner với chuỗi "true"
                         <p className="text-sm text-green-600 mt-1 flex items-center">
                             <FaCheckCircle className="mr-1" /> {/* Biểu tượng check */}
