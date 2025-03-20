@@ -84,8 +84,7 @@ Future<List<dynamic>> getCartItemsByUserId(String userId) async {
     );
     return;
   }
-
-  // Kiểm tra số lượng nhập
+  
   if (pqs <= 0 || pqs > quantityMax) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Số lượng nhập không hợp lệ!')),
@@ -93,7 +92,6 @@ Future<List<dynamic>> getCartItemsByUserId(String userId) async {
     return;
   }
 
-  // Tạo đối tượng sản phẩm
   Map<String, dynamic> product = {
     'user_buyer': ub,
     'user_seller': us,
@@ -103,9 +101,9 @@ Future<List<dynamic>> getCartItemsByUserId(String userId) async {
     'product_price': pp,
     'product_imageUrl': pu,
   };
+
   String jsonProduct = jsonEncode(product);
 
-  // Gửi yêu cầu thêm sản phẩm vào giỏ hàng
   try {
     final response = await http.post(
       Uri.parse('http://$ip:5555/carts'), // Thay <IP> bằng địa chỉ IP thực tế
@@ -141,9 +139,8 @@ Future<List<dynamic>> getCartItemsByUserId(String userId) async {
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
               if (loginInfo.name == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Hãy đăng nhập để có trải nghiệm tốt hơn')),
-                );
+                final snackBar = SnackBar(content: Text('Hãy đăng nhập để có trải nghiệm tốt hơn'));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
               } else {
                 Navigator.push(
                   context,
@@ -237,16 +234,21 @@ Future<List<dynamic>> getCartItemsByUserId(String userId) async {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      addToCart(
-                        loginInfo.id ?? '',
-                        product['user_id'],
-                        product['_id'],
-                        product['name'],
-                        product['quantity'],
-                        quantity, // Sử dụng giá trị quantity từ ô nhập
-                        product['price'],
-                        product['image_url'],
-                      );
+                      if (loginInfo.name == null) {
+                        final snackBar = SnackBar(content: Text('Hãy đăng nhập để có trải nghiệm tốt hơn'));
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      } else {
+                        addToCart(
+                          loginInfo.id ?? '',
+                          product['user_id'],
+                          product['_id'],
+                          product['name'],
+                          product['quantity'],
+                          quantity, // Sử dụng giá trị quantity từ ô nhập
+                          product['price'],
+                          product['image_url'],
+                        );
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,

@@ -6,12 +6,16 @@ import '../config.dart';
 class LoginInfo with ChangeNotifier {
   String? _id;
   String? _name;
+  String? _address;
+  String? _phone;
   String? _avatarurl;
   String? _role;
   String? _email;
 
   String? get id => _id;
   String? get name => _name;
+  String? get address => _address;
+  String? get phone => _phone;
   String? get avatarurl => _avatarurl;
   String? get role => _role;
   String? get email => _email;
@@ -42,6 +46,8 @@ class LoginInfo with ChangeNotifier {
         // Cập nhật thông tin người dùng
         _id = userInfo['_id'];
         _name = userInfo['name'];
+        _address = userInfo['address'];
+        _phone = userInfo['phone'];
         _avatarurl = userInfo['avatarurl'];
         _role = userInfo['role'];
         _email = email; // Lưu email
@@ -59,6 +65,8 @@ class LoginInfo with ChangeNotifier {
     _email = null;
     _id = null;
     _name = null;
+    _address = null;
+    _phone = null;
     _avatarurl = null;
     _role = null;
     notifyListeners();
