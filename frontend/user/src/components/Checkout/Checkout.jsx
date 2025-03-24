@@ -85,6 +85,7 @@ const Checkout = () => {
             const quanlity = -item.product_quantity;
             const id = item.product_id;
             const quanli = await updateProduct({ id, quanlity });
+            // alert(JSON.stringify(quanli));
 
             if(quanli.quantity < 0 || quanli.status == false || quanli.approve == false){
                 alert("Sản phẩm của bạn đã không còn hàng. Vui lòng tìm sản phẩm khác.")
@@ -105,6 +106,8 @@ const Checkout = () => {
                 note: note,
             });
 
+            // alert(JSON.stringify(order));
+
             orderIds.push({id: order.data._id, 
                 name_buyer: order.data.name, 
                 phone: order.data.phone});
@@ -122,6 +125,7 @@ const Checkout = () => {
                     user_id_receive: userInfo._id,
                     message: `Bạn đã đặt thành công đơn hàng ${item.product_name}: ${order.data.total_amount} VNĐ.`
                 })
+                // alert(JSON.stringify(aa));
                 socket.emit('sendNotification');
             }
 
