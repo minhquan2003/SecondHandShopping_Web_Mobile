@@ -9,12 +9,14 @@ class LoginInfo with ChangeNotifier {
   String? _avatarurl;
   String? _role;
   String? _email;
+  bool _isLoggedIn = false;
 
   String? get id => _id;
   String? get name => _name;
   String? get avatarurl => _avatarurl;
   String? get role => _role;
   String? get email => _email;
+  bool get isLoggedIn => _isLoggedIn;
 
   Future<bool> login(String email, String password) async {
     try {
@@ -27,16 +29,17 @@ class LoginInfo with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final user = await http.post(
-        Uri.parse('http://$ip:5555/users/email'), // URL đăng nhập
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email}),
-      );
+          Uri.parse('http://$ip:5555/users/email'), // URL đăng nhập
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({'email': email}),
+        );
         // Xử lý phản hồi đăng nhập
         final Map<String, dynamic> userInfo = json.decode(user.body);
 
         // Kiểm tra nếu tài khoản bị cấm
         if (userInfo['ban'] == true) {
-          throw Exception('Tài khoản của bạn đã bị cấm. Xin hãy liên hệ với hệ thống.');
+          throw Exception(
+              'Tài khoản của bạn đã bị cấm. Xin hãy liên hệ với hệ thống.');
         }
 
         // Cập nhật thông tin người dùng
@@ -48,7 +51,7 @@ class LoginInfo with ChangeNotifier {
         notifyListeners(); // Cập nhật UI
         return true;
       } else {
-        return false;        
+        return false;
       }
     } catch (err) {
       throw Exception('Đã xảy ra lỗi trong quá trình đăng nhập.');
@@ -61,6 +64,12 @@ class LoginInfo with ChangeNotifier {
     _name = null;
     _avatarurl = null;
     _role = null;
+    notifyListeners();
+  }
+
+  void signUp(String email, String password) {
+    _email = email;
+    _isLoggedIn = true;
     notifyListeners();
   }
 }
