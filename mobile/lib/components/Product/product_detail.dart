@@ -211,6 +211,28 @@ class _ProductDetailState extends State<ProductDetail> {
                         hintText: 'Nhập số lượng',
                       ),
                     ),
+                    if(product['user_id'] == loginInfo.id)
+                      Column(children: [
+                        Center(child: Text('Đây là sản phẩm của bạn')),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                          ElevatedButton.icon(onPressed: 
+                            () => {
+
+                            }, 
+                            label: Text('Chỉnh sửa'),
+                            icon: Icon(Icons.edit),
+                          ),
+                          ElevatedButton.icon(onPressed: 
+                            () => {
+
+                            }, 
+                            label: Text('Xoá'),
+                            icon: Icon(Icons.delete),
+                          )
+                        ],)
+                      ],)
                   ],
                 ),
               ),
@@ -225,7 +247,6 @@ class _ProductDetailState extends State<ProductDetail> {
                 Expanded(
                   flex: 2,
                   child: ElevatedButton(
-
                     onPressed: () {
                       if (loginInfo.name == null) {
                         final snackBar = SnackBar(content: Text('Hãy đăng nhập để có trải nghiệm tốt hơn'));

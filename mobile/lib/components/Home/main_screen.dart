@@ -5,6 +5,8 @@ import '../../screen2.dart';
 import 'home.dart';
 import '../Login/login.dart';
 import '../Cart/cart.dart';
+import '../SellerPage/seller_page.dart';
+import '../PostProduct/post_product.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -17,8 +19,8 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 2;
 
   final List<Widget> _pages = [
-    Home(), // Màn hình Home chứa ProductList
-    Screen2(productName: 'Sản phẩm'),
+    SellerPage(),
+    PostProduct(),
     Home(),
     Home(), // Màn hình Screen2
     Screen2(productName: 'Sản phẩm'),
@@ -96,12 +98,12 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: Icon(Icons.assignment),
+            label: 'Quản lý tin',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile', // Mục cho Screen2
+            icon: Icon(Icons.create),
+            label: 'Đăng tin',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -113,15 +115,15 @@ class _MainScreenState extends State<MainScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Tài khoản', // Mục cho Screen2
+            label: 'Tài khoản',
           ),
         ],
-        selectedItemColor: Colors.blue, // Màu sắc icon đã chọn
-        unselectedItemColor: Colors.grey, // Màu sắc icon chưa chọn
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
         currentIndex: _selectedIndex, 
         onTap: _onItemTapped,
-        selectedLabelStyle: TextStyle(color: Colors.black), // Màu sắc chữ cho mục đã chọn
-        unselectedLabelStyle: TextStyle(color: Colors.black), // Màu sắc chữ cho mục chưa chọn
+        selectedLabelStyle: TextStyle(color: Colors.black),
+        unselectedLabelStyle: TextStyle(color: Colors.black),
         type: BottomNavigationBarType.fixed,
       ),
     );
