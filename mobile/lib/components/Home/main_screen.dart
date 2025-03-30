@@ -6,7 +6,7 @@ import 'home.dart';
 import '../Login/login.dart';
 import '../Cart/cart.dart';
 import '../SellerPage/seller_page.dart';
-import '../PostProduct/post_product.dart';
+import '../PostProduct/post_edit_product.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -20,7 +20,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _pages = [
     SellerPage(),
-    PostProduct(),
+    PostEditProduct(product: {},),
     Home(),
     Home(), // Màn hình Screen2
     Screen2(productName: 'Sản phẩm'),

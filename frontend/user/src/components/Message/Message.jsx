@@ -44,7 +44,7 @@ const Message = () => {
 
     return (
         <div style={{ display: 'flex', height: '100vh' }}>
-            <ListMessage userId={userId} onSelectConversation={handleSelectConversation} />
+            <ListMessage userId={userId} onClick={() => handleSelectConversation({selectedConversation, selectedUser})} />
             <Chat conversation={selectedConversation} user={selectedUser} /> {/* Truyền user vào Chat */}
         </div>
     );

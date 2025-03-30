@@ -7,14 +7,18 @@ import '../../config.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-class PostProduct extends StatefulWidget {
-  const PostProduct({super.key});
+class PostEditProduct extends StatefulWidget {
+  final Map<String, dynamic> product;
+  const PostEditProduct({
+    super.key,
+    required this.product,
+  });
 
   @override
-  _PostProductState createState() => _PostProductState();
+  _PostEditProductState createState() => _PostEditProductState();
 }
 
-class _PostProductState extends State<PostProduct> {
+class _PostEditProductState extends State<PostEditProduct> {
   late LoginInfo loginInfo;
   late List<dynamic> categoriesList = [];
   bool isLoading = true; // Biến theo dõi trạng thái tải
@@ -75,6 +79,12 @@ class _PostProductState extends State<PostProduct> {
 
   @override
   Widget build(BuildContext context) {
+    final product = widget.product;
+
+    if(product.isNotEmpty){
+      imgUrl.text = product[''];
+    };
+
     return Scaffold(
       body: loginInfo.name == null
           ? Center(child: Text('Hãy đăng nhập để có trải nghiệm tốt nhất'))
@@ -114,7 +124,7 @@ class _PostProductState extends State<PostProduct> {
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
-                                    child: _imagePath != null
+                                    child: (_imagePath != null && product.isEmpty)
                                     ? Image.file(
                                         File(_imagePath!), // Hiển thị hình ảnh đã chọn
                                         width: double.infinity,
