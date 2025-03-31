@@ -41,7 +41,7 @@ class _SellerPageState extends State<SellerPage> {
                 SliverAppBar(
                   flexibleSpace: FlexibleSpaceBar(
                     background: Column(children: [
-                      Text('Tiêu đề'),
+                      Text('Trang Bán Hàng', ),
                     ],)
                     ,)
                 ),
