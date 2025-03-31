@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:mobile/components/PostProduct/post_edit_product.dart';
 import '../Checkout/checkout.dart';
 import '../../utils/convert.dart';
 import '../Cart/cart.dart';
@@ -219,7 +220,8 @@ class _ProductDetailState extends State<ProductDetail> {
                           children: [
                           ElevatedButton.icon(onPressed: 
                             () => {
-
+                              Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => PostEditProduct(product: product)))
                             }, 
                             label: Text('Chỉnh sửa'),
                             icon: Icon(Icons.edit),

@@ -32,7 +32,10 @@ class _PostEditProductState extends State<PostEditProduct> {
   final TextEditingController condition = TextEditingController();
   final TextEditingController origin = TextEditingController();
   String? selectedCategoryId;
+  String? selectedCondition;
   String? _imagePath;
+  String? categoryImage;
+  String? categoryName;
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
@@ -66,6 +69,27 @@ class _PostEditProductState extends State<PostEditProduct> {
       setState(() {
         categoriesList = jsonDecode(response.body);
         isLoading = false; // Cập nhật trạng thái tải
+        // Kiểm tra nếu có sản phẩm và cập nhật thông tin sản phẩm
+        if (widget.product.isNotEmpty) {
+          imgUrl.text = widget.product['image_url'];
+          name.text = widget.product['name'];
+          description.text = widget.product['description'];
+          price.text = widget.product['price'].toString();
+          quantity.text = widget.product['quantity'].toString();
+          brand.text = widget.product['brand'];
+          selectedCondition = widget.product['condition'];
+          origin.text = widget.product['origin'];
+          selectedCategoryId = widget.product['category_id'];
+
+          // Lấy thông tin danh mục dựa trên category_id
+          for (var category in categoriesList) {
+            if (category['_id'] == selectedCategoryId) {
+              categoryImage = category['image_url'];
+              categoryName = category['category_name'];
+              break;
+            }
+          }
+        }
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -80,11 +104,6 @@ class _PostEditProductState extends State<PostEditProduct> {
   @override
   Widget build(BuildContext context) {
     final product = widget.product;
-
-    if(product.isNotEmpty){
-      imgUrl.text = product[''];
-    };
-
     return Scaffold(
       body: loginInfo.name == null
           ? Center(child: Text('Hãy đăng nhập để có trải nghiệm tốt nhất'))
@@ -191,12 +210,24 @@ class _PostEditProductState extends State<PostEditProduct> {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          TextField(
-                            controller: condition,
+                          DropdownButtonFormField<String>(
+                            value: selectedCondition,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),
                               hintText: 'Tình trạng sản phẩm',
                             ),
+                            items: <String>['Mới', 'Đã qua sử dụng', 'Tái chế']
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedCondition = newValue; // Cập nhật lựa chọn
+                              });
+                            },
                           ),
                           const SizedBox(height: 8),
                           TextField(
@@ -212,6 +243,14 @@ class _PostEditProductState extends State<PostEditProduct> {
                             onChanged: (String? newValue) {
                               setState(() {
                                 selectedCategoryId = newValue;
+                                // Cập nhật hình ảnh và tên danh mục khi thay đổi
+                                for (var category in categoriesList) {
+                                  if (category['_id'] == newValue) {
+                                    categoryImage = category['image_url'];
+                                    categoryName = category['category_name'];
+                                    break;
+                                  }
+                                }
                               });
                             },
                             items: categoriesList.map((category) {
@@ -234,7 +273,7 @@ class _PostEditProductState extends State<PostEditProduct> {
                           ),
                           ElevatedButton(
                             onPressed: () {
-                              print('$selectedCategoryId');
+                              print('$categoriesList');
                             },
                             child: Text('Đăng sản phẩm'),
                           ),
