@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import '../../config.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import '../Product/product_detail.dart';
 
 class PostEditProduct extends StatefulWidget {
   final Map<String, dynamic> product;
@@ -21,7 +22,8 @@ class PostEditProduct extends StatefulWidget {
 class _PostEditProductState extends State<PostEditProduct> {
   late LoginInfo loginInfo;
   late List<dynamic> categoriesList = [];
-  bool isLoading = true; // Biến theo dõi trạng thái tải
+  bool isLoading = true;
+  late Map<String, dynamic> pro;
 
   final TextEditingController imgUrl = TextEditingController();
   final TextEditingController name = TextEditingController();
@@ -29,26 +31,14 @@ class _PostEditProductState extends State<PostEditProduct> {
   final TextEditingController price = TextEditingController();
   final TextEditingController quantity = TextEditingController();
   final TextEditingController brand = TextEditingController();
-  final TextEditingController condition = TextEditingController();
   final TextEditingController origin = TextEditingController();
   String? selectedCategoryId;
   String? selectedCondition;
-  String? _imagePath;
+  
   String? categoryImage;
   String? categoryName;
-
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
-
-    setState(() {
-      if (pickedFile != null) {
-        _imagePath = pickedFile.path; // Cập nhật đường dẫn hình ảnh
-      } else {
-        print('Không có hình ảnh được chọn.');
-      }
-    });
-  }
+  File? _image;
+  final picker = ImagePicker();
 
   @override
   void initState() {
@@ -61,6 +51,39 @@ class _PostEditProductState extends State<PostEditProduct> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     loginInfo = Provider.of<LoginInfo>(context);
+  }
+
+  Future<void> _pickImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+    }
+  }
+
+  Future<void> _uploadImage() async {
+    if (_image == null) return;
+
+    final formData = http.MultipartRequest(
+      'POST',
+      Uri.parse('https://api.cloudinary.com/v1_1/dd6pnq2is/image/upload'),
+    )
+      ..fields['upload_preset'] = 'images_preset'
+      ..files.add(await http.MultipartFile.fromPath('file', _image!.path));
+
+    final response = await formData.send();
+    final responseData = await http.Response.fromStream(response);
+
+    if (response.statusCode == 200) {
+      final result = jsonDecode(responseData.body);
+      setState(() {
+        imgUrl.text = result['secure_url'];
+      });
+      print('Image uploaded: ${imgUrl.text}');
+    } else {
+      print('Failed to upload image: ${responseData.body}');
+    }
   }
 
   Future<void> fetchCategories() async {
@@ -101,9 +124,143 @@ class _PostEditProductState extends State<PostEditProduct> {
     }
   }
 
+  Future<void> postProduct(Map<String, dynamic> product) async {
+    final response = await http.post(Uri.parse(
+      'http://$ip:5555/products'), 
+      headers: {
+        'Content-Type': 'application/json', // Đặt header cho JSON
+      },
+      body: jsonEncode(product),);
+    if(response.statusCode == 201){
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Sản phẩm được lưu và đang chờ xét duyệt!')),
+      );
+    }else{
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Sản phẩm không thêm được!')),
+      );
+    }
+  }
+
+  Future<void> editProduct(String id, Map<String, dynamic> product) async {
+    try {
+      final response = await http.put(
+        Uri.parse('http://$ip:5555/products/$id'),
+        headers: {
+          'Content-Type': 'application/json', // Đặt header cho JSON
+        },
+        body: jsonEncode(product),
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Sản phẩm được thay đổi và đang chờ xét duyệt!')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Sản phẩm không sửa được!')),
+        );
+      }
+    } catch (error) {
+      print('Error updating product: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Có lỗi xảy ra khi cập nhật sản phẩm!')),
+      );
+    }
+  }
+
+  Future<void> handle() async {
+    if(name.text.isEmpty || description.text.isEmpty || brand.text.isEmpty || origin.text.isEmpty || selectedCondition == null){
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Hãy nhập đầy đủ thông tin!')),
+      );
+      return;
+    }
+
+    if(selectedCategoryId == null){
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Hãy chọn loại danh mục sản phẩm!')),
+      );
+      return;
+    }
+
+    final priceText = price.text;
+    final prices = int.tryParse(priceText);
+    if (prices == null || prices <= 0) { // Kiểm tra null và giá trị <= 0
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Giá sản phẩm phải lớn hơn 0!')),
+      );
+      return;
+    }
+
+    final quantityText = quantity.text;
+    final quantityValue = int.tryParse(quantityText); // Chuyển đổi số lượng
+    if (quantityValue == null || quantityValue <= 0) { // Kiểm tra null và số lượng <= 0
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Số lượng phải lớn hơn 0!')),
+      );
+      return;
+    }
+
+    await _uploadImage();
+    if (_image == null && pro.isEmpty){
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Hãy chọn hình ảnh!')),
+      );
+      return;
+    };
+
+    var partner = false;
+            // Assuming userInfo is defined somewhere in your component
+    if (loginInfo.role == 'partner') {
+        partner = true;
+    }
+
+    Map<String, dynamic> product = {
+      "name": name.text,
+      "description": description.text,
+      "price": price.text,
+      "quantity": quantity.text,
+      "user_id": loginInfo.id,
+      "category_id": selectedCategoryId,
+      "image_url": imgUrl.text,
+      "brand": brand.text,
+      'condition': selectedCondition,
+      "origin": origin.text,
+      "partner": partner,
+      "approve": false,
+      "status": true
+    };
+
+    if(pro.isEmpty){
+      postProduct(product);
+    }else{
+      editProduct(pro['_id'], product);
+    }
+    _resetForm();
+  }
+
+  void _resetForm() {
+    // Reset các TextEditingController
+    imgUrl.text = 'https://www.chotot.com/_next/image?url=https%3A%2F%2Fstatic.chotot.com%2Fstorage%2Fchapy-pro%2Fnewcats%2Fv8%2F9000.png&w=256&q=95';
+    name.clear();
+    description.clear();
+    price.clear();
+    quantity.clear();
+    brand.clear();
+    origin.clear();
+    selectedCondition = null;
+    selectedCategoryId = null;
+    _image = null; // Đặt lại hình ảnh
+
+    // Cập nhật lại giao diện nếu cần
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final product = widget.product;
+    pro = product;
     return Scaffold(
       body: loginInfo.name == null
           ? Center(child: Text('Hãy đăng nhập để có trải nghiệm tốt nhất'))
@@ -143,9 +300,9 @@ class _PostEditProductState extends State<PostEditProduct> {
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
-                                    child: (_imagePath != null && product.isEmpty)
+                                    child: (_image != null && product.isEmpty)
                                     ? Image.file(
-                                        File(_imagePath!), // Hiển thị hình ảnh đã chọn
+                                        File(_image!.path), // Hiển thị hình ảnh đã chọn
                                         width: double.infinity,
                                         height: 200,
                                         fit: BoxFit.contain,
@@ -271,12 +428,32 @@ class _PostEditProductState extends State<PostEditProduct> {
                               );
                             }).toList(),
                           ),
-                          ElevatedButton(
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                            if (product.isNotEmpty)
+                            ...[
+                            ElevatedButton(
                             onPressed: () {
-                              print('$categoriesList');
+                              handle();
                             },
-                            child: Text('Đăng sản phẩm'),
-                          ),
+                            child: Text('Lưu thay đổi'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                // Navigator.push(context,
+                                // MaterialPageRoute(builder: (context) => ProductDetail(product: product)));
+                              },
+                              child: Text('Xem trước khi lưu'),
+                            ),
+                            ]else
+                            ElevatedButton(
+                              onPressed: () {
+                                handle();
+                              },
+                              child: Text('Đăng tin'),
+                            ),
+                          ],)
                         ],
                       ),
                     ),
