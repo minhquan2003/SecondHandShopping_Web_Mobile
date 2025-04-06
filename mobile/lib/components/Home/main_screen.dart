@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/components/Order/purchase_order.dart';
+import 'package:mobile/components/Order/sale_order.dart';
 import 'package:mobile/providers/login_info.dart';
 import 'package:provider/provider.dart';
 import '../../screen2.dart';
@@ -22,7 +24,7 @@ class _MainScreenState extends State<MainScreen> {
     SellerPage(),
     PostEditProduct(product: {},),
     Home(),
-    Home(), // Màn hình Screen2
+    SaleOrder(),
     Screen2(productName: 'Sản phẩm'),
   ];
 

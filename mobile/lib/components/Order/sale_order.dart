@@ -6,15 +6,16 @@ import 'package:http/http.dart' as http;
 import '../../config.dart';
 import '../../utils/convert.dart';
 
-class PurchaseOrder extends StatefulWidget {
-  const PurchaseOrder({super.key});
+class SaleOrder extends StatefulWidget {
+  const SaleOrder({super.key});
 
-  _PurchaseOrderState createState() => _PurchaseOrderState();
+  @override
+  _SaleOrderState createState() => _SaleOrderState();
 }
 
-class _PurchaseOrderState extends State<PurchaseOrder> with SingleTickerProviderStateMixin {
+class _SaleOrderState extends State<SaleOrder> with SingleTickerProviderStateMixin {
   late LoginInfo loginInfo;
-  late List<dynamic> purchaseOrder = [];
+  late List<dynamic> saleOrder = [];
   late TabController _tabController;
 
   final List<String> statuses = [
@@ -42,11 +43,11 @@ class _PurchaseOrderState extends State<PurchaseOrder> with SingleTickerProvider
   }
 
   Future<void> fetchPurchaseOrders() async {
-    final response = await http.get(Uri.parse('http://$ip:5555/orders/buyer/${loginInfo.id}'));
+    final response = await http.get(Uri.parse('http://$ip:5555/orders/seller/${loginInfo.id}'));
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
       setState(() {
-        purchaseOrder = result['data'];
+        saleOrder = result['data'];
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -57,9 +58,9 @@ class _PurchaseOrderState extends State<PurchaseOrder> with SingleTickerProvider
 
   List<dynamic> getFilteredOrders(String status) {
     if (status == "All") {
-      return purchaseOrder;
+      return saleOrder;
     } else {
-      return purchaseOrder.where((order) => order['status_order'] == status).toList();
+      return saleOrder.where((order) => order['status_order'] == status).toList();
     }
   }
 
@@ -67,7 +68,7 @@ class _PurchaseOrderState extends State<PurchaseOrder> with SingleTickerProvider
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Đơn mua'),
+        title: Text('Đơn bán'),
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
@@ -80,7 +81,7 @@ class _PurchaseOrderState extends State<PurchaseOrder> with SingleTickerProvider
           final filteredOrders = getFilteredOrders(status);
           return Container(
             child: filteredOrders.isEmpty
-                ? Center(child: Text('Không có đơn mua nào.'))
+                ? Center(child: Text('Không có đơn bán nào.'))
                 : ListView.builder(
                     itemCount: filteredOrders.length,
                     itemBuilder: (context, index) {
