@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/providers/login_info.dart';
 import 'package:provider/provider.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import '../../config.dart';
-import 'package:mobile/components/UI/text_field.dart';
-import 'package:mobile/components/UI/custom_button.dart';
+import '../../providers/signup_provider.dart';
+import '../UI/edit_text_field.dart'; // Đổi import
+import '../../components/UI/custom_button.dart';
+import './otpscreen.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -30,67 +28,69 @@ class _SignUpState extends State<SignUp> {
     super.dispose();
   }
 
-  Future<void> _signUp() async {
-    final email = emailController.text.trim();
-    final password = passwordController.text.trim();
-    final name = nameController.text.trim();
-    final confirmPassword = confirmPasswordController.text.trim();
+  void _handleSignUp(BuildContext context) async {
+    final provider = Provider.of<SignUpProvider>(context, listen: false);
 
-    if (email.isEmpty || password.isEmpty || name.isEmpty) {
+    if (provider.isLoading) return;
+
+    if (emailController.text.isEmpty ||
+        passwordController.text.isEmpty ||
+        nameController.text.isEmpty ||
+        confirmPasswordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Vui lòng nhập đầy đủ thông tin.')),
       );
       return;
     }
 
-    try {
-      final response = await http.post(
-        Uri.parse('http://$ip:5555/auth/signup'), // API đăng ký
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'name': name, 'email': email, 'password': password}),
-      );
-
-      if (response.statusCode == 201) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Đăng ký thành công! Vui lòng đăng nhập.')),
-        );
-        Navigator.pop(context);
-      } else {
-        final responseData = json.decode(response.body);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(responseData['message'] ?? 'Đăng ký thất bại!')),
-        );
-      }
-    } catch (e) {
+    if (passwordController.text.trim() !=
+        confirmPasswordController.text.trim()) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Lỗi kết nối. Vui lòng thử lại.')),
+        const SnackBar(content: Text('Mật khẩu xác nhận không khớp.')),
+      );
+      return;
+    }
+
+    await provider.signUp(
+      username: nameController.text.trim(),
+      email: emailController.text.trim(),
+      password: passwordController.text.trim(),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(provider.message)),
+    );
+
+    if (provider.message == 'Đăng ký thành công!') {
+      await provider.sendOtp(emailController.text.trim());
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                OtpScreen(email: emailController.text.trim())),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<SignUpProvider>(context);
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Phần trên chứa hình ảnh
             Container(
-              height: MediaQuery.of(context).size.height *
-                  0.35, // Chiếm 35% chiều cao màn hình
+              height: MediaQuery.of(context).size.height * 0.35,
               width: double.infinity,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(
-                      'images/register_banner.webp'), // Đường dẫn ảnh
+                  image: AssetImage('images/register_banner.webp'),
                   fit: BoxFit.cover,
                 ),
               ),
             ),
             const SizedBox(height: 10),
-            // Tiêu đề đăng ký
             const Text(
               'Đăng ký',
               style: TextStyle(
@@ -103,36 +103,42 @@ class _SignUpState extends State<SignUp> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  CustomTextField(
+                  EditableTextField(
+                    label: 'Nhập tên',
                     controller: nameController,
-                    hintText: 'Nhập tên',
-                    iconData: Icons.person,
+                    icon: Icons.person,
+                    isEnabled: true,
                   ),
                   const SizedBox(height: 12),
-                  CustomTextField(
+                  EditableTextField(
+                    label: 'Nhập email',
                     controller: emailController,
-                    hintText: 'Nhập email',
-                    iconData: Icons.email,
+                    icon: Icons.email,
+                    isEnabled: true,
                   ),
                   const SizedBox(height: 12),
-                  CustomTextField(
+                  EditableTextField(
+                    label: 'Nhập mật khẩu',
                     controller: passwordController,
-                    hintText: 'Nhập mật khẩu',
-                    iconData: Icons.lock,
+                    icon: Icons.lock,
+                    isEnabled: true,
                     isPassword: true,
                   ),
                   const SizedBox(height: 12),
-                  CustomTextField(
+                  EditableTextField(
+                    label: 'Xác nhận mật khẩu',
                     controller: confirmPasswordController,
-                    hintText: 'Xác nhận mật khẩu',
-                    iconData: Icons.lock,
+                    icon: Icons.lock,
+                    isEnabled: true,
                     isPassword: true,
                   ),
                   const SizedBox(height: 12),
-                  CustomButton(
-                    text: 'Đăng ký',
-                    onPressed: _signUp,
-                  ),
+                  provider.isLoading
+                      ? const CircularProgressIndicator()
+                      : CustomButton(
+                          text: 'Đăng ký',
+                          onPressed: () => _handleSignUp(context),
+                        ),
                   const SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

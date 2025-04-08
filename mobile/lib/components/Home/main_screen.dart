@@ -5,6 +5,7 @@ import '../../screen2.dart';
 import 'home.dart';
 import '../Login/login.dart';
 import '../Cart/cart.dart';
+import '../Profile/menu_profile.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -21,7 +22,7 @@ class _MainScreenState extends State<MainScreen> {
     Screen2(productName: 'Sản phẩm'),
     Home(),
     Home(), // Màn hình Screen2
-    Screen2(productName: 'Sản phẩm'),
+    MenuProfile(),
   ];
 
   void _onItemTapped(int index) {
@@ -32,7 +33,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final loginInfo = Provider.of<LoginInfo>(context); // Lấy thông tin đăng nhập
+    final loginInfo =
+        Provider.of<LoginInfo>(context); // Lấy thông tin đăng nhập
 
     return Scaffold(
       appBar: AppBar(
@@ -50,11 +52,12 @@ class _MainScreenState extends State<MainScreen> {
           IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
-              if(loginInfo.name == null){
+              if (loginInfo.name == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Hãy đăng nhập để có trải nghiệm tốt hơn')),
+                  SnackBar(
+                      content: Text('Hãy đăng nhập để có trải nghiệm tốt hơn')),
                 );
-              }else{
+              } else {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Cart()),
@@ -63,7 +66,9 @@ class _MainScreenState extends State<MainScreen> {
             },
           ),
           IconButton(
-            icon: Icon(loginInfo.name == null ? Icons.login : Icons.logout), // Thay đổi icon theo trạng thái đăng nhập
+            icon: Icon(loginInfo.name == null
+                ? Icons.login
+                : Icons.logout), // Thay đổi icon theo trạng thái đăng nhập
             onPressed: () {
               if (loginInfo.name == null) {
                 Navigator.push(
@@ -79,7 +84,8 @@ class _MainScreenState extends State<MainScreen> {
             icon: const Icon(Icons.menu), // Icon menu
             onSelected: (String value) {
               // Xử lý lựa chọn menu ở đây
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Bạn đã chọn: $value')));
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text('Bạn đã chọn: $value')));
             },
             itemBuilder: (BuildContext context) {
               return {'Một', 'Hai', 'Ba', 'Bốn'}.map((String choice) {
@@ -118,10 +124,12 @@ class _MainScreenState extends State<MainScreen> {
         ],
         selectedItemColor: Colors.blue, // Màu sắc icon đã chọn
         unselectedItemColor: Colors.grey, // Màu sắc icon chưa chọn
-        currentIndex: _selectedIndex, 
+        currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedLabelStyle: TextStyle(color: Colors.black), // Màu sắc chữ cho mục đã chọn
-        unselectedLabelStyle: TextStyle(color: Colors.black), // Màu sắc chữ cho mục chưa chọn
+        selectedLabelStyle:
+            TextStyle(color: Colors.black), // Màu sắc chữ cho mục đã chọn
+        unselectedLabelStyle:
+            TextStyle(color: Colors.black), // Màu sắc chữ cho mục chưa chọn
         type: BottomNavigationBarType.fixed,
       ),
     );

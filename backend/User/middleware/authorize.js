@@ -1,37 +1,52 @@
-import jwt from 'jsonwebtoken';
+// import jwt from "jsonwebtoken";
 
-// Middleware xác thực
-const authorize = (roles = []) => {
-    return (req, res, next) => {
-        // Lấy token từ header Authorization
-        const authHeader = req.headers['authorization'];
+// // Middleware xác thực
+// const authorize = () => {
+//   return (req, res, next) => {
+//     // Lấy token từ header Authorization
+//     const authHeader = req.headers["authorization"];
 
-        if (!authHeader) {
-            return res.status(403).send('Access denied. No token provided.');
-        }
+//     if (!authHeader) {
+//       return res.status(403).send("Access denied. No token provided.");
+//     }
 
-        // Tách token từ header
-        const token = authHeader.split(' ')[1];
+//     // Tách token từ header
+//     const token = authHeader.split(" ")[1];
 
-        if (!token) {
-            return res.status(403).send('Access denied. No token provided.');
-        }
+//     if (!token) {
+//       return res.status(403).send("Access denied. No token provided.");
+//     }
 
-        try {
-            // Giải mã token
-            const decoded = jwt.verify(token, process.env.JWT_SECRET); // Sử dụng biến môi trường cho bí mật
+//     try {
+//       // Giải mã token
+//       const decoded = jwt.verify(token, process.env.JWT_SECRET); // Sử dụng biến môi trường cho bí mật
 
-            req.user = decoded; // Lưu thông tin người dùng vào req.user
+//       req.user = decoded; // Lưu thông tin người dùng vào req.user
 
-            // Kiểm tra vai trò
-            if (roles.length && !roles.includes(decoded.role)) {
-                return res.status(403).send('Access denied. Insufficient permissions.');
-            }
-            next(); // Tiếp tục nếu tất cả các điều kiện đều thỏa mãn
-        } catch (error) {
-            return res.status(400).send('Invalid token.');
-        }
-    };
+//       next(); // Tiếp tục nếu tất cả các điều kiện đều thỏa mãn
+//     } catch (error) {
+//       return res.status(400).send("Invalid token.");
+//     }
+//   };
+// };
+
+// export default authorize;
+
+import jwt from "jsonwebtoken";
+
+import CustomError from "../models/CustomError.js";
+
+export const authorize = (req, res, next) => {
+  const token = req.header("authorization");
+
+  if (!token)
+    return next(new CustomError("No token, authorization denied.", 401));
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded.user;
+    next();
+  } catch (err) {
+    return next(new CustomError("Token is not valid.", 401));
+  }
 };
-
-export default authorize;

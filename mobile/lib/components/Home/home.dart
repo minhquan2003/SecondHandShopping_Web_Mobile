@@ -12,7 +12,6 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<LoginInfo>(
       builder: (context, loginInfo, child) {
-        
         Widget checkUser() {
           if (loginInfo.name == null || loginInfo.name!.isEmpty) {
             return Text('Hãy đăng nhập để có trải nghiệm tốt hơn');
@@ -31,7 +30,8 @@ class Home extends StatelessWidget {
                     background: Column(
                       children: [
                         ClipRRect(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(5)),
                           child: Image.network(
                             'https://tenten.vn/tin-tuc/wp-content/uploads/2022/09/cach-ban-hang-online-hieu-qua.png',
                             width: double.infinity,
@@ -46,7 +46,9 @@ class Home extends StatelessWidget {
                         Container(
                           height: 110,
                           color: Colors.green, // Màu nền cho danh mục sản phẩm
-                          child: CategoryList(urlBase: 'http://$ip:5555/categories/'), // Danh mục sản phẩm
+                          child: CategoryList(
+                              urlBase:
+                                  'http://$ip:5555/categories/'), // Danh mục sản phẩm
                         ),
                       ],
                     ),
@@ -54,7 +56,8 @@ class Home extends StatelessWidget {
                 ),
               ];
             },
-            body: ProductList(urlBase: 'http://$ip:5555/products/'), // Danh sách sản phẩm
+            body: ProductList(
+                urlBase: 'http://$ip:5555/products/'), // Danh sách sản phẩm
           ),
         );
       },
