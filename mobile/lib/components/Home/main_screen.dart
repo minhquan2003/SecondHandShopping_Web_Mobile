@@ -80,20 +80,41 @@ class _MainScreenState extends State<MainScreen> {
             },
           ),
           PopupMenuButton<String>(
-            icon: const Icon(Icons.menu), // Icon menu
-            onSelected: (String value) {
-              // Xử lý lựa chọn menu ở đây
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Bạn đã chọn: $value')));
-            },
-            itemBuilder: (BuildContext context) {
-              return {'Một', 'Hai', 'Ba', 'Bốn'}.map((String choice) {
-                return PopupMenuItem<String>(
-                  value: choice,
-                  child: Text(choice),
-                );
-              }).toList();
-            },
-          ),
+  icon: const Icon(Icons.menu), // Icon menu
+  onSelected: (String value) {
+    // Xử lý lựa chọn menu ở đây
+    switch (value) {
+      case 'Đơn mua':
+        Navigator.push(context,
+        MaterialPageRoute(builder: (context) => PurchaseOrder()));
+        break;
+      case 'Đơn bán':
+        Navigator.push(context,
+        MaterialPageRoute(builder: (context) => SaleOrder()));
+        break;
+      case 'Ba':
+        // Thực hiện hành động cho 'Ba'
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Bạn đã chọn: Ba')),
+        );
+        break;
+      case 'Bốn':
+        // Thực hiện hành động cho 'Bốn'
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Bạn đã chọn: Bốn')),
+        );
+        break;
+    }
+  },
+  itemBuilder: (BuildContext context) {
+    return {'Đơn mua', 'Đơn bán', 'Ba', 'Bốn'}.map((String choice) {
+      return PopupMenuItem<String>(
+        value: choice,
+        child: Text(choice),
+      );
+    }).toList();
+  },
+)
         ],
       ),
       body: _pages[_selectedIndex], // Hiển thị màn hình dựa trên _selectedIndex
