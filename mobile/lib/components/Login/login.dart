@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile/providers/login_info.dart';
 import 'package:provider/provider.dart';
 import '../Home/main_screen.dart';
+import '../Sign Up/SignUp.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -11,8 +12,10 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final TextEditingController emailController = TextEditingController(); // Controller cho email
-  final TextEditingController passwordController = TextEditingController(); // Controller cho mật khẩu
+  final TextEditingController emailController =
+      TextEditingController(); // Controller cho email
+  final TextEditingController passwordController =
+      TextEditingController(); // Controller cho mật khẩu
 
   @override
   void dispose() {
@@ -48,7 +51,8 @@ class _LoginState extends State<Login> {
               ),
               const SizedBox(height: 20),
               TextField(
-                controller: passwordController, // Gán controller cho ô nhập mật khẩu
+                controller:
+                    passwordController, // Gán controller cho ô nhập mật khẩu
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Nhập mật khẩu',
@@ -61,17 +65,22 @@ class _LoginState extends State<Login> {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      // Xử lý đăng ký
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const SignUp()),
+                      );
                     },
                     child: const Text('Đăng ký'),
                   ),
                   ElevatedButton(
                     onPressed: () async {
-                      final bool checkLogin = await Provider.of<LoginInfo>(context, listen: false).login(
-                        emailController.text, 
+                      final bool checkLogin =
+                          await Provider.of<LoginInfo>(context, listen: false)
+                              .login(
+                        emailController.text,
                         passwordController.text,
                       );
-                      
+
                       if (checkLogin) {
                         // Nếu đăng nhập thành công, điều hướng đến MainScreen
                         Navigator.of(context).pushAndRemoveUntil(
@@ -82,10 +91,12 @@ class _LoginState extends State<Login> {
                         // Nếu đăng nhập thất bại, xóa nội dung ô nhập
                         emailController.clear();
                         passwordController.clear();
-                        
+
                         // Hiển thị thông báo
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.')),
+                          SnackBar(
+                              content: Text(
+                                  'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.')),
                         );
                       }
                     },

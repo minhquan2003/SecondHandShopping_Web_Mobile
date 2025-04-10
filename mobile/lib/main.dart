@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:mobile/providers/login_info.dart';
 import 'package:provider/provider.dart';
 import './components/Home/main_screen.dart';
+import './providers/signup_provider.dart';
+import './providers/userProfile_provider.dart';
 
 void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => LoginInfo(),
-      child: const MyApp(),
-    ),
-  );
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (context) => LoginInfo()),
+      ChangeNotifierProvider(create: (context) => SignUpProvider()),
+      ChangeNotifierProvider(create: (context) => UserProfileProvider()),
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -28,4 +32,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
