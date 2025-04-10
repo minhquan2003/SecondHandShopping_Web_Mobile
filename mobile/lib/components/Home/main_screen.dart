@@ -9,6 +9,8 @@ import '../Login/login.dart';
 import '../Cart/cart.dart';
 import '../SellerPage/seller_page.dart';
 import '../PostProduct/post_edit_product.dart';
+import '../Profile/menu_profile.dart';
+
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -24,8 +26,9 @@ class _MainScreenState extends State<MainScreen> {
     SellerPage(),
     PostEditProduct(product: {},),
     Home(),
-    SaleOrder(),
-    Screen2(productName: 'Sản phẩm'),
+    Home(), // Màn hình Screen2
+    MenuProfile(),
+
   ];
 
   void _onItemTapped(int index) {
@@ -36,7 +39,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final loginInfo = Provider.of<LoginInfo>(context); // Lấy thông tin đăng nhập
+    final loginInfo =
+        Provider.of<LoginInfo>(context); // Lấy thông tin đăng nhập
 
     return Scaffold(
       appBar: AppBar(
@@ -54,11 +58,12 @@ class _MainScreenState extends State<MainScreen> {
           IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
-              if(loginInfo.name == null){
+              if (loginInfo.name == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Hãy đăng nhập để có trải nghiệm tốt hơn')),
+                  SnackBar(
+                      content: Text('Hãy đăng nhập để có trải nghiệm tốt hơn')),
                 );
-              }else{
+              } else {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Cart()),
@@ -67,7 +72,9 @@ class _MainScreenState extends State<MainScreen> {
             },
           ),
           IconButton(
-            icon: Icon(loginInfo.name == null ? Icons.login : Icons.logout), // Thay đổi icon theo trạng thái đăng nhập
+            icon: Icon(loginInfo.name == null
+                ? Icons.login
+                : Icons.logout), // Thay đổi icon theo trạng thái đăng nhập
             onPressed: () {
               if (loginInfo.name == null) {
                 Navigator.push(
@@ -80,6 +87,7 @@ class _MainScreenState extends State<MainScreen> {
             },
           ),
           PopupMenuButton<String>(
+
   icon: const Icon(Icons.menu), // Icon menu
   onSelected: (String value) {
     // Xử lý lựa chọn menu ở đây
@@ -141,6 +149,7 @@ class _MainScreenState extends State<MainScreen> {
             label: 'Tài khoản',
           ),
         ],
+
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.grey,
         currentIndex: _selectedIndex, 
