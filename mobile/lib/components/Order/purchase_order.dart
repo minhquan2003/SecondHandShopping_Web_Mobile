@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:mobile/components/Order/order_detail.dart';
 import 'package:provider/provider.dart';
 import '../../providers/login_info.dart';
 import 'package:http/http.dart' as http;
@@ -85,10 +86,15 @@ class _PurchaseOrderState extends State<PurchaseOrder> with SingleTickerProvider
                     itemCount: filteredOrders.length,
                     itemBuilder: (context, index) {
                       final order = filteredOrders[index];
-                      return ListTile(
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => OrderDetail(order: order)));
+                        },
+                      child: ListTile(
                         title: Text(order['name'] ?? 'Người mua không xác định'),
                         subtitle: Text('Tổng tiền: ${formatPrice(order['total_amount'])} đ\nTrạng thái: ${order['status_order']}'),
-                      );
+                      ),);
                     },
                   ),
           );
