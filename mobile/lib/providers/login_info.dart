@@ -25,6 +25,7 @@ class LoginInfo with ChangeNotifier {
   String? get address => _user?.address;
   String? get phone => _user?.phone;
 
+
   Future<bool> login(String email, String password) async {
     try {
       final response = await http.post(
@@ -78,7 +79,6 @@ class LoginInfo with ChangeNotifier {
     _token = null;
     _user = null;
     _isLoggedIn = false;
-
     notifyListeners();
   }
 }

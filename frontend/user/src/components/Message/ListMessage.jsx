@@ -83,6 +83,8 @@ const ListMessage = ({ userId }) => {
         const userSend = conversation.participant1 === userId ? conversation.participant2 : conversation.participant1;
         const senderId = userSend;
         const id = conversation._id
+        // alert(`${userId} và ` + JSON.stringify(conversation))
+        // sessionStorage.setItem("conversation", JSON.stringify(conversation));
         const aa = await axios.post(`http://${IP}:5555/messages/read/${id}`, {senderId});
         // Chuyển hướng đến đường dẫn mới với mã cuộc trò chuyện
         navigate(`/message/${userId}/${conversation._id}`);

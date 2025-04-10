@@ -7,9 +7,13 @@ import { IP } from '../../config';
 
 const socket = io(`http://localhost:5555`);
 
-const Chat = ({ conversation, user }) => {
-    const { userId } = useParams();
+const Chat = () => {
+    // const conver = sessionStorage.getItem('conversation');
+    // const conversation = conver ? JSON.parse(conver) : null;
+    const { userId, conversationId } = useParams();
     const [messages, setMessages] = useState([]);
+    const [conversation, setConversation] = useState();
+    const [user, setUser] = useState();
     const [text, setText] = useState('');
     
     useEffect(() => {
@@ -18,17 +22,26 @@ const Chat = ({ conversation, user }) => {
         return () => {
             socket.off("newMessage", fetchMessages);
         };
-    }, [conversation, userId]);
+    }, [conversationId, userId]);
 
     const fetchMessages = async () => {
-        if (conversation) {
             try {
-                const response = await axios.get(`http://${IP}:5555/messages/${conversation._id}`);
+                const response1 = await axios.get(`http://${IP}:5555/conversations/byId/${conversationId}`);
+                const conversationData = response1.data; // Lưu giá trị vào biến tạm
+                setConversation(conversationData); // Cập nhật state
+
+                const u = userId === conversationData.participant1 ? conversationData.participant2 : conversationData.participant1;
+
+                const response = await axios.get(`http://${IP}:5555/messages/${conversationData._id}`);
                 setMessages(response.data);
+
+                const response2 = await axios.get(`http://${IP}:5555/users/${u}`);
+                setUser(response2.data);
+
+                // alert(`${conversationId} và ` + JSON.stringify(conversationData))
             } catch (error) {
                 console.error('Error fetching messages:', error);
             }
-        }
     };
 
     const handleSend = async () => {
@@ -58,10 +71,13 @@ const Chat = ({ conversation, user }) => {
     return (
         <div className='w-full bg-green-100'>
             <div className='bg-red-100 h-[60%] overflow-y-auto' style={{ padding: '10px', flexGrow: 1 }}>
-                {conversation && user ? (
+                {conversation && userId ? (
                     <>
+                        {user != null ?
+                        <>
                         <h2>Cuộc Hội Thoại với {user.name}</h2>
-                        <img src={user.avatar_url} alt="Avatar" style={{ width: '50px', height: '50px' }} />
+                        <img src={user.avatar_url} alt="Avatar" style={{ width: '50px', height: '50px' }} /> </>  : null}
+                        
                         {messages.map((message) => (
                             <div key={message._id} style={{ margin: '5px 0', padding: '10px', border: '1px solid #eee', borderRadius: '5px' }}>
                                 {userId === message.senderId ? (
@@ -88,7 +104,7 @@ const Chat = ({ conversation, user }) => {
                                             wordWrap: 'break-word',
                                             marginRight: 'auto'
                                         }}>
-                                            <p style={{ margin: 0 }}><strong>{user.name}:</strong> {message.content}</p>
+                                            {user != null ? <p style={{ margin: 0 }}><strong>{user.name}:</strong> {message.content}</p> : null}
                                             <p style={{ margin: '5px 0 0' }}><small>{new Date(message.createdAt).toLocaleString()}</small></p>
                                         </div>
                                     </div>

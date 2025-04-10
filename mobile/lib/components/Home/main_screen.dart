@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/components/Order/purchase_order.dart';
+import 'package:mobile/components/Order/sale_order.dart';
 import 'package:mobile/providers/login_info.dart';
 import 'package:provider/provider.dart';
 import '../../screen2.dart';
 import 'home.dart';
 import '../Login/login.dart';
 import '../Cart/cart.dart';
+import '../SellerPage/seller_page.dart';
+import '../PostProduct/post_edit_product.dart';
 import '../Profile/menu_profile.dart';
+
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -18,11 +23,12 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 2;
 
   final List<Widget> _pages = [
-    Home(), // Màn hình Home chứa ProductList
-    Screen2(productName: 'Sản phẩm'),
+    SellerPage(),
+    PostEditProduct(product: {},),
     Home(),
     Home(), // Màn hình Screen2
     MenuProfile(),
+
   ];
 
   void _onItemTapped(int index) {
@@ -81,33 +87,54 @@ class _MainScreenState extends State<MainScreen> {
             },
           ),
           PopupMenuButton<String>(
-            icon: const Icon(Icons.menu), // Icon menu
-            onSelected: (String value) {
-              // Xử lý lựa chọn menu ở đây
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text('Bạn đã chọn: $value')));
-            },
-            itemBuilder: (BuildContext context) {
-              return {'Một', 'Hai', 'Ba', 'Bốn'}.map((String choice) {
-                return PopupMenuItem<String>(
-                  value: choice,
-                  child: Text(choice),
-                );
-              }).toList();
-            },
-          ),
+
+  icon: const Icon(Icons.menu), // Icon menu
+  onSelected: (String value) {
+    // Xử lý lựa chọn menu ở đây
+    switch (value) {
+      case 'Đơn mua':
+        Navigator.push(context,
+        MaterialPageRoute(builder: (context) => PurchaseOrder()));
+        break;
+      case 'Đơn bán':
+        Navigator.push(context,
+        MaterialPageRoute(builder: (context) => SaleOrder()));
+        break;
+      case 'Ba':
+        // Thực hiện hành động cho 'Ba'
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Bạn đã chọn: Ba')),
+        );
+        break;
+      case 'Bốn':
+        // Thực hiện hành động cho 'Bốn'
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Bạn đã chọn: Bốn')),
+        );
+        break;
+    }
+  },
+  itemBuilder: (BuildContext context) {
+    return {'Đơn mua', 'Đơn bán', 'Ba', 'Bốn'}.map((String choice) {
+      return PopupMenuItem<String>(
+        value: choice,
+        child: Text(choice),
+      );
+    }).toList();
+  },
+)
         ],
       ),
       body: _pages[_selectedIndex], // Hiển thị màn hình dựa trên _selectedIndex
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: Icon(Icons.assignment),
+            label: 'Quản lý tin',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile', // Mục cho Screen2
+            icon: Icon(Icons.create),
+            label: 'Đăng tin',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -119,17 +146,16 @@ class _MainScreenState extends State<MainScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Tài khoản', // Mục cho Screen2
+            label: 'Tài khoản',
           ),
         ],
-        selectedItemColor: Colors.blue, // Màu sắc icon đã chọn
-        unselectedItemColor: Colors.grey, // Màu sắc icon chưa chọn
-        currentIndex: _selectedIndex,
+
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
+        currentIndex: _selectedIndex, 
         onTap: _onItemTapped,
-        selectedLabelStyle:
-            TextStyle(color: Colors.black), // Màu sắc chữ cho mục đã chọn
-        unselectedLabelStyle:
-            TextStyle(color: Colors.black), // Màu sắc chữ cho mục chưa chọn
+        selectedLabelStyle: TextStyle(color: Colors.black),
+        unselectedLabelStyle: TextStyle(color: Colors.black),
         type: BottomNavigationBarType.fixed,
       ),
     );
