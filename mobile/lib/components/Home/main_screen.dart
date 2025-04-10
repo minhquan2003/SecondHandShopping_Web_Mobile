@@ -3,7 +3,6 @@ import 'package:mobile/components/Order/purchase_order.dart';
 import 'package:mobile/components/Order/sale_order.dart';
 import 'package:mobile/providers/login_info.dart';
 import 'package:provider/provider.dart';
-import '../../screen2.dart';
 import 'home.dart';
 import '../Login/login.dart';
 import '../Cart/cart.dart';

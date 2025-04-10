@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import '../../config.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import '../Product/product_detail.dart';
+// import '../Product/product_detail.dart';
 
 class PostEditProduct extends StatefulWidget {
   final Map<String, dynamic> product;
