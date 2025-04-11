@@ -26,28 +26,31 @@ class _OrderDetailState extends State<OrderDetail> {
   void initState() {
     super.initState();
     ordeR = widget.order;
-    fetchOderInfo();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     loginInfo = Provider.of<LoginInfo>(context);
+    fetchOderInfo();
   }
 
   Future<void> fetchOderInfo() async {
-    final responseOrderDetail = await http.get(Uri.parse('http://$ip:5555/orderDetails/order/${ordeR['_id']}'));
-    if (responseOrderDetail.statusCode == 200) {
-      final result = json.decode(responseOrderDetail.body);
-      setState(() {
-        orderDetail = result['data']; // Có thể kiểm tra result['data'] trước khi gán
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Không thể tải được danh sách sản phẩm!')),
-      );
-    }
+  final responseOrderDetail = await http.get(Uri.parse('http://$ip:5555/orderDetails/order/${ordeR['_id']}'));
+  if (responseOrderDetail.statusCode == 200) {
+    final result = json.decode(responseOrderDetail.body);
+    setState(() {
+      // Gán giá trị của thuộc tính 'data' vào orderDetail
+      orderDetail = result['data'] != null && result['data'].isNotEmpty
+          ? result['data'][0] // Lấy phần tử đầu tiên trong danh sách
+          : null; // Nếu không có dữ liệu, gán null
+    });
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Không thể tải được danh sách sản phẩm!')),
+    );
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +64,15 @@ class _OrderDetailState extends State<OrderDetail> {
             Text('${ordeR}'),
             orderDetail == null
                 ? CircularProgressIndicator() // Hiển thị spinner khi đang tải
-                : Text('Chi tiết sản phẩm: ${orderDetail!['product_id'] ?? 'Không có thông tin'}'),
+                : Text('Chi tiết sản phẩm: ${orderDetail ?? 'Không có thông tin'}'),
+            ElevatedButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('${ordeR['_id']}')),
+                );
+              },
+              child: Text('Xem trước khi lưu'),
+            ),
           ],
         ),
       ),
