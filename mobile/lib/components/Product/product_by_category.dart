@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'product_list.dart';
+import '../../config.dart';
 
 class ProductByCategory extends StatefulWidget {
   final String id;
@@ -25,7 +26,7 @@ class _ProductByCategory extends State<ProductByCategory> {
       body: Container(
         padding: const EdgeInsets.all(5.0),
         child: ProductList(
-          urlBase: 'http://192.168.1.248:5555/products/category/${widget.id}',
+          urlBase: 'http://$ip:5555/products/category/${widget.id}',
         ),
       ),
     );

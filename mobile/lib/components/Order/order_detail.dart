@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:mobile/components/Product/product_list.dart';
 import 'package:provider/provider.dart';
 import '../../providers/login_info.dart';
 import 'package:http/http.dart' as http;
@@ -21,61 +22,136 @@ class _OrderDetailState extends State<OrderDetail> {
   late LoginInfo loginInfo;
   late Map<String, dynamic> ordeR;
   Map<String, dynamic>? orderDetail; // Đổi thành nullable
+  Map<String, dynamic>? product;
 
   @override
   void initState() {
     super.initState();
     ordeR = widget.order;
+    fetchOderInfo();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     loginInfo = Provider.of<LoginInfo>(context);
-    fetchOderInfo();
   }
 
   Future<void> fetchOderInfo() async {
-  final responseOrderDetail = await http.get(Uri.parse('http://$ip:5555/orderDetails/order/${ordeR['_id']}'));
-  if (responseOrderDetail.statusCode == 200) {
-    final result = json.decode(responseOrderDetail.body);
-    setState(() {
-      // Gán giá trị của thuộc tính 'data' vào orderDetail
-      orderDetail = result['data'] != null && result['data'].isNotEmpty
-          ? result['data'][0] // Lấy phần tử đầu tiên trong danh sách
-          : null; // Nếu không có dữ liệu, gán null
-    });
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Không thể tải được danh sách sản phẩm!')),
-    );
+    final responseOrderDetail = await http.get(Uri.parse('http://$ip:5555/orderDetails/order/${ordeR['_id']}'));
+    
+    if (responseOrderDetail.statusCode == 200) {
+      final resultOrderDetail = json.decode(responseOrderDetail.body);
+      setState(() {
+        // Gán giá trị của thuộc tính 'data' vào orderDetail
+        orderDetail = resultOrderDetail['data'] != null && resultOrderDetail['data'].isNotEmpty
+            ? resultOrderDetail['data'][0] // Lấy phần tử đầu tiên trong danh sách
+            : null; // Nếu không có dữ liệu, gán null
+      });
+
+      if (orderDetail != null) {
+        final responProduct = await http.get(Uri.parse('http://$ip:5555/products/${orderDetail!['product_id']}'));
+        if (responProduct.statusCode == 200) {
+          final resultProduct = json.decode(responProduct.body); // Lấy body để giải mã
+          setState(() {
+            product = resultProduct;
+          });
+        } else {
+          // Xử lý trường hợp không lấy được sản phẩm
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Không thể tải thông tin sản phẩm!')),
+          );
+        }
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Không thể tải được danh sách sản phẩm!')),
+      );
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chi tiết đơn hàng'),
+        title: loginInfo.id == ordeR['user_id_seller'] 
+            ? Text('Chi tiết đơn bán') 
+            : Text('Chi tiết đơn mua'),
       ),
-      body: Container(
-        child: Column(
-          children: [
-            Text('${ordeR}'),
-            orderDetail == null
-                ? CircularProgressIndicator() // Hiển thị spinner khi đang tải
-                : Text('Chi tiết sản phẩm: ${orderDetail ?? 'Không có thông tin'}'),
-            ElevatedButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${ordeR['_id']}')),
-                );
-              },
-              child: Text('Xem trước khi lưu'),
+      body: product == null 
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.all(16.0), // Thêm padding
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      color: Colors.orange,
+                      padding: EdgeInsets.all(8.0),
+                      child: Text('${ordeR['status_order']}', style: TextStyle(fontSize: 18)),
+                    ),
+                    SizedBox(height: 16),
+                    Text('Thông tin sản phẩm', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 8),
+                    Container(
+                      height: 60,
+                      child: GestureDetector(
+                        onTap: () {
+                          // Xử lý khi nhấn vào
+                        },
+                        child: Card(
+                          color: Colors.amber,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(Icons.map),
+                              SizedBox(width: 8), 
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('${ordeR['name']}  ${ordeR['phone']}'),
+                                  Text(ordeR['address']),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.network(
+                        product?['image_url'] ?? '',
+                        width: double.infinity,
+                        height: 220,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text('${product?['name']}'),
+                    Text('Đơn giá: ${formatPrice(product?['price'])} x${product?['quantity']}'),
+                    Text('Thành tiền: ${formatPrice(ordeR['total_amount'])}'),
+                    ElevatedButton(
+                      onPressed: () {
+                        print('đơn hàng: $ordeR ======= \n chi tiết: $orderDetail ======= \n sản phẩm: $product');
+                      },
+                      child: Text('Xem trước khi lưu'),
+                    ),
+                    SizedBox(height: 16),
+                    Text('Các sản phẩm tương tự', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    Container(
+                      height: 400, // Đặt chiều cao cho ProductList
+                      child: Expanded(child: 
+                      ProductList(
+                        urlBase: 'http://$ip:5555/products/category/${product!['category_id']}',
+                      ),)
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }

@@ -89,7 +89,6 @@ class _SaleOrderState extends State<SaleOrder> with SingleTickerProviderStateMix
                       final order = filteredOrders[index];
                       return GestureDetector(
                         onTap: () {
-                          print(order);
                           Navigator.push(context,
                           MaterialPageRoute(builder: (context) => OrderDetail(order: order)));
                         },

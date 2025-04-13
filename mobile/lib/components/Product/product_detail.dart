@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mobile/components/PostProduct/post_edit_product.dart';
+import 'package:mobile/components/Product/product_list.dart';
 import '../Checkout/checkout.dart';
 import '../../utils/convert.dart';
 import '../Cart/cart.dart';
@@ -22,12 +23,15 @@ class ProductDetail extends StatefulWidget {
 }
 
 class _ProductDetailState extends State<ProductDetail> {
+  late Map<String, dynamic> product;
   int quantity = 1;
   final TextEditingController _quantityController = TextEditingController(text: '1');
+  late List<dynamic> comments = [];
 
   @override
   void initState() {
     super.initState();
+    product = widget.product;
     _quantityController.addListener(() {
       String text = _quantityController.text;
       if (text.isEmpty) {
@@ -44,6 +48,8 @@ class _ProductDetailState extends State<ProductDetail> {
         _quantityController.selection = TextSelection.fromPosition(TextPosition(offset: 1));
       }
     });
+    comments = [];
+    fetchComments();
   }
 
   @override
@@ -59,6 +65,24 @@ class _ProductDetailState extends State<ProductDetail> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return data;
+      } else {
+        throw Exception('Failed to load cart items');
+      }
+    } catch (error) {
+      print('Error fetching cart items: $error');
+      throw error;
+    }
+  }
+
+  Future<void> fetchComments() async {
+    try {
+      final response = await http.get(Uri.parse('http://$ip:5555/reviews/product/${product['_id']}'));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          comments = data;
+        });
       } else {
         throw Exception('Failed to load cart items');
       }
@@ -122,7 +146,6 @@ class _ProductDetailState extends State<ProductDetail> {
 
   @override
   Widget build(BuildContext context) {
-    final product = widget.product;
     final loginInfo = Provider.of<LoginInfo>(context);
 
     return Scaffold(
@@ -212,6 +235,79 @@ class _ProductDetailState extends State<ProductDetail> {
                         hintText: 'Nhập số lượng',
                       ),
                     ),
+                    Container(
+                        constraints: BoxConstraints(maxWidth: 800),
+                        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 28),
+                        padding: EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              blurRadius: 8,
+                              spreadRadius: 2,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Đánh giá',
+                              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(height: 16),
+                            if (comments.isNotEmpty)
+                              Column(
+                                children: comments.map((review) {
+                                  return Container(
+                                    margin: EdgeInsets.only(bottom: 16),
+                                    padding: EdgeInsets.symmetric(vertical: 8),
+                                    decoration: BoxDecoration(
+                                      border: Border(bottom: BorderSide(color: Colors.grey)),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text('Rating: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                                            Row(
+                                              children: List.generate(5, (index) {
+                                                return Icon(
+                                                  index < review['rating'] ? Icons.star : Icons.star_border,
+                                                  color: index < review['rating'] ? Colors.yellow : Colors.grey,
+                                                );
+                                              }),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(review['comment']),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          'Ngày ${review['createdAt']}',
+                                          style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                              )
+                            else
+                              Text('Chưa có đánh giá nào.'),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 400, // Đặt chiều cao cho ProductList
+                        child: Expanded(child: 
+                        ProductList(
+                          urlBase: 'http://$ip:5555/products/category/${product['category_id']}',
+                        ),)
+                      ),
                     if(product['user_id'] == loginInfo.id)
                       Column(children: [
                         Center(child: Text('Đây là sản phẩm của bạn')),
@@ -233,7 +329,7 @@ class _ProductDetailState extends State<ProductDetail> {
                             label: Text('Xoá'),
                             icon: Icon(Icons.delete),
                           )
-                        ],)
+                        ],),
                       ],)
                   ],
                 ),
