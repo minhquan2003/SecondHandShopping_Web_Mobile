@@ -43,19 +43,71 @@ class _SaleOrderState extends State<SaleOrder> with SingleTickerProviderStateMix
     fetchPurchaseOrders();
   }
 
-  Future<void> fetchPurchaseOrders() async {
+  Future<List<dynamic>> fetchPurchaseOrders() async {
     final response = await http.get(Uri.parse('http://$ip:5555/orders/seller/${loginInfo.id}'));
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
+      List<dynamic> fetchedSaleOrder = result['data']; // Đổi tên
+
+      // Using a for loop to process each purchase order
+      for (var order in fetchedSaleOrder) {
+        final responseOrderDetail = await http.get(Uri.parse('http://$ip:5555/orderDetails/order/${order['_id']}'));
+
+        if (responseOrderDetail.statusCode == 200) {
+          final resultOrderDetail = json.decode(responseOrderDetail.body);
+          var orderDetail = resultOrderDetail['data'] != null && resultOrderDetail['data'].isNotEmpty
+              ? resultOrderDetail['data'][0]
+              : null;
+
+          if (orderDetail != null) {
+            final responseProduct = await http.get(Uri.parse('http://$ip:5555/products/${orderDetail['product_id']}'));
+            if (responseProduct.statusCode == 200) {
+              final resultProduct = json.decode(responseProduct.body);
+
+              // Adding orderDetail and product to the order
+              order['orderDetail'] = orderDetail;
+              order['product'] = resultProduct;
+            } else {
+              // Handle product fetch error
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Không thể tải thông tin sản phẩm!')),
+              );
+            }
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Không thể tải được danh sách sản phẩm!')),
+          );
+        }
+      }
+
+      // Update the state with the modified purchase orders
       setState(() {
-        saleOrder = result['data'];
+        saleOrder = fetchedSaleOrder; // Cập nhật saleOrder
       });
+
+      return fetchedSaleOrder; // Return the modified list
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Không thể tải được danh sách sản phẩm!')),
       );
+      return [];
     }
   }
+
+  // Future<void> fetchPurchaseOrders() async {
+  //   final response = await http.get(Uri.parse('http://$ip:5555/orders/seller/${loginInfo.id}'));
+  //   if (response.statusCode == 200) {
+  //     final result = json.decode(response.body);
+  //     setState(() {
+  //       saleOrder = result['data'];
+  //     });
+  //   } else {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Không thể tải được danh sách sản phẩm!')),
+  //     );
+  //   }
+  // }
 
   List<dynamic> getFilteredOrders(String status) {
     if (status == "All") {
@@ -82,7 +134,7 @@ class _SaleOrderState extends State<SaleOrder> with SingleTickerProviderStateMix
           final filteredOrders = getFilteredOrders(status);
           return Container(
             child: filteredOrders.isEmpty
-                ? Center(child: Text('Không có đơn bán nào.'))
+                ? Center(child: CircularProgressIndicator())
                 : ListView.builder(
                     itemCount: filteredOrders.length,
                     itemBuilder: (context, index) {
@@ -94,8 +146,15 @@ class _SaleOrderState extends State<SaleOrder> with SingleTickerProviderStateMix
                         },
                       child: ListTile(
                         title: Text(order['name'] ?? 'Người mua không xác định'),
-                        subtitle: Text('Tổng tiền: ${formatPrice(order['total_amount'])} đ\nTrạng thái: ${order['status_order']}'),
-                      ));
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                          Text(order['_id']),
+                          Text(order['product']?['name'] ?? 'Tên sản phẩm không xác định'),
+                          Text('Tổng tiền: ${formatPrice(order['total_amount'])} đ\nTrạng thái: ${order['status_order']}')
+                        ],),
+                      ),);
                     },
                   ),
           );
