@@ -39,36 +39,35 @@ class _CategoryListState extends State<CategoryList> {
   }
 
   @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    body: isLoading 
-        ? const Center(child: CircularProgressIndicator()) 
-        : Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: List.generate(categories.length, (index) {
-                  final category = categories[index];
-                  // Kiểm tra dữ liệu trước khi sử dụng
-                  if (category['category_name'] != null && category['image_url'] != null) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: SizedBox(
-                        width: 100, // Đặt chiều rộng cụ thể nếu cần
-                        child: CategoryCard(
-                          name: category['category_name'],
-                          imageUrl: category['image_url'],
-                          id: category['_id'],
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: isLoading 
+          ? const Center(child: CircularProgressIndicator()) 
+          : Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: categories.map((category) {
+                    // Kiểm tra dữ liệu trước khi sử dụng
+                    if (category['category_name'] != null && category['image_url'] != null) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: SizedBox(
+                          width: 100, // Đặt chiều rộng cụ thể nếu cần
+                          child: CategoryCard(
+                            name: category['category_name'],
+                            imageUrl: category['image_url'],
+                            id: category['_id'],
+                          ),
                         ),
-                      ),
-                    );
-                  }
-                  return SizedBox.shrink(); // Trả về một widget trống nếu không có danh mục
-                }),
+                      );
+                    }
+                    return SizedBox.shrink(); // Trả về một widget trống nếu không có danh mục
+                  }).toList(),
+                ),
               ),
             ),
-          ),
-  );
-}
+    );
+  }
 }

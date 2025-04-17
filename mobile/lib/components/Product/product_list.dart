@@ -8,7 +8,7 @@ class ProductList extends StatefulWidget {
   const ProductList({
     super.key,
     required this.urlBase,
-    });
+  });
 
   @override
   _ProductListState createState() => _ProductListState();
@@ -17,7 +17,6 @@ class ProductList extends StatefulWidget {
 class _ProductListState extends State<ProductList> {
   List<dynamic> products = [];
   bool isLoading = true;
-
 
   @override
   void initState() {
@@ -52,7 +51,8 @@ class _ProductListState extends State<ProductList> {
                 mainAxisSpacing: 4,
               ),
               itemCount: products.length,
-              physics: const NeverScrollableScrollPhysics(), // Ngăn GridView cuộn độc lập
+              // Xóa dòng này để cho phép cuộn
+              // physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 final product = products[index];
                 return ProductCard(

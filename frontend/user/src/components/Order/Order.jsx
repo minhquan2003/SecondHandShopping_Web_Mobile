@@ -17,6 +17,73 @@ const Order = () => {
     const [searchPhone, setSearchPhone] = useState(''); // Thêm state cho tìm kiếm số điện thoại
 
     useEffect(() => {
+        // const fetchOrders = async () => {
+        //     try {
+        //         const userInfoString = sessionStorage.getItem('userInfo');
+        //         const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
+        
+        //         if (!userInfo) {
+        //             console.error('User info not found');
+        //             return;
+        //         }
+        
+        //         // Fetch seller orders
+        //         const sellResponse = await axios.get(`http://${IP}:5555/orders/seller/${userInfo._id}`);
+        //         const fetchedSellOrders = sellResponse.data.data;
+        
+        //         // Process each seller order to fetch order details and products
+        //         for (const order of fetchedSellOrders) {
+        //             const orderDetailResponse = await axios.get(`http://${IP}:5555/orderDetails/order/${order._id}`);
+        //             if (orderDetailResponse.status === 200) {
+        //                 const orderDetail = orderDetailResponse.data.data?.[0] || null;
+        
+        //                 if (orderDetail) {
+        //                     const productResponse = await axios.get(`http://${IP}:5555/products/${orderDetail.product_id}`);
+        //                     if (productResponse.status === 200) {
+        //                         const product = productResponse.data;
+        //                         order.orderDetail = orderDetail;
+        //                         order.product = product;
+        //                     } else {
+        //                         console.error('Error fetching product information');
+        //                     }
+        //                 }
+        //             } else {
+        //                 console.error('Error fetching order details');
+        //             }
+        //         }
+        
+        //         setSellOrders(fetchedSellOrders); // Update state with fetched orders
+        
+        //         // Fetch buyer orders
+        //         const buyResponse = await axios.get(`http://${IP}:5555/orders/buyer/${userInfo._id}`);
+        //         const fetchedBuyOrders = buyResponse.data.data;
+        
+        //         // Process each buyer order to fetch order details and products
+        //         for (const order of fetchedBuyOrders) {
+        //             const orderDetailResponse = await axios.get(`http://${IP}:5555/orderDetails/order/${order._id}`);
+        //             if (orderDetailResponse.status === 200) {
+        //                 const orderDetail = orderDetailResponse.data.data?.[0] || null;
+        
+        //                 if (orderDetail) {
+        //                     const productResponse = await axios.get(`http://${IP}:5555/products/${orderDetail.product_id}`);
+        //                     if (productResponse.status === 200) {
+        //                         const product = productResponse.data;
+        //                         order.orderDetail = orderDetail;
+        //                         order.product = product;
+        //                     } else {
+        //                         console.error('Error fetching product information');
+        //                     }
+        //                 }
+        //             } else {
+        //                 console.error('Error fetching order details');
+        //             }
+        //         }
+        
+        //         setBuyOrders(fetchedBuyOrders); // Update state with fetched orders
+        //     } catch (error) {
+        //         console.error('Error fetching orders:', error);
+        //     }
+        // };
         const fetchOrders = async () => {
             try {
                 const userInfoString = sessionStorage.getItem('userInfo');
@@ -239,6 +306,9 @@ const Order = () => {
                                         </div>
                                         <div className="text-gray-700">
                                             <strong>Trạng thái đơn hàng:</strong> <span className="font-normal">{order.status_order}</span>
+                                        </div>
+                                        <div className="text-gray-700">
+                                            <strong>Trạng thái đơn hàng:</strong> <span className="font-normal">{order.product.name}</span>
                                         </div>
                                     </li>
                                 </Link>

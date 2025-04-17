@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:mobile/components/Order/order_detail.dart';
+import 'package:mobile/components/Order/purchase_order_detail.dart';
 import 'package:provider/provider.dart';
 import '../../providers/login_info.dart';
 import 'package:http/http.dart' as http;
@@ -17,6 +17,7 @@ class _PurchaseOrderState extends State<PurchaseOrder> with SingleTickerProvider
   late LoginInfo loginInfo;
   late List<dynamic> purchaseOrder = [];
   late TabController _tabController;
+  bool isLoading = true;
 
   final List<String> statuses = [
     "All",
@@ -67,6 +68,7 @@ class _PurchaseOrderState extends State<PurchaseOrder> with SingleTickerProvider
               // Adding orderDetail and product to the order
               order['orderDetail'] = orderDetail;
               order['product'] = resultProduct;
+              isLoading = false;
             } else {
               // Handle product fetch error
               ScaffoldMessenger.of(context).showSnackBar(
@@ -132,8 +134,10 @@ class _PurchaseOrderState extends State<PurchaseOrder> with SingleTickerProvider
         children: statuses.map((status) {
           final filteredOrders = getFilteredOrders(status);
           return Container(
-            child: filteredOrders.isEmpty
-                ? Center(child: CircularProgressIndicator())
+            child: isLoading 
+                ?Center(child: CircularProgressIndicator())
+                : filteredOrders.isEmpty ? 
+                Center(child: Text('Không có đơn hàng nào.'))
                 : ListView.builder(
                     itemCount: filteredOrders.length,
                     itemBuilder: (context, index) {
@@ -141,7 +145,7 @@ class _PurchaseOrderState extends State<PurchaseOrder> with SingleTickerProvider
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => OrderDetail(order: order)));
+                          MaterialPageRoute(builder: (context) => PurchaseOrderDetail(order: order)));
                           print(order);
                         },
                       child: Row(children: [

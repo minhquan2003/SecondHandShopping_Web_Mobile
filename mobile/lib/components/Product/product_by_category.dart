@@ -23,7 +23,7 @@ class _ProductByCategory extends State<ProductByCategory> {
       appBar: AppBar(
         title: Text(widget.name),
       ),
-      body: Container(
+      body: Padding(
         padding: const EdgeInsets.all(5.0),
         child: ProductList(
           urlBase: 'http://$ip:5555/products/category/${widget.id}',

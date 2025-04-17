@@ -7,18 +7,18 @@ import 'package:http/http.dart' as http;
 import '../../config.dart';
 import '../../utils/convert.dart';
 
-class OrderDetail extends StatefulWidget {
+class PurchaseOrderDetail extends StatefulWidget {
   final Map<String, dynamic> order;
-  const OrderDetail({
+  const PurchaseOrderDetail({
     super.key,
     required this.order,
   });
 
   @override
-  _OrderDetailState createState() => _OrderDetailState();
+  _PurchaseOrderDetailState createState() => _PurchaseOrderDetailState();
 }
 
-class _OrderDetailState extends State<OrderDetail> {
+class _PurchaseOrderDetailState extends State<PurchaseOrderDetail> {
   late LoginInfo loginInfo;
   late Map<String, dynamic> ordeR;
   Map<String, dynamic>? orderDetail; // Đổi thành nullable
@@ -74,22 +74,20 @@ class _OrderDetailState extends State<OrderDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: loginInfo.id == ordeR['user_id_seller'] 
-            ? Text('Chi tiết đơn bán') 
-            : Text('Chi tiết đơn mua'),
+        title: Text('Chi tiết đơn mua'),
       ),
       body: product == null 
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               child: Container(
-                padding: EdgeInsets.all(16.0), // Thêm padding
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
+                      width: double.infinity,
                       color: Colors.orange,
                       padding: EdgeInsets.all(8.0),
-                      child: Text('${ordeR['status_order']}', style: TextStyle(fontSize: 18)),
+                      child: Center(child: Text('${ordeR['status_order']}', style: TextStyle(fontSize: 18))),
                     ),
                     SizedBox(height: 16),
                     Text('Thông tin sản phẩm', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -133,6 +131,7 @@ class _OrderDetailState extends State<OrderDetail> {
                     Text('${product?['name']}'),
                     Text('Đơn giá: ${formatPrice(product?['price'])} x${product?['quantity']}'),
                     Text('Thành tiền: ${formatPrice(ordeR['total_amount'])}'),
+                    
                     ElevatedButton(
                       onPressed: () {
                         print('đơn hàng: $ordeR ======= \n chi tiết: $orderDetail ======= \n sản phẩm: $product');
