@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import PartnerList from "../components/AccountManage/PartnerList";
-import PartnerRequest from "../components/AccountManage/PartnerRequest";
+import PartnerList from "../components/PartnerManage/PartnerList";
+import PartnerRequest from "../components/PartnerManage/PartnerRequest";
 
 const PartnerManage = () => {
   const [view, setView] = useState("request"); // Default view is 'request' for pending products

@@ -6,10 +6,17 @@ import {
 
 export const fetchAllNotifications = async (req, res) => {
   try {
-    const notifications = await getAllNotifications();
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const result = await getAllNotifications(page, limit);
     res.status(200).json({
       success: true,
-      data: notifications,
+      totalNotifications: result.totalNotifications,
+      totalPages: result.totalPages,
+      currentPage: result.currentPage,
+      limit: result.limit,
+      skip: result.skip,
+      notifications: result.notifications,
     });
   } catch (error) {
     res.status(500).json({
@@ -58,27 +65,23 @@ export const postNotification = async (req, res) => {
 };
 
 export const removeNotification = async (req, res) => {
-  const { id } = req.params;
+  const { notificationIds } = req.body;
+
+  if (!notificationIds || notificationIds.length === 0) {
+    res.status(400).json({ message: "No notification IDs provided" });
+  }
 
   try {
-    if (!id) {
-      return res.status(400).json({
-        success: false,
-        message: "Notification ID is required.",
-      });
-    }
-
-    const deletedNotification = await deleteNotification(id);
+    const deletedNotifications = await deleteNotification(notificationIds);
 
     res.status(200).json({
-      success: true,
       message: "Notification deleted successfully.",
-      data: deletedNotification,
+      deleteCount: deletedNotifications.modifiedCount,
     });
   } catch (error) {
     res.status(500).json({
-      success: false,
-      message: error.message,
+      message: "Failed to delete notification",
+      error: error.message,
     });
   }
 };

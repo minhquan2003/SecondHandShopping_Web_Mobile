@@ -2,12 +2,19 @@ import { getAllFeedbacks } from "../../services/feedback/adminFeedbackService.js
 
 const getFeedbacks = async (req, res) => {
   try {
-    const feedbackData = await getAllFeedbacks();
-
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const sort = req.query.sort;
+    const filter = req.query.filter;
+    const result = await getAllFeedbacks(page, limit, sort, filter);
     res.status(200).json({
       success: true,
-      totalFeedbacks: feedbackData.totalFeedbacks, // Tổng số feedback
-      data: feedbackData.feedbacks,
+      totalFeedbacks: result.totalFeedbacks,
+      totalPages: result.totalPages,
+      limit: result.limit,
+      skip: result.skip,
+      currentPage: result.currentPage,
+      feedbacks: result.feedbacks,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

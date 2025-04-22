@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"; // Import useEffect
+import { useState, useEffect } from "react";
 
 export const useAuth = () => {
   const [error, setError] = useState(null);

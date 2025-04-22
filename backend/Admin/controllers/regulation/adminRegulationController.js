@@ -3,24 +3,42 @@ import {
   createRegulation,
   updateRegulation,
   deleteRegulation,
-  searchRegulationsByTitle,
 } from "../../services/regulation/adminRegulationService.js";
 
 // Lấy tất cả quy định với phân trang
 const getRegulations = async (req, res) => {
-  try {
-    const result = await getAllRegulations();
+  // try {
+  //   const result = await getAllRegulations();
 
+  //   res.status(200).json({
+  //     success: true,
+  //     total: result.total,
+  //     data: result.regulations,
+  //   });
+  // } catch (error) {
+  //   res.status(500).json({
+  //     success: false,
+  //     message: "Failed to fetch regulations",
+  //     error: error.message,
+  //   });
+  // }
+
+  try {
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const result = await getAllRegulations(page, limit);
     res.status(200).json({
       success: true,
-      total: result.total,
-      data: result.regulations,
+      totalRegulations: result.totalRegulations,
+      totalPages: result.totalPages,
+      limit: result.limit,
+      crrentPage: result.currentPage,
+      regulations: result.regulations,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Failed to fetch regulations",
-      error: error.message,
+      message: error.message,
     });
   }
 };
@@ -66,49 +84,24 @@ const editRegulation = async (req, res) => {
 
 // Xóa quy định theo ID
 const removeRegulation = async (req, res) => {
-  const { id } = req.params;
+  const { regulationIds } = req.body;
+
+  if (!regulationIds || regulationIds.length === 0) {
+    res.status(400).json({ message: "No regulation IDs provided" });
+  }
   try {
-    const regulation = await deleteRegulation(id);
+    const regulations = await deleteRegulation(regulationIds);
 
     res.status(200).json({
-      success: true,
-      message: "Regulation deleted successfully",
-      data: regulation,
+      message: "Regulatons deleted successfully",
+      deleteCount: regulations.modifiedCount,
     });
   } catch (error) {
     res.status(500).json({
-      success: false,
       message: "Failed to delete regulation",
       error: error.message,
     });
   }
 };
 
-// Tìm kiếm quy định theo title
-const searchRegulations = async (req, res) => {
-  const { keyword } = req.query;
-
-  try {
-    const result = await searchRegulationsByTitle(keyword);
-
-    res.status(200).json({
-      success: true,
-      total: result.total,
-      data: result.regulations,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to search regulations",
-      error: error.message,
-    });
-  }
-};
-
-export {
-  getRegulations,
-  addRegulation,
-  editRegulation,
-  removeRegulation,
-  searchRegulations,
-};
+export { getRegulations, addRegulation, editRegulation, removeRegulation };

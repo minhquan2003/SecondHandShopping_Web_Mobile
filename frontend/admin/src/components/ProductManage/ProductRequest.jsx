@@ -4,32 +4,50 @@ import { SiTicktick } from "react-icons/si";
 import { IoClose } from "react-icons/io5";
 import { GiCancel } from "react-icons/gi";
 import { TbListDetails } from "react-icons/tb";
+import { FaSort } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 
 const ProductRequest = () => {
-  const { products, loading, error, approveProduct, deleteProduct } =
-    useProducts("request"); // Get pending products
+  const [page, setPage] = useState(1);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [selectedCheckBox, setSelectedCheckBox] = useState([]);
+  const [fieldSort, setFieldSort] = useState("");
+  const [orderSort, setOrderSort] = useState("asc");
+  const [searchKey, setSearchKey] = useState("");
+  const {
+    products = [],
+    loading,
+    error,
+    totalPages,
+    approveProducts,
+    deleteSelectedProducts,
+  } = useProducts("request", page, fieldSort, orderSort, searchKey);
 
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const handleSort = (field) => {
+    setOrderSort((prev) => (prev === "asc" ? "desc" : "asc"));
+    setFieldSort(field);
+  };
 
-  // Calculate pagination values
-  const totalPages = Math.ceil(products.length / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentProducts = products.slice(indexOfFirstItem, indexOfLastItem);
-
-  const handleApprove = (productId) => {
-    if (window.confirm("Are you sure you want to approve this product?")) {
-      approveProduct(productId);
+  const handleApprove = () => {
+    if (selectedCheckBox.length === 0) {
+      alert("Please select at least one product.");
+      return;
+    }
+    if (window.confirm("Are you sure you want to approve selected products")) {
+      approveProducts(selectedCheckBox);
+      setSelectedCheckBox([]);
     }
   };
 
-  const handleDeny = (productId) => {
-    if (window.confirm("Are you sure you want to deny this product?")) {
-      deleteProduct(productId);
+  const handleDeleteSelected = () => {
+    if (selectedCheckBox.length === 0) {
+      alert("Please select at least one product.");
+      return;
+    }
+    if (window.confirm("Are you sure you want to delete selected products?")) {
+      deleteSelectedProducts(selectedCheckBox);
+      setSelectedCheckBox([]);
     }
   };
 
@@ -43,57 +61,124 @@ const ProductRequest = () => {
     setSelectedProduct(null);
   };
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
+  const handleSelectOne = (productId) => {
+    setSelectedCheckBox((prev) =>
+      prev.includes(productId)
+        ? prev.filter((id) => id != productId)
+        : [...prev, productId]
+    );
   };
 
-  if (loading) return <div className="text-center text-lg">Loading...</div>;
-  if (error)
-    return <div className="text-center text-lg text-red-500">{error}</div>;
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedCheckBox(products.map((product) => product._id));
+    } else {
+      setSelectedCheckBox([]);
+    }
+  };
 
   return (
-    <div className="container mx-auto p-4 bg-gray-100 rounded-md mt-4">
-      <h2 className="text-2xl font-bold text-blue-600 mb-4 text-center">
-        PRODUCT LISTING PENDING APPROVAL
-      </h2>
-      {products.length === 0 ? (
-        <div className="text-center text-lg">
-          No pending products available.
+    <div className="p-4 bg-white rounded-lg">
+      {loading && <p>Loading...</p>}
+      {error && <p className="text-red-500">{error}</p>}
+
+      <div className="flex items-center">
+        <select
+          className="border border-black p-2 mb-4"
+          defaultValue="choose"
+          onChange={(e) => {
+            if (e.target.value == "deleteProducts") {
+              handleDeleteSelected();
+              e.target.value = "choose";
+            }
+            if (e.target.value == "approveProducts") {
+              handleApprove();
+              e.target.value = "choose";
+            }
+          }}
+        >
+          <option value="choose" disabled>
+            Choose action...
+          </option>
+          <option value="approveProducts">Approve selected products</option>
+          <option value="deleteProducts">Delete selected products</option>
+        </select>
+        <div className="w-full flex border-2 border-gray-200 mb-4 p-1 ml-4">
+          <div className="flex w-full mx-10 rounded bg-white">
+            <input
+              className=" w-full border-none bg-transparent px-4 py-1 text-gray-400 outline-none focus:outline-none "
+              type="search"
+              name="search"
+              placeholder="Search by username..."
+              value={searchKey}
+              onChange={(e) => setSearchKey(e.target.value)}
+            />
+            <button type="submit" className="m-2 rounded text-blue-600">
+              <FaSearch />
+            </button>
+          </div>
         </div>
-      ) : (
-        <>
-          <table className="min-w-full bg-white border border-gray-200">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="text-sm px-4 py-2 text-center font-bold text-gray-600 border">
-                  Image
-                </th>
-                <th className="text-sm px-4 py-2 text-center font-bold text-gray-600 border">
-                  Name
-                </th>
-                <th className="text-sm px-4 py-2 text-center font-bold text-gray-600 border">
-                  Category
-                </th>
-                <th className="text-sm px-4 py-2 text-center font-bold text-gray-600 border">
-                  Price
-                </th>
-                <th className="text-sm px-2 py-2 text-center font-bold text-gray-600 border">
-                  Quantity
-                </th>
-                <th className="text-sm px-4 py-2 text-center font-bold text-gray-600 border">
-                  Description
-                </th>
-                <th className="text-sm px-4 py-2 text-center font-bold text-gray-600 border">
-                  Posted By
-                </th>
-                <th className="text-sm px-4 py-2 text-center font-bold text-gray-600 border">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentProducts.map((product) => (
-                <tr key={product._id} className="border-b hover:bg-gray-50">
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse border border-gray-200">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="text-sm px-4 py-2 text-center font-bold text-gray-600 border">
+                <input
+                  type="checkbox"
+                  onChange={handleSelectAll}
+                  checked={
+                    products.length > 0 &&
+                    selectedCheckBox.length === products.length
+                  }
+                />
+              </th>
+              <th className="border px-4 py-2 text-center whitespace-nowrap">
+                Image
+              </th>
+              <th className="border px-4 py-2 text-center whitespace-nowrap">
+                <span className="inline-flex items-center gap-x-2">
+                  Name <FaSort onClick={() => handleSort("name")} />
+                </span>
+              </th>
+              <th className="border px-4 py-2 text-center whitespace-nowrap">
+                <span className="inline-flex items-center gap-x-2">
+                  Category{" "}
+                  <FaSort onClick={() => handleSort("category_name")} />
+                </span>
+              </th>
+              <th className="border px-4 py-2 text-center whitespace-nowrap">
+                <span className="inline-flex items-center gap-x-2">
+                  Price <FaSort onClick={() => handleSort("price")} />
+                </span>
+              </th>
+              <th className="border px-4 py-2 text-center whitespace-nowrap">
+                <span className="inline-flex items-center gap-x-2">
+                  Quantity <FaSort onClick={() => handleSort("quantity")} />
+                </span>
+              </th>
+              <th className="border px-4 py-2 text-center whitespace-nowrap">
+                <span className="inline-flex items-center gap-x-2">
+                  Posted By <FaSort onClick={() => handleSort("username")} />
+                </span>
+              </th>
+              <th className="border px-4 py-2 text-center whitespace-nowrap">
+                Detail
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {Array.isArray(products) && products.length > 0 ? (
+              products.map((product) => (
+                <tr key={product._id} className="border">
+                  <td className="px-4 py-2 text-center">
+                    <input
+                      type="checkbox"
+                      checked={selectedCheckBox.includes(product._id)}
+                      onChange={() => handleSelectOne(product._id)}
+                    />
+                  </td>
                   <td className="border px-4 py-2 text-center">
                     <img
                       src={product.image_url}
@@ -114,58 +199,49 @@ const ProductRequest = () => {
                     {product.quantity}
                   </td>
                   <td className="border px-4 py-2 text-center">
-                    {product.description.split(" ").slice(0, 10).join(" ")}...
-                  </td>
-                  <td className="border px-4 py-2 text-center">
                     {product.username}
                   </td>
-                  <td className="px-4 py-2">
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => handleApprove(product._id)}
-                        className="px-3 py-1 text-sm text-white bg-green-500 rounded hover:bg-green-600"
-                      >
-                        <SiTicktick />
-                      </button>
-                      <button
-                        onClick={() => handleDeny(product._id)}
-                        className="px-3 py-1 text-white bg-red-500 rounded hover:bg-red-600"
-                      >
-                        <GiCancel />
-                      </button>
-                      <button
-                        onClick={() => handleViewDetails(product)}
-                        className="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600"
-                      >
-                        <TbListDetails />
-                      </button>
-                    </div>
+                  <td className="border px-2 py-2 text-center">
+                    <button
+                      onClick={() => handleViewDetails(product)}
+                      className="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600"
+                    >
+                      <TbListDetails />
+                    </button>
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="3" className="p-4 text-center">
+                  No products available.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex justify-center mt-4 space-x-2">
-              {Array.from({ length: totalPages }, (_, index) => (
-                <button
-                  key={index + 1}
-                  onClick={() => handlePageChange(index + 1)}
-                  className={`px-4 py-2 text-sm ${
-                    currentPage === index + 1
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-300 text-gray-700"
-                  } rounded`}
-                >
-                  {index + 1}
-                </button>
-              ))}
-            </div>
-          )}
-        </>
-      )}
+      {/* Pagination */}
+      <div className="flex justify-center mt-4">
+        <button
+          className="px-3 py-1 mx-1 bg-gray-200 rounded disabled:opacity-50"
+          disabled={page === 1}
+          onClick={() => setPage(page - 1)}
+        >
+          Previous
+        </button>
+        <span className="px-3 py-1 mx-2">
+          Page {page} of {totalPages}
+        </span>
+        <button
+          className="px-3 py-1 mx-1 bg-gray-200 rounded disabled:opacity-50"
+          disabled={page >= totalPages}
+          onClick={() => setPage(page + 1)}
+        >
+          Next
+        </button>
+      </div>
 
       {isPopupOpen && selectedProduct && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">

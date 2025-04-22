@@ -2,33 +2,7 @@ import {
   getTopSellingProducts,
   getOrderStats,
   getAllOrders,
-  findOrdersByName,
 } from "../../services/order/adminOrderService.js";
-
-export const searchOrdersByName = async (req, res) => {
-  try {
-    const { name, page = 1, limit = 10 } = req.query; // Lấy giá trị tham số từ query string, mặc định là trang 1 và limit 10
-
-    if (!name) {
-      return res.status(400).json({ message: "Name parameter is required" });
-    }
-
-    const orders = await findOrdersByName(name, page, limit);
-
-    if (!orders.length) {
-      return res
-        .status(404)
-        .json({ message: "No orders found with the given name" });
-    }
-
-    return res.status(200).json({
-      success: true,
-      data: orders,
-    });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-};
 
 export const fetchTopSellingProducts = async (req, res) => {
   try {
@@ -68,27 +42,51 @@ export const fetchOrderStats = async (req, res) => {
   }
 };
 
+// export const fetchAllOrders = async (req, res) => {
+//   try {
+//     const { page = 1, limit = 10 } = req.query;
+
+//     // Chuyển đổi page và limit thành số nguyên
+//     const currentPage = parseInt(page, 10);
+//     const pageSize = parseInt(limit, 10);
+
+//     if (currentPage < 1 || pageSize < 1) {
+//       return res.status(400).json({ message: "Invalid page or limit value" });
+//     }
+
+//     const orders = await getAllOrders(currentPage, pageSize);
+
+//     return res.status(200).json({
+//       message: "Orders fetched successfully",
+//       data: orders,
+//       page: currentPage,
+//       limit: pageSize,
+//     });
+//   } catch (error) {
+//     return res.status(500).json({ message: error.message });
+//   }
+// };
+
 export const fetchAllOrders = async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const sort = req.query.sort;
+    const filter = req.query.filter;
 
-    // Chuyển đổi page và limit thành số nguyên
-    const currentPage = parseInt(page, 10);
-    const pageSize = parseInt(limit, 10);
-
-    if (currentPage < 1 || pageSize < 1) {
-      return res.status(400).json({ message: "Invalid page or limit value" });
-    }
-
-    const orders = await getAllOrders(currentPage, pageSize);
-
-    return res.status(200).json({
-      message: "Orders fetched successfully",
-      data: orders,
-      page: currentPage,
-      limit: pageSize,
+    const result = await getAllOrders(page, limit, sort, filter);
+    res.status(200).json({
+      success: true,
+      totalOrders: result.totalOrders,
+      totalPages: result.totalPages,
+      limit: result.limit,
+      currentPage: result.currentPage,
+      orderdetails: result.orderdetails,
     });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };

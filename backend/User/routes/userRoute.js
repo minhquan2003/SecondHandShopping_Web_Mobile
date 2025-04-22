@@ -17,10 +17,10 @@ userRoute.post("/", addUser);
 userRoute.post("/email", getUserByEmail);
 
 userRoute.get("/", getUsers);
-userRoute.get("/:id", getUserById);
+userRoute.get("/:id", authorize, getUserById);
 userRoute.post("/comparePassword", comparePassword);
 
-userRoute.put("/:id", updateUserById);
+userRoute.put("/:id", authorize, updateUserById);
 userRoute.delete("/:id", deleteUserById);
 
 export default userRoute;

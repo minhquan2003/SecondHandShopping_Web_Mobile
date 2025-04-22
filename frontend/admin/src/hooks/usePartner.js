@@ -1,89 +1,98 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 
-const usePartners = () => {
+const usePartners = (
+  type,
+  page = 1,
+  fieldSort = "",
+  orderSort = "",
+  searchKey = ""
+) => {
   const [partners, setPartners] = useState([]);
-  const [requestPartners, setRequestPartners] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchPartners = async () => {
+      let url = "";
+      if (type === "partner") {
+        url = `http://localhost:5555/admin/all-partners?page=${page}`;
+      } else if (type === "regispartner") {
+        url = `http://localhost:5555/admin/all-requestpartners?page=${page}`;
+      }
+      if (fieldSort && orderSort) {
+        url += `&sort=${orderSort}&sort=${fieldSort}`;
+      }
+
+      if (searchKey) {
+        url += `&filter=name&filter=${searchKey}`;
+      }
       try {
         setLoading(true);
+        setError(null);
+        const response = await axios.get(url);
+        const data = response.data;
 
-        // Fetch partners
-        const partnersResponse = await fetch(
-          "http://localhost:5555/admin/all-partners"
-        );
-        const partnersData = await partnersResponse.json();
-
-        // Filter users with the role of 'partner'
-        const partnerUsers = partnersData.users.filter(
-          (user) => user.role === "partner"
-        );
-
-        // Fetch request partners
-        const requestPartnersResponse = await fetch(
-          "http://localhost:5555/admin/all-requestpartners"
-        );
-        const requestPartnersData = await requestPartnersResponse.json();
-
-        const requestpartnerUsers = requestPartnersData.users.filter(
-          (user) => user.role === "regisPartner"
-        );
-
-        // Update state
-        setPartners(partnerUsers);
-        setRequestPartners(requestpartnerUsers);
+        if (data.success && Array.isArray(data.partners)) {
+          setPartners(data.partners);
+          setTotalPages(data.totalPages || 1);
+        } else {
+          throw new Error("Invalid response structure");
+        }
       } catch (err) {
-        setError(err);
+        setError(err.message);
+        setPartners([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchPartners();
-  }, []);
+  }, [type, page, fieldSort, orderSort, searchKey]);
 
   // Function to approve a partner
-  const approvePartner = async (userId) => {
+  const approvePartner = async (selectedIds) => {
     try {
-      await fetch(`http://localhost:5555/admin/approve-partner/${userId}`, {
-        method: "PUT",
+      await axios.put(`http://localhost:5555/admin/approve-partner`, {
+        userIds: selectedIds,
       });
-      setRequestPartners((prev) =>
-        prev.filter((partner) => partner._id !== userId)
+
+      setPartners((prev) =>
+        prev.filter((partner) => !selectedIds.includes(partner._id))
       );
-      alert("Partner approved!");
+      alert("Selected regispartner approve successfully");
     } catch {
       alert("Failed to approve the Partner.");
     }
   };
 
   // Function to deny a partner
-  const denyPartner = async (userId) => {
+  const denyPartner = async (selectedIds) => {
     try {
-      await fetch(`http://localhost:5555/admin/switch-to-user/${userId}`, {
-        method: "PUT",
+      await axios.put(`http://localhost:5555/admin/switch-to-user`, {
+        userIds: selectedIds,
       });
-      setRequestPartners((prev) =>
-        prev.filter((partner) => partner._id !== userId)
+
+      setPartners((prev) =>
+        prev.filter((partner) => !selectedIds.includes(partner._id))
       );
-      alert("Partner deny!");
+      alert("Deny partner successfully");
     } catch (err) {
       setError(err.message);
     }
   };
 
-  const deletePartner = async (userId) => {
+  const deletePartner = async (selectedIds) => {
     try {
-      await fetch(`http://localhost:5555/admin/delete-role-partner/${userId}`, {
-        method: "PUT",
+      await axios.delete(`http://localhost:5555/admin/delete-role-partner`, {
+        userIds: selectedIds,
       });
-      setRequestPartners((prev) =>
-        prev.filter((partner) => partner._id !== userId)
+
+      setPartners((prev) =>
+        prev.filter((partner) => !selectedIds.includes(partner._id))
       );
-      alert("Partner delete!");
+      alert("Selected partner delete successfully");
     } catch (err) {
       setError(err.message);
     }
@@ -91,9 +100,9 @@ const usePartners = () => {
 
   return {
     partners,
-    requestPartners,
     loading,
     error,
+    totalPages,
     approvePartner,
     denyPartner,
     deletePartner,

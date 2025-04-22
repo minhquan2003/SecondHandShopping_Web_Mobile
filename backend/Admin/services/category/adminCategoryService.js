@@ -2,13 +2,62 @@ import Categories from "../../../User/models/Categories.js";
 import Products from "../../../User/models/Products.js";
 
 // Lấy tất cả categories có phân trang và tổng số
-export const getAllCategories = async () => {
+export const getAllCategories = async (page = 1, limit = 10, sort, filter) => {
   try {
-    const categories = await Categories.find().sort({ createdAt: -1 });
-    const totalCategories = await Categories.countDocuments();
+    const query = { status: true };
+    const skip = (page - 1) * limit;
+    if (filter) {
+      const label = filter[0];
+      const value = filter[1];
+      query[label] = { $regex: value, $options: "i" };
+      const filterCategories = await Categories.find(query)
+        .skip(skip)
+        .limit(limit)
+        .lean();
+      const totalCategories = await Categories.countDocuments(query);
+      const totalPages = await Math.ceil(totalCategories / limit);
+      return {
+        categories: filterCategories,
+        totalCategories,
+        totalPages,
+        limit,
+        skip,
+        currentPage: page,
+      };
+    }
+    const totalCategories = await Categories.countDocuments(query);
+    const totalPages = await Math.ceil(totalCategories / limit);
+
+    if (sort) {
+      const objectSort = {};
+      objectSort[sort[1]] = sort[0];
+      const sortCategories = await Categories.find(query)
+        .skip(skip)
+        .limit(limit)
+        .sort(objectSort)
+        .lean();
+      return {
+        categories: sortCategories,
+        totalCategories,
+        totalPages,
+        limit,
+        skip,
+        currentPage: page,
+      };
+    }
+
+    const categories = await Categories.find(query)
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
     return {
       categories,
       totalCategories,
+      totalPages,
+      limit,
+      skip,
+      currentPage: page,
     };
   } catch (error) {
     throw new Error("Error fetching categories: " + error.message);
@@ -35,32 +84,17 @@ export const updateCategory = async (id, data) => {
 };
 
 // Xóa category theo ID
-export const deleteCategory = async (id) => {
+export const deleteCategory = async (categoryIds) => {
   try {
-    // Kiểm tra xem có sản phẩm nào đang sử dụng category này không
-    const productsUsingCategory = await Products.find({ category_id: id });
-
-    if (productsUsingCategory.length > 0) {
-      throw new Error(
-        "Cannot delete category because it is used by some products."
-      );
+    const categories = await Categories.updateMany(
+      { _id: { $in: categoryIds } },
+      { status: false }
+    );
+    if (categories.modifiedCount === 0) {
+      throw new Error("No category found or already");
     }
-
-    // Nếu không có sản phẩm nào, tiến hành xóa category
-    return await Categories.findByIdAndDelete(id);
+    return categories;
   } catch (error) {
     throw new Error("Error deleting category: " + error.message);
-  }
-};
-
-export const fetchCategoryById = async (categoryId) => {
-  try {
-    const category = await Categories.findById(categoryId).select("name");
-    if (!category) {
-      throw new Error("Category not found");
-    }
-    return category;
-  } catch (error) {
-    throw new Error("Error fetching category: " + error.message);
   }
 };

@@ -1,235 +1,226 @@
 import React, { useState, useEffect } from "react";
 import useUser from "../../hooks/useUser";
-import { BiSolidUserDetail } from "react-icons/bi";
-import { RiDeleteBin2Line } from "react-icons/ri";
-import { BiLock, BiLockOpen } from "react-icons/bi"; // Import lock icons
+import { IoClose } from "react-icons/io5";
+import { TbListDetails } from "react-icons/tb";
+import { FaSort } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 
 const UserList = () => {
-  const { users, loading, banUser, unbanUser, deleteAccount, accounts } =
-    useUser();
-  const [userList, setUserList] = useState(users || []);
-  const [bannedUsers, setBannedUsers] = useState(
-    users.filter((user) => user.ban)
-  ); // Track banned users
-  const [searchTerm, setSearchTerm] = useState(""); // State for search
-  const [confirmationAction, setConfirmationAction] = useState(null);
+  const [page, setPage] = useState(1);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [viewingUser, setViewingUser] = useState(null);
-  const [message, setMessage] = useState(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [selectedCheckBox, setSelectedCheckBox] = useState([]);
+  const [fieldSort, setFieldSort] = useState("");
+  const [orderSort, setOrderSort] = useState("asc");
+  const [searchKey, setSearchKey] = useState("");
 
-  // Pagination states
-  const [currentPage, setCurrentPage] = useState(1);
-  const limit = 10; // Number of users per page
-  const totalPages = Math.ceil(accounts / limit); // Calculate total pages
+  const {
+    users = [],
+    loading,
+    error,
+    totalPages,
+    deleteUsers,
+    banUser,
+  } = useUser("users", page, fieldSort, orderSort, searchKey);
 
-  useEffect(() => {
-    setUserList(users.slice((currentPage - 1) * limit, currentPage * limit)); // Paginate users
-    setBannedUsers(users.filter((user) => user.ban)); // Lọc danh sách user bị ban
-  }, [users, currentPage]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  // Handle search functionality
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-    const filteredUsers = users.filter((user) =>
-      user.name.toLowerCase().includes(e.target.value.toLowerCase())
-    );
-    setUserList(filteredUsers);
+  const handleSort = (field) => {
+    setOrderSort((prev) => (prev === "asc" ? "desc" : "asc"));
+    setFieldSort(field);
   };
 
-  const handleAction = async (action, user) => {
-    try {
-      if (action === "banUser") {
-        await banUser(user._id);
-        setBannedUsers((prevBannedUsers) => [...prevBannedUsers, user]);
-        setUserList((prevUsers) =>
-          prevUsers.map((u) => (u._id === user._id ? { ...u, ban: true } : u))
-        );
-        setMessage(`User ${user.name} banned successfully.`);
-      } else if (action === "unbanUser") {
-        await unbanUser(user._id);
-        setBannedUsers((prevBannedUsers) =>
-          prevBannedUsers.filter((u) => u._id !== user._id)
-        );
-        setUserList((prevUsers) =>
-          prevUsers.map((u) => (u._id === user._id ? { ...u, ban: false } : u))
-        );
-        setMessage(`User ${user.name} unbanned successfully.`);
-      } else if (action === "deleteAccount") {
-        await deleteAccount(user._id);
-        setUserList((prevUsers) => prevUsers.filter((u) => u._id !== user._id));
-        setBannedUsers((prevBannedUsers) =>
-          prevBannedUsers.filter((u) => u._id !== user._id)
-        );
-        setMessage("User deleted successfully.");
-      }
-      window.location.reload();
-    } catch (error) {
-      console.error("Action failed:", error);
-      setMessage("Failed to perform action.");
+  const handleBanUsers = () => {
+    if (selectedCheckBox.length === 0) {
+      alert("Please choose at least one user");
+      return;
     }
-    setConfirmationAction(null);
-    setSelectedUser(null);
-    setTimeout(() => setMessage(null), 3000);
+    if (window.confirm("Are you sure you want to ban selected user")) {
+      banUser(selectedCheckBox);
+      setSelectedCheckBox([]);
+    }
   };
 
-  const confirmAction = (action, user) => {
-    setConfirmationAction(action);
+  const handleDeleteSelected = () => {
+    if (selectedCheckBox.length === 0) {
+      alert("Please choose at least one user");
+      return;
+    }
+    if (window.confirm("Are you sure you want to delete selected users")) {
+      deleteUsers(selectedCheckBox);
+      setSelectedCheckBox([]);
+    }
+  };
+
+  const handleViewDetails = (user) => {
     setSelectedUser(user);
+    setIsPopupOpen(true);
+  };
+  const closePopup = () => {
+    setIsPopupOpen(false);
+    setSelectedUser(null);
   };
 
-  // Pagination handlers
-  const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
+  const handleSelectOne = (userId) => {
+    setSelectedCheckBox((prev) =>
+      prev.includes(userId)
+        ? prev.filter((id) => id != userId)
+        : [...prev, userId]
+    );
+  };
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedCheckBox(users.map((user) => user._id));
+    } else {
+      setSelectedCheckBox([]);
     }
   };
 
   return (
-    <div className="w-5/6 ml-[16.6666%] p-4 bg-gray-100 rounded-md">
-      <h2 className="text-2xl font-bold text-blue-600 mb-4 text-center">
-        User Manage
-      </h2>
+    <div className="p-4 bg-white rounded-lg">
+      {loading && <p>Loading...</p>}
+      {error && <p className="text-red-500">{error}</p>}
 
-      {/* Success/Failure Message */}
-      {message && (
-        <div className="mb-4 p-2 bg-green-100 text-green-700 rounded">
-          {message}
+      <div className="flex items-center">
+        <select
+          className="border border-black p-2 mb-4"
+          defaultValue="choose"
+          onChange={(e) => {
+            if (e.target.value === "deleteUsers") {
+              handleDeleteSelected();
+              e.target.value = "choose";
+            }
+            if (e.target.value === "banUsers") {
+              handleBanUsers();
+              e.target.value = "choose";
+            }
+          }}
+        >
+          <option value="choose" disabled>
+            Choose action...
+          </option>
+          <option value="banUsers">Ban selected users</option>
+          <option value="deleteUsers">Delete selected users</option>
+        </select>
+        <div className="w-full flex border-2 border-gray-200 mb-4 p-1 ml-4">
+          <div className="flex w-full mx-10 rounded bg-white">
+            <input
+              className=" w-full border-none bg-transparent px-4 py-1 text-gray-400 outline-none focus:outline-none "
+              type="search"
+              name="search"
+              placeholder="Search by username..."
+              value={searchKey}
+              onChange={(e) => setSearchKey(e.target.value)}
+            />
+            <button type="submit" className="m-2 rounded text-blue-600">
+              <FaSearch />
+            </button>
+          </div>
         </div>
-      )}
-
-      {/* Search Bar */}
-      <div className="my-4">
-        <input
-          type="text"
-          className="border px-4 py-2 rounded w-full"
-          placeholder="Search users by name..."
-          value={searchTerm}
-          onChange={handleSearch}
-        />
       </div>
 
-      {/* User Table */}
-      <table className="table-auto w-full border-collapse border border-gray-300 mt-4">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="border px-4 py-2">Username</th>
-            <th className="border px-4 py-2">Email</th>
-            <th className="border px-4 py-2">Phone</th>
-            <th className="border px-4 py-2">Detail</th>
-            <th className="border px-4 py-2">Delete</th>
-            <th className="border px-4 py-2">Lock</th>
-          </tr>
-        </thead>
-        <tbody>
-          {userList.map((user) => (
-            <tr
-              key={user._id}
-              className={`hover:bg-gray-50 ${user.ban ? "opacity-50" : ""}`}
-            >
-              <td className="text-sm border px-4 py-2">{user.name}</td>
-              <td className="text-sm border px-4 py-2">{user.email}</td>
-              <td className="text-sm border px-4 py-2">{user.phone}</td>
-              <td className="text-sm border px-4 py-2 text-center">
-                <button
-                  className="text-blue-500 mx-2"
-                  title="View Details"
-                  onClick={() => setViewingUser(user)}
-                >
-                  <BiSolidUserDetail />
-                </button>
-              </td>
-              <td className="border px-4 py-2 text-center">
-                <button
-                  className="text-red-500 mx-2"
-                  title="Delete Account"
-                  onClick={() => confirmAction("deleteAccount", user)}
-                >
-                  <RiDeleteBin2Line />
-                </button>
-              </td>
-              <td className="border px-4 py-2 text-center">
-                <button
-                  className="text-yellow-500 mx-2"
-                  title={user.ban ? "Unban Account" : "Ban Account"}
-                  onClick={() =>
-                    confirmAction(user.ban ? "unbanUser" : "banUser", user)
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse border border-gray-200">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="text-sm px-4 py-2 text-center font-bold text-gray-600 border">
+                <input
+                  type="checkbox"
+                  checked={
+                    users.length > 0 && selectedCheckBox.length === users.length
                   }
-                >
-                  {user.ban ? <BiLockOpen /> : <BiLock />}
-                </button>
-              </td>
+                  onChange={handleSelectAll}
+                />
+              </th>
+              <th className="border px-4 py-2 text-center whitespace-nowrap">
+                <span className="inline-flex items-center gap-x-2">
+                  Name <FaSort onClick={() => handleSort("name")} />
+                </span>
+              </th>
+              <th className="border px-4 py-2 text-center whitespace-nowrap">
+                <span className="inline-flex items-center gap-x-2">
+                  Email <FaSort onClick={() => handleSort("email")} />
+                </span>
+              </th>
+              <th className="border px-4 py-2 text-center whitespace-nowrap">
+                <span className="inline-flex items-center gap-x-2">
+                  Phone <FaSort onClick={() => handleSort("phone")} />
+                </span>
+              </th>
+              <th className="border px-4 py-2 text-center whitespace-nowrap">
+                <span className="inline-flex items-center gap-x-2">
+                  Address <FaSort onClick={() => handleSort("address")} />
+                </span>
+              </th>
+              <th className="border px-4 py-2">Detail</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {Array.isArray(users) && users.length > 0 ? (
+              users.map((user) => (
+                <tr key={user._id} className="border">
+                  <td className="px-4 py-2 text-center">
+                    <input
+                      type="checkbox"
+                      checked={selectedCheckBox.includes(user._id)}
+                      onChange={() => handleSelectOne(user._id)}
+                    />
+                  </td>
+                  <td className="border px-4 py-2 text-center">{user.name}</td>
+                  <td className="border px-2 py-2 text-center">{user.email}</td>
+                  <td className="border px-4 py-2 text-center">{user.phone}</td>
+                  <td className="border px-4 py-2 text-center">
+                    {user.address}
+                  </td>
+                  <td className="border px-4 py-2 text-center">
+                    <button
+                      onClick={() => handleViewDetails(user)}
+                      className="px-2 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600"
+                    >
+                      <TbListDetails />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6" className="p-4 text-center">
+                  No users available.
+                  {console.log(users)}
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
-      {/* Pagination Controls */}
+      {/* Pagination */}
       <div className="flex justify-center mt-4">
         <button
-          className="px-4 py-2 bg-gray-200 rounded-l"
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
+          className="px-3 py-1 mx-1 bg-gray-200 rounded disabled:opacity-50"
+          disabled={page === 1}
+          onClick={() => setPage(page - 1)}
         >
           Previous
         </button>
-        <span className="px-4 py-2">{`Page ${currentPage} of ${totalPages}`}</span>
+        <span className="px-3 py-1 mx-2">
+          Page {page} of {totalPages}
+        </span>
         <button
-          className="px-4 py-2 bg-gray-200 rounded-r"
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
+          className="px-3 py-1 mx-1 bg-gray-200 rounded disabled:opacity-50"
+          disabled={page >= totalPages}
+          onClick={() => setPage(page + 1)}
         >
           Next
         </button>
       </div>
 
-      {/* Confirmation Modal */}
-      {confirmationAction && selectedUser && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-4 rounded shadow-md w-96">
-            <h2 className="text-lg font-bold mb-4">Confirm Action</h2>
-            <p>
-              Are you sure you want to{" "}
-              {confirmationAction === "deleteAccount"
-                ? "delete"
-                : selectedUser.ban
-                ? "unban"
-                : "ban"}{" "}
-              the user <strong>{selectedUser.name}</strong>?
-            </p>
-            <div className="mt-4 flex justify-end">
-              <button
-                className="bg-gray-200 px-4 py-2 rounded mr-2"
-                onClick={() => setConfirmationAction(null)}
-              >
-                Cancel
-              </button>
-              <button
-                className={`${
-                  confirmationAction === "deleteAccount"
-                    ? "bg-red-500"
-                    : "bg-yellow-500"
-                } text-white px-4 py-2 rounded`}
-                onClick={() => handleAction(confirmationAction, selectedUser)}
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Viewing User Modal */}
-      {viewingUser && (
+      {isPopupOpen && selectedUser && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-4 rounded shadow-md w-96">
             <h2 className="text-lg font-bold mb-4">User Details</h2>
             <div className="flex justify-center mb-4">
               <img
-                src={viewingUser.avatar_url}
+                src={selectedUser.avatar_url}
                 alt="Avatar"
                 className="rounded-full h-24 w-24"
               />
@@ -238,26 +229,26 @@ const UserList = () => {
               <tbody>
                 <tr>
                   <td className="border px-4 py-2 font-bold">Name</td>
-                  <td className="border px-4 py-2">{viewingUser.name}</td>
+                  <td className="border px-4 py-2">{selectedUser.name}</td>
                 </tr>
                 <tr>
                   <td className="border px-4 py-2 font-bold">Email</td>
-                  <td className="border px-4 py-2">{viewingUser.email}</td>
+                  <td className="border px-4 py-2">{selectedUser.email}</td>
                 </tr>
                 <tr>
                   <td className="border px-4 py-2 font-bold">Phone</td>
-                  <td className="border px-4 py-2">{viewingUser.phone}</td>
+                  <td className="border px-4 py-2">{selectedUser.phone}</td>
                 </tr>
                 <tr>
                   <td className="border px-4 py-2 font-bold">Address</td>
-                  <td className="border px-4 py-2">{viewingUser.address}</td>
+                  <td className="border px-4 py-2">{selectedUser.address}</td>
                 </tr>
               </tbody>
             </table>
             <div className="mt-4 flex justify-end">
               <button
                 className="bg-gray-200 px-4 py-2 rounded"
-                onClick={() => setViewingUser(null)}
+                onClick={closePopup}
               >
                 Close
               </button>
@@ -268,5 +259,4 @@ const UserList = () => {
     </div>
   );
 };
-
 export default UserList;

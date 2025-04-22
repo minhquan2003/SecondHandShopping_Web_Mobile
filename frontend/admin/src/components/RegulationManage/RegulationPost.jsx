@@ -35,7 +35,7 @@ const RegulationPost = ({ onRegulationPosted }) => {
   };
 
   return (
-    <div className="w-2/3 mx-auto p-4 bg-gray-100 rounded-md pl-[16.6666%]">
+    <div className="w-2/3 mx-auto m-4 bg-white rounded-md">
       <div className="rounded-md border border-gray-300 p-4">
         <h1 className="text-2xl text-center font-semibold mb-6">
           Create New Regulation

@@ -1,82 +1,100 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 
-const useProducts = (type) => {
-  const [products, setProducts] = useState([]);
+const useProducts = (
+  type,
+  page = 1,
+  fieldSort = "",
+  orderSort = "",
+  searchKey = ""
+) => {
+  const [products, setProducts] = useState([]); // Ensuring products is always an array
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const fetchProducts = async () => {
       let url = "";
       if (type === "request") {
-        url = "http://localhost:5555/admin/pending-products"; // Fetch pending products
+        url = `http://localhost:5555/admin/pending-products?page=${page}`;
       } else if (type === "approved") {
-        url = "http://localhost:5555/admin/products"; // Fetch approved products
+        url = `http://localhost:5555/admin/products?page=${page}`;
+      }
+
+      if (fieldSort && orderSort) {
+        url += `&sort=${orderSort}&sort=${fieldSort}`;
+      }
+      if (searchKey) {
+        url += `&filter=name&filter=${searchKey}`;
       }
 
       try {
-        const response = await fetch(url);
-        const data = await response.json();
-        if (data.success) {
-          const filteredProducts = data.data.filter(
-            (product) =>
-              product.status === true &&
-              product.approve === (type === "approved" ? true : false)
-          );
+        setLoading(true);
+        setError(null); // Reset error before fetch
+        const response = await axios.get(url);
 
-          setProducts(filteredProducts);
+        const data = response.data;
+
+        if (data.success && Array.isArray(data.products)) {
+          setProducts(data.products);
+          setTotalPages(data.totalPages || 1);
         } else {
-          setError("Failed to load products.");
+          throw new Error("Invalid response structure");
         }
       } catch (err) {
-        setError("Error fetching data.");
+        setError(err.message);
+        setProducts([]); // Ensure `products` doesn't become undefined
       } finally {
         setLoading(false);
       }
     };
 
     fetchProducts();
-  }, [type]);
+  }, [type, page, fieldSort, orderSort, searchKey]);
 
-  const approveProduct = async (productId) => {
+  const approveProducts = async (selectedIds) => {
     try {
-      await fetch(`http://localhost:5555/admin/approve-product/${productId}`, {
-        method: "PUT",
+      await axios.put("http://localhost:5555/admin/approve-products", {
+        productIds: selectedIds,
       });
+
       setProducts((prev) =>
-        prev.filter((product) => product._id !== productId)
+        prev.filter((product) => !selectedIds.includes(product._id))
       );
-      alert("Product approved!");
+      alert("Selected products approve successfully!");
     } catch {
-      alert("Failed to approve the product.");
+      alert("Failed to approve selected products");
     }
   };
 
-  const deleteProduct = async (productId) => {
+  const hideProducts = async (selectedIds) => {
     try {
-      await fetch(`http://localhost:5555/admin/delete-product/${productId}`, {
-        method: "DELETE",
+      await axios.put("http://localhost:5555/admin/hide-products", {
+        productIds: selectedIds,
       });
+
       setProducts((prev) =>
-        prev.filter((product) => product._id !== productId)
+        prev.filter((product) => !selectedIds.includes(product._id))
       );
-      alert("Product denied and removed!");
+      alert("Selected products hide successfully!");
     } catch {
-      alert("Failed to deny the product.");
+      alert("Failed to hide selected products.");
     }
   };
 
-  const hideProduct = async (productId) => {
+  const deleteSelectedProducts = async (selectedIds) => {
     try {
-      await fetch(`http://localhost:5555/admin/hide-product/${productId}`, {
-        method: "PUT",
+      await axios.delete("http://localhost:5555/admin/delete-products", {
+        productIds: selectedIds,
       });
+
       setProducts((prev) =>
-        prev.filter((product) => product._id !== productId)
+        prev.filter((product) => !selectedIds.includes(product._id))
       );
-      alert("Product hidden!");
+      alert("Selected products deleted successfully!");
     } catch {
-      alert("Failed to hide the product.");
+      alert("Failed to delete selected products.");
     }
   };
 
@@ -84,9 +102,10 @@ const useProducts = (type) => {
     products,
     loading,
     error,
-    approveProduct,
-    deleteProduct,
-    hideProduct,
+    totalPages,
+    approveProducts,
+    hideProducts,
+    deleteSelectedProducts,
   };
 };
 
