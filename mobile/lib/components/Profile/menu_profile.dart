@@ -3,13 +3,50 @@ import 'package:provider/provider.dart';
 import '../UI/menu_item.dart';
 import '../../providers/login_info.dart';
 import './user_setting.dart';
+import '../../providers/userProfile_provider.dart';
+import '../order/sale_order.dart';
+import '../Order/purchase_order.dart';
+import '../Feedback/form_feedback.dart';
 
-class MenuProfile extends StatelessWidget {
-  final String userAvatarUrl = 'https://example.com/avatar.jpg';
+class MenuProfile extends StatefulWidget {
+  @override
+  _MenuProfileState createState() => _MenuProfileState();
+}
+
+class _MenuProfileState extends State<MenuProfile> {
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    final loginInfo = Provider.of<LoginInfo>(context, listen: false);
+    final userId = loginInfo.id;
+
+    if (userId != null) {
+      await Provider.of<UserProfileProvider>(context, listen: false)
+          .fetchUser(userId);
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final userInfo = Provider.of<LoginInfo>(context);
+    final userProfileProvider = Provider.of<UserProfileProvider>(context);
+    final user = userProfileProvider.user;
+
+    if (_isLoading) {
+      return Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -19,10 +56,10 @@ class MenuProfile extends StatelessWidget {
           children: [
             Row(
               children: [
-                userInfo.avatarurl != null
+                (user != null && user.avatarUrl != null)
                     ? CircleAvatar(
                         radius: 50,
-                        backgroundImage: NetworkImage(userInfo.avatarurl!),
+                        backgroundImage: NetworkImage(user.avatarUrl!),
                       )
                     : Icon(Icons.person, size: 50),
                 Container(
@@ -60,6 +97,14 @@ class MenuProfile extends StatelessWidget {
               icon: Icons.shopping_cart,
               textColor: Colors.black,
               iconBackgroundColor: Colors.blue,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PurchaseOrder(),
+                  ),
+                );
+              },
             ),
             MenuProfileItem(
               text: 'Đơn bán',
@@ -67,6 +112,14 @@ class MenuProfile extends StatelessWidget {
               icon: Icons.shopping_bag,
               textColor: Colors.black,
               iconBackgroundColor: Colors.green,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SaleOrder(),
+                  ),
+                );
+              },
             ),
             Container(
                 width: double.infinity,
@@ -95,13 +148,6 @@ class MenuProfile extends StatelessWidget {
               icon: Icons.feedback,
               textColor: Colors.black,
               iconBackgroundColor: Colors.blue,
-            ),
-            MenuProfileItem(
-              text: 'Đăng ký đối tác',
-              backgroundColor: Colors.white,
-              icon: Icons.add_business_sharp,
-              textColor: Colors.black,
-              iconBackgroundColor: Colors.yellow[700],
             ),
             Container(
                 width: double.infinity,
@@ -138,6 +184,14 @@ class MenuProfile extends StatelessWidget {
               icon: Icons.feedback,
               textColor: Colors.black,
               iconBackgroundColor: Colors.grey,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FeedbackForm(),
+                  ),
+                );
+              },
             ),
             MenuProfileItem(
               text: 'Đăng xuất',

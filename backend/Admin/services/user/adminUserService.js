@@ -5,178 +5,243 @@ import Reviews from "../../../User/models/Reviews.js";
 import Feedbacks from "../../../User/models/Feedbacks.js";
 import Notifications from "../../../User/models/Notifications.js";
 
-//--------Đếm số lượng người dùng tất cả trừ admin
-const getCountExcludingRole = async (excludedRole) => {
+//--------------------------------Lấy tất cả người dùng trừ admin--------------------------------
+const getAllUsersExcludingRole = async (
+  excludedRole,
+  page = 1,
+  limit = 10,
+  sort,
+  filter
+) => {
   try {
-    const count = await Users.countDocuments({
-      role: { $ne: excludedRole },
-      status: true,
-    });
-    return count;
-  } catch (error) {
-    throw new Error("Error fetching count excluding role: " + error.message);
-  }
-};
+    const query = { status: true, role: { $ne: excludedRole }, ban: false };
+    const skip = (page - 1) * limit;
 
-//--------Lấy tất cả người dùng trừ admin
-const getAllUsersExcludingRole = async (excludedRole) => {
-  try {
-    const users = await Users.find({
-      role: { $ne: excludedRole },
-      status: true,
-    });
-    return users;
+    if (filter) {
+      const label = filter[0];
+      const value = filter[1];
+      query[label] = { $regex: value, $options: "i" };
+      const filterusers = await Users.find(query)
+        .skip(skip)
+        .limit(limit)
+        .lean();
+      const totalUsers = await Users.countDocuments(query);
+      const totalPages = Math.ceil(totalUsers / limit);
+      return {
+        totalUsers,
+        totalPages,
+        skip,
+        limit,
+        currentPage: page,
+        users: filterusers,
+      };
+    }
+
+    const totalUsers = await Users.countDocuments(query);
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    if (sort) {
+      const objectSort = {};
+      objectSort[sort[1]] = sort[0];
+      const sortUsers = await Users.find(query)
+        .skip(skip)
+        .limit(limit)
+        .sort(objectSort)
+        .lean();
+
+      return {
+        totalUsers,
+        totalPages,
+        skip,
+        limit,
+        currentPage: page,
+        users: sortUsers,
+      };
+    }
+    const users = await Users.find(query).skip(skip).limit(limit).lean();
+
+    return {
+      totalUsers,
+      totalPages,
+      skip,
+      limit,
+      currentPage: page,
+      users,
+    };
   } catch (error) {
     throw new Error("Error fetching users: " + error.message);
   }
 };
 
-//--------Đếm số lượng người dùng theo role
-const getCountByRole = async (role) => {
+//--------------------------------Lấy tất cả người dùng đang có role là....--------------------------------
+const getUsersByRole = async (role, page = 1, limit = 10, sort, filter) => {
   try {
-    const count = await Users.countDocuments({
-      role,
-      status: true,
-    });
-    return count;
+    const query = { role, status: true };
+    const skip = (page - 1) * limit;
+    if (filter) {
+      const label = filter[0];
+      const value = filter[1];
+      query[label] = { $regex: value, $options: "i" };
+      const totalUsers = await Users.countDocuments(query);
+      const totalPages = Math.ceil(totalUsers / limit);
+      const filterUsers = await Users.find(query)
+        .skip(skip)
+        .limit(limit)
+        .lean();
+      return {
+        success: true,
+        totalUsers,
+        totalPages,
+        skip,
+        limit,
+        currentPage: page,
+        users: filterUsers,
+      };
+    }
+
+    const totalUsers = await Users.countDocuments(query);
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    if (sort) {
+      const objectSort = {};
+      objectSort[sort[1]] = sort[0];
+      const sortUsers = await Users.find(query)
+        .skip(skip)
+        .limit(limit)
+        .sort(objectSort)
+        .lean();
+      return {
+        success: true,
+        totalUsers,
+        totalPages,
+        skip,
+        limit,
+        currentPage: page,
+        users: sortUsers,
+      };
+    }
+    const users = await Users.find(query).skip(skip).limit(limit).lean();
+
+    return {
+      success: true,
+      totalUsers,
+      totalPages,
+      skip,
+      limit,
+      currentPage: page,
+      users,
+    };
   } catch (error) {
-    throw new Error("Error fetching count by role: " + error.message);
+    throw new Error("Error fetching users: " + error.message);
   }
 };
 
-//--------Lấy tất cả người dùng đang có role là....
-const getUsersByRole = async (role) => {
+//--------------------------------Lấy tất cả người dùng bị ban--------------------------------
+const getBannedUsers = async (page = 1, limit = 10, sort, filter) => {
   try {
-    const users = await Users.find({
-      role,
-      status: true,
-    });
-    return users;
-  } catch (error) {
-    throw new Error("Error fetching users by role: " + error.message);
-  }
-};
+    const query = { ban: true, status: true };
+    const skip = (page - 1) * limit;
+    const totalUsers = await Users.countDocuments(query);
+    const totalPages = Math.ceil(totalUsers / limit);
 
-//--------Đếm số lượng người dùng bị ban
-const getCountBannedUsers = async () => {
-  try {
-    const count = await Users.countDocuments({
-      ban: true,
-      status: true,
-    });
-    return count;
-  } catch (error) {
-    throw new Error("Error fetching count of banned users: " + error.message);
-  }
-};
+    if (filter) {
+      const label = filter[0];
+      const value = filter[1];
+      query[label] = { $regex: value, $options: "i" };
+      const filterUsers = await Users.find(query)
+        .skip(skip)
+        .limit(limit)
+        .lean();
+      return {
+        totalUsers,
+        totalPages,
+        limit,
+        currentPage: page,
+        users: filterUsers,
+      };
+    }
 
-//--------Lấy tất cả người dùng bị ban
-const getBannedUsers = async () => {
-  try {
-    const users = await Users.find({
-      ban: true,
-      status: true,
-    });
-    return users;
+    if (sort) {
+      const objectSort = {};
+      objectSort[sort[1]] = sort[0];
+      const sortUsers = await Users.find(query)
+        .skip(skip)
+        .limit(limit)
+        .sort(objectSort)
+        .lean();
+      return {
+        totalUsers,
+        totalPages,
+        limit,
+        currentPage: page,
+        users: sortUsers,
+      };
+    }
+    const users = await Users.find(query).skip(skip).limit(limit).lean();
+
+    return {
+      totalUsers,
+      totalPages,
+      limit,
+      currentPage: page,
+      users,
+    };
   } catch (error) {
     throw new Error("Error fetching banned users: " + error.message);
   }
 };
 
-//-------- Ban người dùng
-const banUser = async (userId) => {
+//--------------------------------Ban người dùng--------------------------------
+const banUser = async (userIds) => {
   try {
-    const user = await Users.findById(userId);
-    if (!user) {
-      throw new Error("User not found");
-    }
-    user.ban = true; // Đặt trạng thái ban là true
-    await user.save();
-    return user;
+    const users = await Users.updateMany(
+      { _id: { $in: userIds } },
+      { ban: true }
+    );
+    if (users.modifiedCount === 0) throw new Error("No users found or already");
+
+    return users;
   } catch (error) {
     throw new Error("Error banning user: " + error.message);
   }
 };
 
-//-------- Unban người dùng
-const unbanUser = async (userId) => {
+//--------------------------------Unban người dùng--------------------------------
+const unbanUser = async (userIds) => {
   try {
-    const user = await Users.findById(userId);
-    if (!user) {
-      throw new Error("User not found");
-    }
-    user.ban = false; // Đặt trạng thái ban là false
-    await user.save();
-    return user;
-  } catch (error) {
-    throw new Error("Error unbanning user: " + error.message);
-  }
-};
-
-//---- Đổi role giữa partner và user
-const toggleUserRole = async (userId) => {
-  try {
-    const user = await Users.findById(userId);
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    // Chuyển đổi role
-    user.role = user.role === "partner" ? "user" : "partner";
-    await user.save();
-    return user;
-  } catch (error) {
-    throw new Error("Error toggling user role: " + error.message);
-  }
-};
-
-//--------Xóa tạm người dùng
-const deleteUser = async (userId) => {
-  try {
-    // Update the user's status to false
-    const result = await Users.findByIdAndUpdate(
-      userId,
-      { status: false },
-      { new: true } // Return the updated document
+    const users = await Users.updateMany(
+      { _id: { $in: userIds } },
+      { ban: false }
     );
 
-    // Update related models' statuses
-    await Products.updateMany({ user_id: userId }, { status: false });
+    if (users.modifiedCount === 0) {
+      throw new Error("No users found or already unban");
+    }
 
-    await Orders.updateMany(
-      { $or: [{ user_id_buyer: userId }, { user_id_seller: userId }] },
+    return users;
+  } catch (error) {
+    throw new Error("Error unban user: " + error.message);
+  }
+};
+
+//--------------------------------Xóa tạm người dùng--------------------------------
+const deleteUser = async (userIds) => {
+  try {
+    const users = await Users.updateMany(
+      { _id: { $in: userIds } },
       { status: false }
     );
 
-    await Notifications.updateMany(
-      { user_id_receive: userId },
-      { status: false }
-    );
-
-    await Feedbacks.updateMany({ user_id: userId }, { status: false });
-
-    await Reviews.updateMany({ user_id: userId }, { status: false });
-
-    return result;
-  } catch (error) {
-    throw new Error("Error deactivating user: " + error.message);
-  }
-};
-
-// Fetch user by ID
-const fetchUserById = async (userId) => {
-  try {
-    const user = await Users.findById(userId).select("name");
-    if (!user) {
-      throw new Error("User not found");
+    if (users.modifiedCount === 0) {
+      throw new Error("No users found or already deleted");
     }
-    return user;
+    return users;
   } catch (error) {
-    throw new Error("Error fetching user: " + error.message);
+    throw new Error("Error updating user status: " + error.message);
   }
 };
 
-//-------- Tìm kiếm người dùng theo từ khóa
+//--------------------------------Tìm kiếm người dùng theo từ khóa--------------------------------
 const searchUsers = async (keyword) => {
   try {
     const regex = new RegExp(keyword, "i"); // Tạo regex để tìm kiếm không phân biệt hoa thường
@@ -197,39 +262,50 @@ const searchUsers = async (keyword) => {
   }
 };
 
-// Chuyển role giữa regisPartner và partner
-const switchRole = async (userId, currentRole, newRole) => {
+//--------------------------------Chuyển role giữa regisPartner và partner và user--------------------------------
+// const switchRole = async (userId, currentRole, newRole) => {
+//   try {
+//     const user = await Users.findById(userId);
+//     if (!user) {
+//       throw new Error("User not found");
+//     }
+
+//     if (user.role !== currentRole) {
+//       throw new Error(`User is not in role: ${currentRole}`);
+//     }
+
+//     // Cập nhật role mới
+//     user.role = newRole;
+//     await user.save();
+//     return user;
+//   } catch (error) {
+//     throw new Error("Error switching user role: " + error.message);
+//   }
+// };
+
+const switchRole = async (userIds, currenRole, newRole) => {
   try {
-    const user = await Users.findById(userId);
-    if (!user) {
-      throw new Error("User not found");
-    }
+    const users = await Users.updateMany(
+      { _id: { $in: userIds }, role: currenRole, status: true },
+      { $set: { role: newRole } }
+    );
 
-    if (user.role !== currentRole) {
-      throw new Error(`User is not in role: ${currentRole}`);
+    if (users.modifiedCount === 0) {
+      throw new Error("No users found or already switch");
     }
-
-    // Cập nhật role mới
-    user.role = newRole;
-    await user.save();
-    return user;
+    return users;
   } catch (error) {
-    throw new Error("Error switching user role: " + error.message);
+    throw new Error("Error switch user role: " + error.message);
   }
 };
 
 export {
-  getCountExcludingRole,
-  getCountByRole,
   getAllUsersExcludingRole,
   getUsersByRole,
   deleteUser,
-  getCountBannedUsers,
   getBannedUsers,
   unbanUser,
   banUser,
-  toggleUserRole,
-  fetchUserById,
   searchUsers,
   switchRole,
 };

@@ -1,23 +1,45 @@
 import Regulations from "../../../User/models/Regulations.js";
 
-// Lấy tất cả quy định với phân trang, chỉ lấy quy định có status là true
-const getAllRegulations = async () => {
-  try {
-    const regulations = await Regulations.find({ status: true }) // Lọc theo status
-      .sort({ createdAt: -1 }); // Sắp xếp theo thời gian mới nhất
+//--------------------------------Lấy tất cả quy định--------------------------------
+const getAllRegulations = async (page = 1, limit = 10) => {
+  // try {
+  //   const regulations = await Regulations.find({ status: true }) // Lọc theo status
+  //     .sort({ createdAt: -1 }); // Sắp xếp theo thời gian mới nhất
 
-    const totalRegulations = await Regulations.countDocuments({ status: true }); // Đếm chỉ các quy định có status = true
+  //   const totalRegulations = await Regulations.countDocuments({ status: true }); // Đếm chỉ các quy định có status = true
+
+  //   return {
+  //     regulations,
+  //     total: totalRegulations,
+  //   };
+  // } catch (error) {
+  //   throw new Error("Error fetching regulations: " + error.message);
+  // }
+
+  try {
+    const query = { status: true };
+    const skip = (page - 1) * limit;
+    const regulations = await Regulations.find(query)
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    const totalRegulations = await Regulations.countDocuments(query);
+    const totalPages = await Math.ceil(totalRegulations / limit);
 
     return {
+      totalRegulations,
+      totalPages,
+      currentPage: page,
+      limit,
       regulations,
-      total: totalRegulations,
     };
   } catch (error) {
     throw new Error("Error fetching regulations: " + error.message);
   }
 };
 
-// Thêm quy định mới
+//--------------------------------Thêm quy định mới--------------------------------
 const createRegulation = async (data) => {
   try {
     const regulation = new Regulations(data);
@@ -44,47 +66,21 @@ const updateRegulation = async (id, data) => {
   }
 };
 
-// Xóa (cập nhật trạng thái) quy định theo ID
-const deleteRegulation = async (id) => {
+//--------------------------------Xóa (cập nhật trạng thái) quy định theo ID--------------------------------
+const deleteRegulation = async (regulationIds) => {
   try {
-    const regulation = await Regulations.findById(id);
+    const regulations = await Regulations.updateMany(
+      { _id: { $in: regulationIds } },
+      { status: false }
+    );
 
-    if (!regulation) {
-      throw new Error("Regulation not found");
+    if (regulations.matchedCount === 0) {
+      throw new Error("No regulations found or already");
     }
 
-    // Cập nhật trạng thái thành false thay vì xóa
-    regulation.status = false;
-    await regulation.save();
-
-    return regulation;
+    return regulations;
   } catch (error) {
     throw new Error("Error deleting regulation: " + error.message);
-  }
-};
-
-const searchRegulationsByTitle = async (keyword = "") => {
-  try {
-    console.log("Searching regulations with keyword:", keyword); // Debugging line
-
-    let query = { status: true };
-    if (keyword && keyword.trim() !== "") {
-      query.title = { $regex: keyword, $options: "i" }; // Case-insensitive search
-    }
-
-    console.log("Query being executed:", query); // Debugging line
-
-    const regulations = await Regulations.find(query).sort({ createdAt: -1 });
-
-    const totalRegulations = await Regulations.countDocuments(query);
-
-    return {
-      regulations,
-      total: totalRegulations,
-    };
-  } catch (error) {
-    console.error("Error searching regulations:", error); // Log the error
-    throw new Error("Error searching regulations: " + error.message);
   }
 };
 
@@ -93,5 +89,4 @@ export {
   createRegulation,
   updateRegulation,
   deleteRegulation,
-  searchRegulationsByTitle,
 };

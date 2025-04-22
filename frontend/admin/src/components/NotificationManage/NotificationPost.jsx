@@ -33,7 +33,7 @@ const NotificationPost = () => {
   };
 
   return (
-    <div className="w-2/3 mx-auto p-4 bg-gray-100 rounded-md pl-[16.6666%]">
+    <div className="w-2/3 mx-auto p-4 bg-gray-100 rounded-md">
       <div className="rounded-md border border-gray-300 p-4">
         <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
           Create new Notification

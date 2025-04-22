@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import './components/Home/main_screen.dart';
 import './providers/signup_provider.dart';
 import './providers/userProfile_provider.dart';
+import '../providers/regulation_provider.dart';
+import '../providers/feedback.provider.dart';
 
 void main() {
   runApp(MultiProvider(
@@ -11,6 +13,8 @@ void main() {
       ChangeNotifierProvider(create: (context) => LoginInfo()),
       ChangeNotifierProvider(create: (context) => SignUpProvider()),
       ChangeNotifierProvider(create: (context) => UserProfileProvider()),
+      ChangeNotifierProvider(create: (context) => RegulationProvider()),
+      ChangeNotifierProvider(create: (context) => FeedbackProvider()),
     ],
     child: const MyApp(),
   ));

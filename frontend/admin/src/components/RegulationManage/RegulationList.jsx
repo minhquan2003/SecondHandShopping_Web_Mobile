@@ -76,7 +76,7 @@ const RegulationList = ({ refreshRegulations }) => {
   );
 
   return (
-    <div className="w-5/6 ml-[16.6666%] p-4 bg-gray-100 rounded-md">
+    <div className="p-4 bg-white rounded-lg">
       <h2 className="text-2xl font-bold text-blue-600 mb-4 text-center">
         Our Regulations
       </h2>
@@ -97,7 +97,7 @@ const RegulationList = ({ refreshRegulations }) => {
         <>
           <table className="w-full table-auto border-collapse">
             <thead>
-              <tr className="bg-gray-200">
+              <tr className="bg-gray-100">
                 <th className="border px-4 py-2 text-left">Title</th>
                 <th className="border px-4 py-2 text-left">Description</th>
                 <th className="border px-4 py-2 text-center">Actions</th>

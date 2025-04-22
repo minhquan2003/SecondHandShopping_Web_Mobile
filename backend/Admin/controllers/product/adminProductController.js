@@ -2,71 +2,92 @@ import {
   updateProductApproveToTrue,
   getProducts,
   updateProductApproveToFalse,
-  deleteProduct,
+  deleteProducts,
   getRequestProducts,
 } from "../../services/product/adminProductService.js";
 
-// Chấp nhận cho hiện bài viết sản phẩm
-const approveProduct = async (req, res) => {
-  const { productId } = req.params;
-
+//-------------------Chấp nhận cho hiện bài viết sản phẩm------------------
+const approveProducts = async (req, res) => {
+  const { productIds } = req.body;
+  if (!productIds || productIds.length === 0) {
+    return res.status(400).json({ message: "No product IDs" });
+  }
   try {
-    const updatedProduct = await updateProductApproveToTrue(productId);
-
+    const updateApproveToTrue = await updateProductApproveToTrue(productIds);
     res.status(200).json({
-      message: "Product status updated successfully",
-      product: updatedProduct,
+      message: "Products approve successfully",
+      approveCount: updateApproveToTrue.modifiedCount,
     });
   } catch (error) {
     res.status(500).json({
-      message: "Failed to update product status",
+      message: "Failed to approve products",
       error: error.message,
     });
   }
 };
 
-// Ẩn sản phẩm (status thành false)
-const hideProduct = async (req, res) => {
-  const { productId } = req.params;
+//-----------------Ẩn sản phẩm (status thành false)-------------------------
+const hideProducts = async (req, res) => {
+  const { productIds } = req.body;
+
+  if (!productIds || productIds.length === 0) {
+    return res.status(400).json({ message: "No product IDs" });
+  }
+
   try {
-    const updatedProduct = await updateProductApproveToFalse(productId);
+    const updateApproveToFalse = await updateProductApproveToFalse(productIds);
     res.status(200).json({
-      message: "Product hidden successfully",
-      product: updatedProduct,
+      message: "Products hide successfully",
+      hideCount: updateApproveToFalse.modifiedCount,
     });
   } catch (error) {
     res.status(500).json({
-      message: "Failed to hide product",
+      message: "Failed to hide products",
+      error: error.messge,
+    });
+  }
+};
+
+//-{----------------------Xóa sản phẩm---------------------------}
+const removeProducts = async (req, res) => {
+  const { productIds } = req.body;
+
+  if (!productIds || productIds.length === 0) {
+    return res.status(400).json({ message: "No product IDs provided" });
+  }
+
+  try {
+    const deletedProducts = await deleteProducts(productIds);
+    res.status(200).json({
+      message: "Products deleted successfully",
+      deletedCount: deletedProducts.modifiedCount,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to delete products",
       error: error.message,
     });
   }
 };
 
-// Xóa sản phẩm theo ID
-const removeProduct = async (req, res) => {
-  const { productId } = req.params;
-  try {
-    const deletedProduct = await deleteProduct(productId);
-    res.status(200).json({
-      message: "Product deleted successfully",
-      product: deletedProduct,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "Failed to delete product",
-      error: error.message,
-    });
-  }
-};
-
+//--------------------Lấy tất cả sản phẩm đã duyệt------------------------
 const getAllProducts = async (req, res) => {
   try {
-    const result = await getProducts(); // No pagination parameters are passed
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const sort = req.query.sort;
+    const filter = req.query.filter;
+
+    const result = await getProducts(page, limit, sort, filter);
 
     res.status(200).json({
       success: true,
-      totalProducts: result.totalProducts, // Include totalProducts
-      data: result.products,
+      totalProducts: result.totalProducts,
+      totalPages: result.totalPages,
+      currentPage: result.currentPage,
+      limit: result.limit,
+      skip: result.skip,
+      products: result.products,
     });
   } catch (error) {
     res.status(500).json({
@@ -76,14 +97,22 @@ const getAllProducts = async (req, res) => {
   }
 };
 
+//--------------------Lấy tất cả sản phẩm chưa duyệt---------------------
 const getPendingProducts = async (req, res) => {
   try {
-    const result = await getRequestProducts(); // No pagination parameters are passed
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const sort = req.query.sort;
+    const filter = req.query.filter;
+    const result = await getRequestProducts(page, limit, sort, filter);
 
     res.status(200).json({
       success: true,
-      totalProducts: result.totalProducts, // Include totalProducts
-      data: result.products,
+      totalProducts: result.totalProducts,
+      totalPages: result.totalPages,
+      currentPage: result.currentPage,
+      limit: result.limit,
+      products: result.products,
     });
   } catch (error) {
     res.status(500).json({
@@ -94,9 +123,9 @@ const getPendingProducts = async (req, res) => {
 };
 
 export {
-  approveProduct,
+  approveProducts,
   getAllProducts,
-  hideProduct,
-  removeProduct,
+  hideProducts,
+  removeProducts,
   getPendingProducts,
 };

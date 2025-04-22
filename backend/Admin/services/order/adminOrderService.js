@@ -1,6 +1,7 @@
 import OrderDetails from "../../../User/models/OrderDetails.js";
 import Products from "../../../User/models/Products.js";
 import Orders from "../../../User/models/Orders.js";
+import Users from "../../../User/models/Users.js";
 
 // Function to format the total amount in readable units (e.g., trillion, million, etc.)
 const formatAmount = (amount) => {
@@ -134,70 +135,208 @@ export const getTopSellingProducts = async (timeFrame) => {
   }
 };
 
-export const getAllOrders = async (page, limit) => {
+// export const getAllOrders = async (page = 1, limit = 10) => {
+//   const query = { status: true };
+//   const skip = (page - 1) * limit;
+//   const orderdetails = await OrderDetails.find(query)
+//     .skip(skip)
+//     .limit(limit)
+//     .lean();
+
+//   for (const orderdetail of orderdetails) {
+//     const order = await Orders.findById(orderdetail.order_id).lean();
+
+//     if (!order) {
+//       console.error(`Order not found for order_id: ${orderdetail.order_id}`);
+//       continue; // Bỏ qua vòng lặp nếu không tìm thấy order
+//     }
+
+//     const product = await Products.findById(orderdetail.product_id).lean();
+//     const user_seller = await Users.findById(order.user_id_seller).lean();
+//     const user_buyer = await Users.findById(order.user_id_buyer).lean();
+
+//     orderdetail.name_seller = user_seller?.name || "Unknown Phone";
+//     orderdetail.name_buyer = user_buyer?.name || "Unknown Phone";
+//     orderdetail.phone_buyer = order?.phone || "Unknown Phone";
+//     orderdetail.address_buyer = user_buyer?.address || "Unknown Phone";
+//     orderdetail.status_order = order?.status_order || "Unknown Phone";
+//     orderdetail.note = order?.phone || "Unknown Phone";
+//     orderdetail.product_name = product?.name || "Unknown Phone";
+//   }
+
+//   const totalOrders = await OrderDetails.countDocuments(query);
+//   const totalPages = Math.ceil(totalOrders / limit);
+
+//   return {
+//     orderdetails,
+//     totalOrders,
+//     totalPages,
+//     limit,
+//     skip,
+//     currentPage: page,
+//   };
+// };
+
+export const getAllOrders = async (page = 1, limit = 10, sort, filter) => {
   try {
+    const query = { status: true };
     const skip = (page - 1) * limit;
 
-    // Lấy danh sách đơn hàng với phân trang
-    const orders = await Orders.find().skip(skip).limit(limit).lean();
+    const pipeline = [
+      { $match: query },
 
-    if (!orders.length) throw new Error("No orders found");
+      // Convert product_id to ObjectId
+      {
+        $addFields: {
+          product_id: {
+            $convert: {
+              input: "$product_id",
+              to: "objectId",
+              onError: "$product_id",
+            },
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "product_id",
+          foreignField: "_id",
+          as: "product",
+        },
+      },
+      { $unwind: { path: "$product", preserveNullAndEmptyArrays: true } },
 
-    // Lấy tất cả các orderDetail và sản phẩm liên quan
-    const orderIds = orders.map((order) => order._id.toString());
-    const orderDetails = await OrderDetails.find({
-      order_id: { $in: orderIds },
-    }).lean();
+      // Convert order_id to ObjectId
+      {
+        $addFields: {
+          order_id: {
+            $convert: {
+              input: "$order_id",
+              to: "objectId",
+              onError: "$order_id",
+            },
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "orders",
+          localField: "order_id",
+          foreignField: "_id",
+          as: "order",
+        },
+      },
+      { $unwind: { path: "$order", preserveNullAndEmptyArrays: true } },
 
-    const productIds = orderDetails.map((od) => od.product_id);
-    const products = await Products.find({
-      _id: { $in: productIds },
-    }).lean();
+      // Convert user_id_buyer from order to ObjectId
+      {
+        $addFields: {
+          user_id_buyer: {
+            $convert: {
+              input: "$order.user_id_buyer",
+              to: "objectId",
+              onError: "$order.user_id_buyer",
+            },
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user_id_buyer",
+          foreignField: "_id",
+          as: "user_buyer",
+        },
+      },
+      { $unwind: { path: "$user_buyer", preserveNullAndEmptyArrays: true } },
 
-    // Map dữ liệu chi tiết vào từng đơn hàng
-    const detailedOrders = orders.map((order) => {
-      const items = orderDetails
-        .filter((od) => od.order_id === order._id.toString())
-        .map((od) => {
-          const product = products.find(
-            (p) => p._id.toString() === od.product_id
-          );
-          return {
-            productId: od.product_id,
-            productName: product?.name || "Unknown product",
-            price: od.price,
-            quantity: od.quantity,
-            total: od.price * od.quantity,
-          };
-        });
+      // Convert user_id_seller from order to ObjectId
+      {
+        $addFields: {
+          user_id_seller: {
+            $convert: {
+              input: "$order.user_id_seller",
+              to: "objectId",
+              onError: "$order.user_id_seller",
+            },
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user_id_seller",
+          foreignField: "_id",
+          as: "user_seller",
+        },
+      },
+      { $unwind: { path: "$user_seller", preserveNullAndEmptyArrays: true } },
 
-      return {
-        ...order,
-        items,
-        totalAmount: items.reduce((sum, item) => sum + item.total, 0),
-      };
-    });
+      // Add display fields
+      {
+        $addFields: {
+          product_name: {
+            $ifNull: ["$product.name", "Unknown"],
+          },
+          name_buyer: {
+            $ifNull: ["$user_buyer.name", "Unknown"],
+          },
+          phone_buyer: {
+            $ifNull: ["$user_buyer.phone", "Unknown"],
+          },
+          address_buyer: {
+            $ifNull: ["$user_buyer.address", "Unknown"],
+          },
+          name_seller: {
+            $ifNull: ["$user_seller.name", "Unknown"],
+          },
+          phone_seller: {
+            $ifNull: ["$user_seller.phone", "Unknown"],
+          },
+          status_order: {
+            $ifNull: ["$order.status_order", "Unknown"],
+          },
+          note: {
+            $ifNull: ["$order.note", "Unknown"],
+          },
+        },
+      },
 
-    return detailedOrders;
+      // Apply filter if any
+      ...(filter
+        ? [
+            {
+              $match: {
+                [filter[0]]: { $regex: filter[1], $options: "i" },
+              },
+            },
+          ]
+        : []),
+
+      // Remove embedded docs
+      { $project: { product: 0, user_buyer: 0, user_seller: 0, order: 0 } },
+
+      // Sort
+      ...(sort ? [{ $sort: { [sort[1]]: sort[0] === "asc" ? 1 : -1 } }] : []),
+
+      // Pagination
+      { $skip: skip },
+      { $limit: limit },
+    ];
+
+    const orderdetails = await OrderDetails.aggregate(pipeline).exec();
+    const totalOrders = await OrderDetails.countDocuments(query).exec();
+    const totalPages = Math.ceil(totalOrders / limit);
+    return {
+      totalOrders,
+      totalPages,
+      limit,
+      skip,
+      currentPage: page,
+      orderdetails,
+    };
   } catch (error) {
-    throw new Error(`Failed to get orders: ${error.message}`);
-  }
-};
-
-export const findOrdersByName = async (name, page = 1, limit = 10) => {
-  try {
-    const skip = (page - 1) * limit; // Tính toán vị trí bắt đầu của phân trang
-
-    // Tìm kiếm đơn hàng dựa trên name và áp dụng phân trang
-    const orders = await Orders.find({
-      name: { $regex: name, $options: "i" }, // Tìm kiếm khớp tên, không phân biệt chữ hoa chữ thường
-    })
-      .skip(skip) // Áp dụng phân trang
-      .limit(limit) // Giới hạn số lượng kết quả
-      .lean();
-
-    return orders;
-  } catch (error) {
-    throw new Error(`Error finding orders by name: ${error.message}`);
+    throw new Error(`Error fetching all orders: ${error.message}`);
   }
 };

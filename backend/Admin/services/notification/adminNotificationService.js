@@ -1,9 +1,25 @@
 import Notifications from "../../../User/models/Notifications.js";
 import Users from "../../../User/models/Users.js";
 
-export const getAllNotifications = async () => {
+export const getAllNotifications = async (page = 1, limit = 10) => {
   try {
-    return await Notifications.find({ status: true });
+    const query = { status: true };
+    const skip = (page - 1) * limit;
+    const notifications = await Notifications.find(query)
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    const totalNotifications = await Notifications.countDocuments(query);
+    const totalPages = Math.ceil(totalNotifications / limit);
+    return {
+      notifications,
+      totalNotifications,
+      totalPages,
+      limit,
+      skip,
+      currentPage: page,
+    };
   } catch (error) {
     throw new Error(`Error fetching notifications: ${error.message}`);
   }
@@ -74,21 +90,18 @@ export const createNotification = async ({
   }
 };
 
-export const deleteNotification = async (notificationId) => {
+export const deleteNotification = async (notificationIds) => {
   try {
-    const notification = await Notifications.findOneAndUpdate(
-      { _id: notificationId, status: true },
-      { status: false },
-      { new: true }
+    const notifications = await Notifications.updateMany(
+      { _id: { $in: notificationIds } },
+      { status: false }
     );
 
-    if (!notification) {
-      throw new Error(
-        `Notification with ID ${notificationId} not found or already deleted.`
-      );
+    if (notifications.modifiedCount === 0) {
+      throw new Error(`Notification not found or already deleted.`);
     }
 
-    return notification;
+    return notifications;
   } catch (error) {
     throw new Error(`Error deleting notification: ${error.message}`);
   }

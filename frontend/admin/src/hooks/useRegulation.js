@@ -1,28 +1,39 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const useRegulation = () => {
+const useRegulation = (page = 1) => {
   const [regulations, setRegulations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
+  const [totalPages, setTotalPages] = useState(1);
+  const [success, setSuccess] = useState(null);
 
   // Hàm fetch regulations
-  const fetchRegulations = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:5555/admin/regulations/"
-      );
-      const activeRegulations = response.data.data.filter(
-        (regulation) => regulation.status === true
-      );
-      setRegulations(activeRegulations);
-    } catch (err) {
-      setError("Error fetching regulations");
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    const fetchRegulations = async () => {
+      let url = `http://localhost:5555/admin/regulations?${page}`;
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await axios.get(url);
+
+        const data = await response.data;
+
+        if (data.success && Array.isArray(data.regulations)) {
+          setRegulations(data.regulations);
+          setTotalPages(data.totalPages || 1);
+        } else {
+          throw new Error("Invalid response structure");
+        }
+      } catch (err) {
+        setError(err.message);
+        setRegulations([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRegulations();
+  }, [page]);
 
   // Hàm post regulation
   const postRegulation = async (newRegulation) => {
@@ -42,7 +53,7 @@ const useRegulation = () => {
           addedRegulation,
         ]);
       }
-    } catch (err) {
+    } catch {
       setError("Error posting regulation");
       setSuccess(false);
     } finally {
@@ -51,66 +62,71 @@ const useRegulation = () => {
   };
 
   // Hàm xóa regulation
-  const deleteRegulation = async (id) => {
+  const deleteRegulation = async (selectedIds) => {
     try {
-      await axios.delete(`http://localhost:5555/admin/regulation/${id}`);
-      // After deleting, fetch regulations again to refresh the list
-      await fetchRegulations();
-    } catch (err) {
+      const response = await axios.delete(
+        "http://localhost:5555/admin/regulation",
+        {
+          regulationIds: selectedIds,
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to delete regulations");
+
+      setRegulations((prev) =>
+        prev.filter((regulation) => !selectedIds.includes(regulation._id))
+      );
+      alert("Selected regulations deleted successfully");
+    } catch {
       setError("Error deleting regulation");
     }
   };
 
   // Hàm tùy chỉnh regulation (cập nhật regulation)
+  // const customRegulation = async (id, updatedData) => {
+  //   try {
+  //     await axios.put(
+  //       `http://localhost:5555/admin/regulation/${id}`,
+  //       updatedData
+  //     );
+  //     // After updating, fetch regulations again to refresh the list
+  //     await fetchRegulations();
+  //   } catch (err) {
+  //     setError("Error updating regulation");
+  //   }
+  // };
+
   const customRegulation = async (id, updatedData) => {
     try {
-      await axios.put(
+      setLoading(true);
+      setError(null);
+      setSuccess(null);
+
+      const response = await axios.put(
         `http://localhost:5555/admin/regulation/${id}`,
         updatedData
       );
-      // After updating, fetch regulations again to refresh the list
-      await fetchRegulations();
+
+      if (response.status === 200) {
+        setSuccess("Regulation updated successfully!");
+      } else {
+        throw new Error("Failed to update regulation");
+      }
     } catch (err) {
-      setError("Error updating regulation");
-    }
-  };
-
-  // Fetch regulations based on search keyword
-  const searchRegulations = async (searchKeyword = "") => {
-    setLoading(true);
-    try {
-      const keywordParam = searchKeyword.trim() === "" ? "" : searchKeyword;
-
-      const response = await axios.get(
-        `http://localhost:5555/admin/regulation/search?keyword=${keywordParam}`
-      );
-      console.log("API Response:", response.data); // Log the API response
-
-      const activeRegulations = response.data.data.filter(
-        (regulation) => regulation.status === true
-      );
-      setRegulations(activeRegulations);
-    } catch (err) {
-      console.error("Error fetching regulations:", err); // Log the error
-      setError("Error fetching regulations");
+      setError(err.response?.data?.message || "Error updating regulation");
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch regulations when the component is loaded
-  useEffect(() => {
-    fetchRegulations();
-  }, []);
-
   return {
     regulations,
     loading,
     error,
+    totalPages,
     deleteRegulation,
     customRegulation,
     postRegulation,
-    searchRegulations,
     success,
   };
 };

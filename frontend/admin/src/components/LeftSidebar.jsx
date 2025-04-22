@@ -34,7 +34,7 @@ const LeftSidebar = () => {
     <div className="w-64 bg-white text-blue-500 h-full flex flex-col">
       <div className="flex items-center justify-center">
         <img
-          src="../../public/images/logo.png"
+          src="../../images/logo.png"
           alt="Logo"
           className="h-13 max-w-[10em]"
         />
@@ -79,7 +79,7 @@ const LeftSidebar = () => {
               <FaBoxOpen className="mr-2" /> Product Posts
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link
               to="/admin/partner"
               onClick={() => handleLinkClick("/admin/partner")}
@@ -91,7 +91,7 @@ const LeftSidebar = () => {
             >
               <FaHandshake className="mr-2" /> Partner
             </Link>
-          </li>
+          </li> */}
           <li>
             <Link
               to="/admin/feedbacks"
@@ -177,6 +177,7 @@ const LeftSidebar = () => {
                   "Are you sure you want to log out?"
                 );
                 if (confirmLogout) {
+                  localStorage.removeItem("activeLink");
                   logout();
                 }
               }}

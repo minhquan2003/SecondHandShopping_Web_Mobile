@@ -2,125 +2,244 @@ import Products from "../../../User/models/Products.js";
 import Categories from "../../../User/models/Categories.js";
 import Users from "../../../User/models/Users.js";
 
-// Chuyển trạng thái status thành true
-const updateProductApproveToTrue = async (productId) => {
+//----------------Chuyển trạng thái status thành true----------------
+const updateProductApproveToTrue = async (productIds) => {
   try {
-    const product = await Products.findByIdAndUpdate(
-      productId,
-      { approve: true }, // Update the approve field to true
-      { new: true }
+    const products = await Products.updateMany(
+      { _id: { $in: productIds } },
+      { approve: true }
     );
-
-    if (!product) {
-      throw new Error("Product not found");
+    if (products.modifiedCount === 0) {
+      throw new Error("No product found or already");
     }
-
-    return product;
+    return products;
   } catch (error) {
-    throw new Error(
-      "Error updating product approve status to true: " + error.message
-    );
+    throw new Error("Error updating product approve: " + error.message);
   }
 };
 
-// Chuyển trạng thái status thành false
-const updateProductApproveToFalse = async (productId) => {
+//--------------------------------Ẩn sản phẩm--------------------------------
+const updateProductApproveToFalse = async (productIds) => {
   try {
-    const product = await Products.findByIdAndUpdate(
-      productId,
-      { approve: false }, // Update the approve field to false
-      { new: true }
+    const products = await Products.updateMany(
+      { _id: { $in: productIds } },
+      { approve: false }
     );
-
-    if (!product) {
-      throw new Error("Product not found");
+    if (products.modifiedCount === 0) {
+      throw new Error("No products found or already");
     }
-
-    return product;
+    return products;
   } catch (error) {
-    throw new Error(
-      "Error updating product approve status to false: " + error.message
-    );
+    throw new Error("Error updating product approve: " + error.message);
   }
 };
 
-// Xóa sản phẩm theo ID
-const deleteProduct = async (productId) => {
+//--------------------------------Xóa sản phẩm checkbox--------------------------------
+const deleteProducts = async (productIds) => {
   try {
-    // Update the product's status to false
-    const product = await Products.findByIdAndUpdate(
-      productId,
-      { status: false }, // Set the status field to false
-      { new: true } // Return the updated product document
+    const products = await Products.updateMany(
+      { _id: { $in: productIds } },
+      { status: false }
     );
 
-    if (!product) {
-      throw new Error("Product not found or already deleted");
+    if (products.modifiedCount === 0) {
+      throw new Error("No products found or already deleted");
     }
 
-    return product; // Return the updated product
+    return products;
   } catch (error) {
     throw new Error("Error updating product status: " + error.message);
   }
 };
 
-const getProducts = async () => {
+//--------------------------------Lấy sản phẩm đã duyệt--------------------------------
+const getProducts = async (page = 1, limit = 10, sort, filter) => {
   try {
-    // Define the query for active and approved products
     const query = { status: true, approve: true };
+    const skip = (page - 1) * limit;
 
-    // Fetch all products without pagination
-    const products = await Products.find(query).lean();
+    const pipeline = [
+      { $match: query },
+      {
+        $addFields: {
+          category_id: {
+            $convert: {
+              input: "$category_id",
+              to: "objectId",
+              onError: "$category_id",
+            },
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category_id",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      { $unwind: { path: "$category", preserveNullAndEmptyArrays: true } },
+      {
+        $addFields: {
+          user_id: {
+            $convert: {
+              input: "$user_id",
+              to: "objectId",
+              onError: "$user_id",
+            },
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user_id",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      { $unwind: { path: "$user", preserveNullAndEmptyArrays: true } },
+      {
+        $addFields: {
+          category_name: { $ifNull: ["$category.category_name", "Unknown"] },
+          username: { $ifNull: ["$user.name", "Unknown"] },
+        },
+      },
 
-    // Populate additional details (Category and User)
-    for (const product of products) {
-      const category = await Categories.findById(product.category_id);
-      const user = await Users.findById(product.user_id);
+      // Filter được đặt sau khi đã có category_name và username
+      ...(filter
+        ? [
+            {
+              $match: {
+                [filter[0]]: { $regex: filter[1], $options: "i" },
+              },
+            },
+          ]
+        : []),
 
-      // Add category name and username to the product
-      product.category_name = category?.category_name || "Unknown";
-      product.username = user?.name || "Unknown User";
-    }
+      { $project: { category: 0, user: 0 } },
 
-    // Count the total number of matching products
+      // Sắp xếp nếu có
+      ...(sort ? [{ $sort: { [sort[1]]: sort[0] === "asc" ? 1 : -1 } }] : []),
+
+      // Phân trang
+      { $skip: skip },
+      { $limit: limit },
+    ];
+
+    const products = await Products.aggregate(pipeline);
+
+    // Đếm tổng số sản phẩm
     const totalProducts = await Products.countDocuments(query);
+    const totalPages = Math.ceil(totalProducts / limit);
 
     return {
+      totalProducts,
+      totalPages,
+      skip,
+      limit,
+      currentPage: page,
       products,
-      totalProducts, // Add the total count
     };
   } catch (error) {
     throw new Error("Error fetching products: " + error.message);
   }
 };
 
-// Lấy tất cả sản phẩm với approve = false (đang chờ duyệt)
-const getRequestProducts = async () => {
+//---------------------------------------------------------------
+const getRequestProducts = async (page = 1, limit = 10, sort, filter) => {
   try {
     const query = { status: true, approve: false };
+    const skip = (page - 1) * limit;
 
-    // Fetch all pending products without pagination
-    const products = await Products.find(query).lean();
+    const pipeline = [
+      { $match: query },
+      {
+        $addFields: {
+          category_id: {
+            $convert: {
+              input: "$category_id",
+              to: "objectId",
+              onError: "$category_id",
+            },
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category_id",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      { $unwind: { path: "$category", preserveNullAndEmptyArrays: true } },
+      {
+        $addFields: {
+          user_id: {
+            $convert: {
+              input: "$user_id",
+              to: "objectId",
+              onError: "$user_id",
+            },
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user_id",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      { $unwind: { path: "$user", preserveNullAndEmptyArrays: true } },
+      {
+        $addFields: {
+          category_name: { $ifNull: ["$category.category_name", "Unknown"] },
+          username: { $ifNull: ["$user.name", "Unknown"] },
+        },
+      },
 
-    // Populate additional details (Category and User)
-    for (const product of products) {
-      const category = await Categories.findById(product.category_id);
-      const user = await Users.findById(product.user_id);
-      product.category_name = category?.category_name || "Unknown";
-      product.username = user?.name || "Unknown User";
-    }
+      // Filter được đặt sau khi đã có category_name và username
+      ...(filter
+        ? [
+            {
+              $match: {
+                [filter[0]]: { $regex: filter[1], $options: "i" },
+              },
+            },
+          ]
+        : []),
 
-    // Count the total number of matching pending products
+      { $project: { category: 0, user: 0 } },
+
+      // Sắp xếp nếu có
+      ...(sort ? [{ $sort: { [sort[1]]: sort[0] === "asc" ? 1 : -1 } }] : []),
+
+      // Phân trang
+      { $skip: skip },
+      { $limit: limit },
+    ];
+
+    // Lấy sản phẩm đã xử lý
+    const products = await Products.aggregate(pipeline);
+
+    // Đếm tổng số sản phẩm
     const totalProducts = await Products.countDocuments(query);
+    const totalPages = Math.ceil(totalProducts / limit);
 
     return {
+      totalProducts,
+      totalPages,
+      skip,
+      limit,
+      currentPage: page,
       products,
-      totalProducts, // Add the total count
     };
   } catch (error) {
-    throw new Error(
-      "Error fetching pending approval products: " + error.message
-    );
+    throw new Error("Error fetching products: " + error.message);
   }
 };
 
@@ -128,6 +247,6 @@ export {
   updateProductApproveToTrue,
   getProducts,
   updateProductApproveToFalse,
-  deleteProduct,
+  deleteProducts,
   getRequestProducts,
 };

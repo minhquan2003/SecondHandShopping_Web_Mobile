@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import LeftSidebar from "../components/LeftSidebar";
-import AccountOverview from "../components/Dashboard/AccountOverview";
+import AccountOverview from "../components/ui/AccountOverview";
 
 const AdminLayout = ({ children }) => {
   return (

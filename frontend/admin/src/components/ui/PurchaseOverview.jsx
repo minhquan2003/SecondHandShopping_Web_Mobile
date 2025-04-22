@@ -16,9 +16,7 @@ const PurchaseOverview = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 bg-gray-100 rounded-md mt-4 border-b-2 border-black-300 pb-8">
-      <h2 className="text-xl font-semibold mb-4 mx-4">Purchase Overview</h2>
-
+    <div className="container mx-auto p-4 bg-gray-100 rounded-md mt-4 pb-8">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mx-4">
         {/* Total Orders */}
         <div className="flex flex-col items-center bg-violet-500 py-8 hover:scale-105 transition-all duration-300 ease-in-out">

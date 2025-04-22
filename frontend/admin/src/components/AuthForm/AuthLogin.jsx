@@ -53,39 +53,12 @@ const AuthLogin = () => {
             />
           </label>
 
-          {/* <div className="flex justify-between items-center mb-4">
-            <div className="flex items-center">
-              <input type="checkbox" id="rememberMe" className="mr-2" />
-              <label htmlFor="rememberMe" className="text-sm text-gray-700">
-                Nhớ mật khẩu
-              </label>
-            </div>
-
-            <div className="flex justify-start">
-              <a href="#" className="text-red-500 hover:underline text-sm">
-                Quên mật khẩu?
-              </a>
-            </div>
-          </div> */}
-
           <button
             type="submit"
             className="w-full bg-red-500 text-white p-3 rounded mt-4 font-semibold"
           >
             Đăng Nhập
           </button>
-
-          {/* <div className="flex justify-around mt-4">
-            <a href="#" className="text-red-500 hover:underline text-sm">
-              Quên mật khẩu?
-            </a>
-            <a
-              href="/signup"
-              className="text-green-500 hover:underline text-sm"
-            >
-              Đăng ký tài khoản.
-            </a>
-          </div> */}
         </form>
       </div>
     </div>

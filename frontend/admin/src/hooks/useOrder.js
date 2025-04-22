@@ -62,69 +62,50 @@ const usePurchaseOverview = () => {
   return { overviewData, loading, error };
 };
 
-const useOrders = (page, limit) => {
+const useOrders = (
+  page = 1,
+  fieldSort = "",
+  orderSort = "",
+  searchKey = ""
+) => {
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const fetchOrders = async () => {
-      setLoading(true);
+      let url = `http://localhost:5555/admin/orders?page=${page}`;
+      if (fieldSort && orderSort) {
+        url += `&sort=${orderSort}&sort=${fieldSort}`;
+      }
+      if (searchKey) {
+        url += `&filter=name_buyer&filter=${searchKey}`;
+      }
       try {
-        const response = await axios.get("http://localhost:5555/admin/orders", {
-          params: { page, limit },
-        });
-        setOrders(response.data.data);
-        setLoading(false);
+        setLoading(true);
+        setError(null);
+        const response = await axios.get(url);
+
+        const data = await response.data;
+        if (data.success && Array.isArray(data.orderdetails)) {
+          setOrders(data.orderdetails);
+          setTotalPages(data.totalPages || 1);
+        } else {
+          throw new Error("Invalid response structure");
+        }
       } catch (err) {
         setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    fetchOrders();
-  }, [page, limit]);
-
-  return { orders, loading, error };
-};
-
-const useSearchOrder = (page, limit, name) => {
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchOrders = async () => {
-      if (!name) return; // Nếu không có từ khóa tìm kiếm, không gọi API
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          "http://localhost:5555/admin/search-orders",
-          { params: { page, limit, name } }
-        );
-        setOrders(response.data.data);
-        setError(null); // Xóa lỗi trước đó
-      } catch (err) {
-        if (err.response && err.response.status === 404) {
-          setOrders([]); // Trả về danh sách rỗng nếu không tìm thấy
-          setError("No orders found");
-        } else {
-          setError("An error occurred"); // Xử lý lỗi khác
-        }
+        setOrders([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchOrders();
-  }, [page, limit, name]);
+  }, [page, fieldSort, orderSort, searchKey]);
 
-  return { orders, loading, error };
+  return { orders, loading, error, totalPages };
 };
 
-export {
-  useTopSellingProducts,
-  usePurchaseOverview,
-  useOrders,
-  useSearchOrder,
-};
+export { useTopSellingProducts, usePurchaseOverview, useOrders };

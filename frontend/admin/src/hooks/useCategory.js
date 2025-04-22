@@ -1,28 +1,42 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-function useCategory() {
+function useCategory(page = 1, fieldSort = "", orderSort = "", searchKey = "") {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [totalPages, setTotalPages] = useState(1);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:5555/admin/categories"
-        );
-        if (response.data.success) {
-          setCategories(response.data.data);
+        setLoading(true);
+        setError(null);
+        let url = `http://localhost:5555/admin/categories?page=${page}`;
+
+        if (fieldSort && orderSort) {
+          url += `&sort=${orderSort}&sort=${fieldSort}`;
         }
-      } catch (error) {
-        console.error("Error fetching categories:", error);
+        if (searchKey) {
+          url += `&filter=category_name&filter=${searchKey}`;
+        }
+        const response = await axios.get(url);
+
+        const data = await response.data;
+        if (data.success && Array.isArray(data.categories)) {
+          setCategories(data.categories);
+          setTotalPages(data.totalPages || 1);
+        } else throw new Error("Invalide response structure");
+      } catch (err) {
+        setError(err.message);
+        setCategories([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchCategories();
-  }, []);
+  }, [page, fieldSort, orderSort, searchKey]);
 
   const createCategory = async (newCategory) => {
     try {
@@ -81,7 +95,15 @@ function useCategory() {
     }
   };
 
-  return { categories, loading, createCategory, editCategory, deleteCategory };
+  return {
+    categories,
+    loading,
+    error,
+    totalPages,
+    createCategory,
+    editCategory,
+    deleteCategory,
+  };
 }
 
 export default useCategory;

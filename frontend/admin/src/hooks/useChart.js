@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 const useChart = (year) => {
   const [data, setData] = useState([]);
@@ -7,10 +8,10 @@ const useChart = (year) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
+        const response = await axios.get(
           `http://localhost:5555/admin/statistics/yearly-users?year=${year}`
         );
-        const result = await response.json();
+        const result = await response.data;
         setData(result);
       } catch (error) {
         console.error("Error fetching data:", error);

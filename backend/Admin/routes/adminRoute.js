@@ -19,10 +19,10 @@ import {
 } from "../controllers/user/adminUserController.js";
 
 import {
-  approveProduct,
+  approveProducts,
   getAllProducts,
-  hideProduct,
-  removeProduct,
+  hideProducts,
+  removeProducts,
   getPendingProducts,
 } from "../controllers/product/adminProductController.js";
 
@@ -46,7 +46,6 @@ import {
   addRegulation,
   editRegulation,
   removeRegulation,
-  searchRegulations,
 } from "../controllers/regulation/adminRegulationController.js";
 
 import {
@@ -58,7 +57,6 @@ import {
   fetchTopSellingProducts,
   fetchOrderStats,
   fetchAllOrders,
-  searchOrdersByName,
 } from "../controllers/order/adminOrderController.js";
 import { authenticateJWT } from "../middlewares/middleware.js";
 
@@ -76,36 +74,35 @@ adminRouter.get("/all-users", getAllUsers);
 adminRouter.get("/all-partners", getUsersWithPartnerRole);
 adminRouter.get("/all-requestpartners", getUsersWithRequestPartner);
 adminRouter.get("/all-banner", getAllBannedUsers);
-adminRouter.put("/ban-user/:userId", banUserAccount);
-adminRouter.put("/unban-user/:userId", unbanUserAccount);
-adminRouter.delete("/delete-account/:id", deleteUserAccount);
+adminRouter.put("/ban-user", banUserAccount);
+adminRouter.put("/unban-user", unbanUserAccount);
+adminRouter.delete("/delete-account", deleteUserAccount);
 adminRouter.get("/search", searchUsersByKeyword);
-adminRouter.put("/approve-partner/:userId", switchToPartner);
-adminRouter.put("/delete-role-partner/:userId", switchPartnerToUser);
-adminRouter.put("/switch-to-user/:userId", switchToUser);
+adminRouter.put("/approve-partner", switchToPartner);
+adminRouter.put("/delete-role-partner", switchPartnerToUser);
+adminRouter.put("/switch-to-user", switchToUser);
 
-adminRouter.put("/approve-product/:productId", approveProduct);
-adminRouter.delete("/delete-product/:productId", removeProduct);
+adminRouter.put("/approve-products", approveProducts);
 adminRouter.get("/products", getAllProducts);
-adminRouter.put("/hide-product/:productId", hideProduct);
+adminRouter.put("/hide-products", hideProducts);
 adminRouter.get("/pending-products", getPendingProducts);
+adminRouter.delete("/delete-products", removeProducts);
 
 adminRouter.get("/all-feedback", getFeedbacks);
 
 adminRouter.get("/categories", getCategories);
 adminRouter.post("/category/", createCategory);
 adminRouter.put("/category/:id", editCategory);
-adminRouter.delete("/category/:id", removeCategory);
+adminRouter.delete("/category", removeCategory);
 
 adminRouter.get("/notifications/", fetchAllNotifications);
 adminRouter.post("/notifications/", postNotification);
-adminRouter.delete("/notifications/:id", removeNotification);
+adminRouter.delete("/notifications", removeNotification);
 
 adminRouter.get("/regulations/", getRegulations);
 adminRouter.post("/regulation/", addRegulation);
 adminRouter.put("/regulation/:id", editRegulation);
-adminRouter.delete("/regulation/:id", removeRegulation);
-adminRouter.get("/regulation/search", searchRegulations);
+adminRouter.delete("/regulation", removeRegulation);
 
 adminRouter.get("/statistics/yearly-users", getUserStatistics);
 adminRouter.get("/statistics", getStatisticsByYear);
@@ -113,9 +110,8 @@ adminRouter.get("/statistics", getStatisticsByYear);
 adminRouter.get("/top-selling-products", fetchTopSellingProducts);
 adminRouter.get("/order-stats", fetchOrderStats);
 adminRouter.get("/orders", fetchAllOrders);
-adminRouter.get("/search-orders", searchOrdersByName);
 
 adminRouter.get("/reviews", fetchAllReviews);
-adminRouter.delete("/reviews/:id", removeReview);
+adminRouter.delete("/reviews", removeReview);
 
 export default adminRouter;

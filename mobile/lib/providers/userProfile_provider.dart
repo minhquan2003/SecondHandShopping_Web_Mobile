@@ -8,14 +8,17 @@ import 'package:mime/mime.dart';
 import 'package:http_parser/http_parser.dart';
 import 'dart:io';
 import './login_info.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProfileProvider with ChangeNotifier {
   User? _user;
   User? get user => _user;
-  String? _token = LoginInfo().token;
+  String? _token;
   String? get token => _token;
 
   Future<void> fetchUser(String id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _token = prefs.getString('token');
     final response =
         await http.get(Uri.parse('http://$ip:5555/users/$id'), headers: {
       'Content-Type': 'application/json',
@@ -27,6 +30,9 @@ class UserProfileProvider with ChangeNotifier {
       _user = User.fromJson(data);
       notifyListeners();
     } else {
+      print('$token');
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
       throw Exception('Failed to load user profile');
     }
   }
