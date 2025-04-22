@@ -12,6 +12,7 @@ import '../Profile/menu_profile.dart';
 import '../Profile/before_login.dart';
 import '../Regulation/regulation.dart';
 import '../Profile/before_login.dart';
+import '../Notification/notification.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -65,6 +66,22 @@ class _MainScreenState extends State<MainScreen> {
         ),
         backgroundColor: const Color.fromARGB(255, 255, 238, 84),
         actions: [
+          IconButton(
+            icon: Icon(Icons.notifications),
+            onPressed: () {
+              if (loginInfo.name == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text('Hãy đăng nhập để có trải nghiệm tốt hơn')),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Notifications()),
+                );
+              }
+            },
+          ),
           IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
