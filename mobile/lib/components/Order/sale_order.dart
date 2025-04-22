@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:mobile/components/Order/purchase_order_detail.dart';
 import 'package:mobile/components/Order/sale_order_detail.dart';
 import 'package:provider/provider.dart';
 import '../../providers/login_info.dart';

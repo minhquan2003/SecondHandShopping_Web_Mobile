@@ -21,8 +21,12 @@ class PurchaseOrderDetail extends StatefulWidget {
 class _PurchaseOrderDetailState extends State<PurchaseOrderDetail> {
   late LoginInfo loginInfo;
   late Map<String, dynamic> ordeR;
-  Map<String, dynamic>? orderDetail; // Đổi thành nullable
+  Map<String, dynamic>? orderDetail;
   Map<String, dynamic>? product;
+
+  int _rating = 0;
+  final TextEditingController _commentController = TextEditingController();
+  final TextEditingController _cancelTextController = TextEditingController(); // Controller cho lý do huỷ
 
   @override
   void initState() {
@@ -38,34 +42,98 @@ class _PurchaseOrderDetailState extends State<PurchaseOrderDetail> {
   }
 
   Future<void> fetchOderInfo() async {
-    final responseOrderDetail = await http.get(Uri.parse('http://$ip:5555/orderDetails/order/${ordeR['_id']}'));
-    
-    if (responseOrderDetail.statusCode == 200) {
-      final resultOrderDetail = json.decode(responseOrderDetail.body);
-      setState(() {
-        // Gán giá trị của thuộc tính 'data' vào orderDetail
-        orderDetail = resultOrderDetail['data'] != null && resultOrderDetail['data'].isNotEmpty
-            ? resultOrderDetail['data'][0] // Lấy phần tử đầu tiên trong danh sách
-            : null; // Nếu không có dữ liệu, gán null
-      });
+    orderDetail = ordeR['orderDetail'];
+    product = ordeR['product'];
 
-      if (orderDetail != null) {
-        final responProduct = await http.get(Uri.parse('http://$ip:5555/products/${orderDetail!['product_id']}'));
-        if (responProduct.statusCode == 200) {
-          final resultProduct = json.decode(responProduct.body); // Lấy body để giải mã
-          setState(() {
-            product = resultProduct;
-          });
-        } else {
-          // Xử lý trường hợp không lấy được sản phẩm
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Không thể tải thông tin sản phẩm!')),
-          );
-        }
+    // final responseOrderDetail = await http.get(Uri.parse('http://$ip:5555/orderDetails/order/${ordeR['_id']}'));
+    
+    // if (responseOrderDetail.statusCode == 200) {
+    //   final resultOrderDetail = json.decode(responseOrderDetail.body);
+    //   setState(() {
+    //     orderDetail = resultOrderDetail['data'] != null && resultOrderDetail['data'].isNotEmpty
+    //         ? resultOrderDetail['data'][0]
+    //         : null;
+    //   });
+
+    //   if (orderDetail != null) {
+    //     final responProduct = await http.get(Uri.parse('http://$ip:5555/products/${orderDetail!['product_id']}'));
+    //     if (responProduct.statusCode == 200) {
+    //       final resultProduct = json.decode(responProduct.body);
+    //       setState(() {
+    //         product = resultProduct;
+    //       });
+    //     } else {
+    //       ScaffoldMessenger.of(context).showSnackBar(
+    //         SnackBar(content: Text('Không thể tải thông tin sản phẩm!')),
+    //       );
+    //     }
+    //   }
+    // } else {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(content: Text('Không thể tải được danh sách sản phẩm!')),
+    //   );
+    // }
+  }
+
+  Future<void> handleComment() async {
+    Map<String, dynamic> comment = {
+      "product_id": product?['_id'],
+      "user_id": ordeR['user_id_buyer'],
+      "rating": _rating,
+      "comment": _commentController.text,
+    };
+    final responseCommnet = await http.post(Uri.parse('http://$ip:5555/reviews'),
+    headers: {
+      'Content-Type': 'application/json', // Đặt header cho JSON
+    },
+    body: jsonEncode(comment),);
+    
+    if(responseCommnet.statusCode == 201){
+      print('Đánh giá thành công');
+    }else{
+      print('có lỗi');
+    }
+  }
+
+  void handleCancel() async {
+    final cancelReason = _cancelTextController.text;
+    if (cancelReason.isNotEmpty) {
+      // Gửi yêu cầu huỷ đơn hàng đến server
+      Map<String, dynamic> statusOrder = {
+        "status_order": 'Request Cancel'
+      };
+      final responseCancel = await http.put(Uri.parse('http://$ip:5555/orders/${ordeR['_id']}'),
+      headers: {
+      'Content-Type': 'application/json', // Đặt header cho JSON
+    },
+    body: jsonEncode(statusOrder),);
+    if(responseCancel.statusCode == 200){
+      Map<String, dynamic> notification = {
+        "user_id_created": ordeR['user_id_buyer'],
+        "user_id_receive": ordeR['user_id_seller'],
+        "message": 'Đơn hàng ${product?['name']} của ${loginInfo.name} đã muốn huỷ do: $cancelReason.'
+      };
+      final responseCancel = await http.post(Uri.parse('http://$ip:5555/notifications'),
+      headers: {
+      'Content-Type': 'application/json', // Đặt header cho JSON
+      },
+      body: jsonEncode(notification),);
+      if(responseCancel.statusCode == 201){
+        print('Tạo thông báo thành công');
+      }else{
+        print('có lỗi tạo thông báo');
       }
+      print('Gửi huỷ thành công');
+    }else{
+      print('có lỗi tạo yêu cầu huỷ');
+    }
+      _cancelTextController.clear();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Yêu cầu huỷ đơn hàng đã được gửi!')),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Không thể tải được danh sách sản phẩm!')),
+        SnackBar(content: Text('Vui lòng nhập lý do huỷ đơn hàng!')),
       );
     }
   }
@@ -92,32 +160,6 @@ class _PurchaseOrderDetailState extends State<PurchaseOrderDetail> {
                     SizedBox(height: 16),
                     Text('Thông tin sản phẩm', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                     SizedBox(height: 8),
-                    Container(
-                      height: 60,
-                      child: GestureDetector(
-                        onTap: () {
-                          // Xử lý khi nhấn vào
-                        },
-                        child: Card(
-                          color: Colors.amber,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Icon(Icons.map),
-                              SizedBox(width: 8), 
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text('${ordeR['name']}  ${ordeR['phone']}'),
-                                  Text(ordeR['address']),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: Image.network(
@@ -131,21 +173,91 @@ class _PurchaseOrderDetailState extends State<PurchaseOrderDetail> {
                     Text('${product?['name']}'),
                     Text('Đơn giá: ${formatPrice(product?['price'])} x${product?['quantity']}'),
                     Text('Thành tiền: ${formatPrice(ordeR['total_amount'])}'),
-                    
-                    ElevatedButton(
-                      onPressed: () {
-                        print('đơn hàng: $ordeR ======= \n chi tiết: $orderDetail ======= \n sản phẩm: $product');
-                      },
-                      child: Text('Xem trước khi lưu'),
-                    ),
+
+                    // Phần đánh giá sản phẩm
+                    ordeR['status_order'] == 'Success' 
+                    ? Column(children: [
+                        Text('Đánh giá sản phẩm', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(5, (index) {
+                            return IconButton(
+                              icon: Icon(
+                                index < _rating ? Icons.star : Icons.star_border,
+                                color: Colors.amber,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _rating = index + 1; // Cập nhật số sao đánh giá
+                                });
+                              },
+                            );
+                          }),
+                        ),
+                        TextField(
+                          controller: _commentController,
+                          decoration: InputDecoration(
+                            labelText: 'Nhập nhận xét',
+                            border: OutlineInputBorder(),
+                          ),
+                          maxLines: 4,
+                        ),
+                        SizedBox(height: 8),
+                        ElevatedButton(
+                          onPressed: () {
+                            // Xử lý gửi đánh giá
+                            print('đơn hàng: $ordeR ======= \n chi tiết: $orderDetail ======= \n sản phẩm: $product');
+                            final comment = _commentController.text;
+                            if (_rating > 0 && comment.isNotEmpty) {
+                              print('Đánh giá: $_rating, Nhận xét: $comment');
+                              handleComment();
+                              _rating = 0;
+                              _commentController.clear();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Cảm ơn bạn đã gửi đánh giá!')),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Vui lòng chọn số sao và nhập nhận xét!')),
+                              );
+                            }
+                          },
+                          child: Text('Gửi đánh giá'),
+                        ),
+                      ]) : SizedBox.shrink(),
+
+                    // Phần huỷ đơn hàng
+                    (ordeR['status_order'] == 'Pending' || ordeR['status_order'] == 'Confirmed')
+                    ? Column(
+                        children: [
+                          SizedBox(height: 16),
+                          Text('Huỷ đơn hàng', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: TextField(
+                              controller: _cancelTextController,
+                              decoration: InputDecoration(
+                                labelText: 'Nguyên nhân muốn huỷ đơn hàng',
+                                border: OutlineInputBorder(),
+                              ),
+                              maxLines: 2,
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: handleCancel,
+                            child: Text('Huỷ đơn hàng'),
+                          ),
+                        ],
+                      )
+                    : SizedBox.shrink(),
+
                     SizedBox(height: 16),
                     Text('Các sản phẩm tương tự', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                     Container(
-                      height: 400, // Đặt chiều cao cho ProductList
-                      child: Expanded(child: 
-                      ProductList(
+                      height: 400,
+                      child: ProductList(
                         urlBase: 'http://$ip:5555/products/category/${product!['category_id']}',
-                      ),)
+                      ),
                     ),
                   ],
                 ),

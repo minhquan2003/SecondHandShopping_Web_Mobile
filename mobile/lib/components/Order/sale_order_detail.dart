@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:mobile/components/Product/product_list.dart';
 import 'package:provider/provider.dart';
 import '../../providers/login_info.dart';
 import 'package:http/http.dart' as http;
@@ -23,6 +22,8 @@ class _SaleOrderDetailState extends State<SaleOrderDetail> {
   late Map<String, dynamic> ordeR;
   Map<String, dynamic>? orderDetail; // Đổi thành nullable
   Map<String, dynamic>? product;
+
+   final TextEditingController _cancelTextController = TextEditingController();
 
   @override
   void initState() {
@@ -67,6 +68,84 @@ class _SaleOrderDetailState extends State<SaleOrderDetail> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Không thể tải được danh sách sản phẩm!')),
       );
+    }
+  }
+
+  void handleCancel() async {
+    final cancelReason = _cancelTextController.text;
+    if (cancelReason.isNotEmpty) {
+      // Gửi yêu cầu huỷ đơn hàng đến server
+      Map<String, dynamic> statusOrder = {
+        "status_order": 'Cancelled'
+      };
+      final responseCancel = await http.put(Uri.parse('http://$ip:5555/orders/${ordeR['_id']}'),
+      headers: {
+      'Content-Type': 'application/json', // Đặt header cho JSON
+    },
+    body: jsonEncode(statusOrder),);
+    if(responseCancel.statusCode == 200){
+      Map<String, dynamic> notification = {
+        "user_id_created": ordeR['user_id_seller'],
+        "user_id_receive": ordeR['user_id_buyer'],
+        "message": 'Đơn hàng ${product?['name']} của bạn đã bị huỷ do: $cancelReason.'
+      };
+      final responseCancel = await http.post(Uri.parse('http://$ip:5555/notifications'),
+      headers: {
+      'Content-Type': 'application/json', // Đặt header cho JSON
+      },
+      body: jsonEncode(notification),);
+      if(responseCancel.statusCode == 201){
+        print('Tạo thông báo thành công');
+      }else{
+        print('có lỗi tạo thông báo');
+      }
+      print('Gửi huỷ thành công');
+    }else{
+      print('có lỗi tạo yêu cầu huỷ');
+    }
+      _cancelTextController.clear();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Huỷ đơn hàng đã được gửi!')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Vui lòng nhập lý do huỷ đơn hàng!')),
+      );
+    }
+  }
+
+  void handleChangeStatusOrder() async {
+    Map<String, dynamic> statusOrder = {
+      "status_order": ordeR['status_order'] == "Pending" ? "Confirmed" :
+      ordeR['status_order'] == "Confirmed" ? "Packaged" :
+      ordeR['status_order'] == "Packaged" ? "Shipping" : 
+      ordeR['status_order'] == "Request Cancel" ? "Cancelled" : "Success"
+    };
+    final responseCancel = await http.put(Uri.parse('http://$ip:5555/orders/${ordeR['_id']}'),
+    headers: {'Content-Type': 'application/json',},
+    body: jsonEncode(statusOrder),);
+    if(responseCancel.statusCode == 200){
+      Map<String, dynamic> notification = {
+        "user_id_created": ordeR['user_id_seller'],
+        "user_id_receive": ordeR['user_id_buyer'],
+        "message": 'Đơn hàng ${product?['name']} của bạn ${ordeR['status_order'] == "Pending" ? "đã được xác nhận và chờ đóng gói." :
+      ordeR['status_order'] == "Confirmed" ? "được đóng gói và chờ gửi đến bộ phận vận chuyển." :
+      ordeR['status_order'] == "Packaged" ? "đang trên đường vận chuyển đến bạn." :
+      ordeR['status_order'] == "Request Cancel" ? "đã được xác nhận huỷ." : "đã được giao thành công."}.'
+      };
+      final responseCancel = await http.post(Uri.parse('http://$ip:5555/notifications'),
+      headers: {
+      'Content-Type': 'application/json', // Đặt header cho JSON
+      },
+      body: jsonEncode(notification),);
+      if(responseCancel.statusCode == 201){
+        print('Tạo thông báo thành công');
+      }else{
+        print('có lỗi tạo thông báo');
+      }
+      print('Gửi chuyển trạng thái thành công');
+    }else{
+      print('có lỗi chuyển trạng thái đơn hàng.');
     }
   }
 
@@ -141,13 +220,52 @@ class _SaleOrderDetailState extends State<SaleOrderDetail> {
                       child: Text('Xem trước khi lưu'),
                     ),
                     SizedBox(height: 16),
-                    Text('Các sản phẩm tương tự', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                    Container(
-                      height: 400, // Đặt chiều cao cho ProductList
-                      child: Expanded(child: 
-                      ProductList(
-                        urlBase: 'http://$ip:5555/products/category/${product!['category_id']}',
-                      ),)
+                    (ordeR['status_order'] == 'Pending' || ordeR['status_order'] == 'Confirmed')
+                    ? Column(
+                        children: [
+                          SizedBox(height: 16),
+                          Text('Huỷ đơn hàng', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: TextField(
+                              controller: _cancelTextController,
+                              decoration: InputDecoration(
+                                labelText: 'Nguyên nhân muốn huỷ đơn hàng',
+                                border: OutlineInputBorder(),
+                              ),
+                              maxLines: 2,
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: (){
+                              if(_cancelTextController.text.isNotEmpty){
+                                handleCancel();
+                              }else{
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Vui lòng nhập nguyên nhân huỷ đơn!')),
+                                );
+                              }
+                            },
+                            child: Text('Huỷ đơn hàng'),
+                          ),
+                        ],
+                      )
+                    : ordeR['status_order'] == 'Request Cancel' ?
+                    ElevatedButton(
+                      onPressed: (){
+                        
+                      },
+                      child: Text('Xác nhận huỷ'),
+                    )
+                    : SizedBox.shrink(),
+                    (ordeR['status_order'] == 'Success' || ordeR['status_order'] == 'Request Cancel'
+                    || ordeR['status_order'] == 'Cancelled') ?
+                    SizedBox.shrink()
+                    : ElevatedButton(
+                      onPressed: (){
+                        handleChangeStatusOrder();
+                      },
+                      child: Text('Xác nhận đơn hàng'),
                     ),
                   ],
                 ),

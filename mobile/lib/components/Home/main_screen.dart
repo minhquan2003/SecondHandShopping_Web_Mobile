@@ -9,6 +9,7 @@ import '../Cart/cart.dart';
 import '../SellerPage/seller_page.dart';
 import '../PostProduct/post_edit_product.dart';
 import '../Profile/menu_profile.dart';
+import '../Notification/notification.dart';
 
 
 class MainScreen extends StatefulWidget {
@@ -54,6 +55,22 @@ class _MainScreenState extends State<MainScreen> {
         ),
         backgroundColor: const Color.fromARGB(255, 255, 238, 84),
         actions: [
+          IconButton(
+            icon: Icon(Icons.notifications),
+            onPressed: () {
+              if (loginInfo.name == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text('Hãy đăng nhập để có trải nghiệm tốt hơn')),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Notifications()),
+                );
+              }
+            },
+          ),
           IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
