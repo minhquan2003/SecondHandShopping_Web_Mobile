@@ -18,6 +18,12 @@ class Notifications extends StatefulWidget {
 class _NotificationsState extends State<Notifications> {
 
   @override
+  void initState() {
+    super.initState();
+    
+  }
+
+  @override
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(

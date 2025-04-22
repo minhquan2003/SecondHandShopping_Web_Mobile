@@ -11,7 +11,6 @@ import '../PostProduct/post_edit_product.dart';
 import '../Profile/menu_profile.dart';
 import '../Profile/before_login.dart';
 import '../Regulation/regulation.dart';
-import '../Profile/before_login.dart';
 import '../Notification/notification.dart';
 
 class MainScreen extends StatefulWidget {
