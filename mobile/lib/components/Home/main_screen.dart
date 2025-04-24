@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'home.dart';
 import '../Login/login.dart';
 import '../Cart/cart.dart';
-import '../SellerPage/seller_page.dart';
+import '../SellerPage/edit_seller_page.dart';
 import '../PostProduct/post_edit_product.dart';
 import '../Profile/menu_profile.dart';
 import '../Profile/before_login.dart';
@@ -24,7 +24,7 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 2;
 
   final List<Widget> _pages = [
-    SellerPage(),
+    EditSellerPage(),
     PostEditProduct(
       product: {},
     ),

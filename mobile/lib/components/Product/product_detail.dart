@@ -144,6 +144,21 @@ class _ProductDetailState extends State<ProductDetail> {
     }
   }
 
+  void deleteProductById(String id) async {
+    try {
+      final response = await http.delete(Uri.parse('http://$ip:5555/products/$id'),);
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body); // Trả về sản phẩm
+      } else {
+        throw Exception('Không có sản phẩm nào. Mã trạng thái: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error delete product: $error');
+      throw Exception('Không có sản phẩm nào.');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final loginInfo = Provider.of<LoginInfo>(context);
@@ -235,6 +250,31 @@ class _ProductDetailState extends State<ProductDetail> {
                         hintText: 'Nhập số lượng',
                       ),
                     ),
+                    if(product['user_id'] == loginInfo.id)
+                      Column(children: [
+                        Center(child: Text('Đây là sản phẩm của bạn')),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                          ElevatedButton.icon(onPressed: 
+                            () => {
+                              Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => PostEditProduct(product: product)))
+                            }, 
+                            label: Text('Chỉnh sửa'),
+                            icon: Icon(Icons.edit),
+                          ),
+                          ElevatedButton.icon(
+                            onPressed: 
+                            () => {
+                              deleteProductById(product['_id'])
+                            }, 
+                            label: Text('Xoá'),
+                            icon: Icon(Icons.delete),
+                          )
+                        ],),
+                      ],
+                    ),
                     Container(
                         constraints: BoxConstraints(maxWidth: 800),
                         margin: EdgeInsets.symmetric(horizontal: 16, vertical: 28),
@@ -308,29 +348,7 @@ class _ProductDetailState extends State<ProductDetail> {
                           urlBase: 'http://$ip:5555/products/category/${product['category_id']}',
                         ),)
                       ),
-                    if(product['user_id'] == loginInfo.id)
-                      Column(children: [
-                        Center(child: Text('Đây là sản phẩm của bạn')),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                          ElevatedButton.icon(onPressed: 
-                            () => {
-                              Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => PostEditProduct(product: product)))
-                            }, 
-                            label: Text('Chỉnh sửa'),
-                            icon: Icon(Icons.edit),
-                          ),
-                          ElevatedButton.icon(onPressed: 
-                            () => {
-
-                            }, 
-                            label: Text('Xoá'),
-                            icon: Icon(Icons.delete),
-                          )
-                        ],),
-                      ],)
+                    
                   ],
                 ),
               ),
