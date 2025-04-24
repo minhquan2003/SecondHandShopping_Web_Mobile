@@ -15,7 +15,11 @@ const useRegulation = (page = 1) => {
       try {
         setLoading(true);
         setError(null);
-        const response = await axios.get(url);
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
 
         const data = await response.data;
 
@@ -68,6 +72,11 @@ const useRegulation = (page = 1) => {
         "http://localhost:5555/admin/regulation",
         {
           regulationIds: selectedIds,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
       );
 
@@ -104,7 +113,12 @@ const useRegulation = (page = 1) => {
 
       const response = await axios.put(
         `http://localhost:5555/admin/regulation/${id}`,
-        updatedData
+        updatedData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
 
       if (response.status === 200) {

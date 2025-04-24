@@ -9,7 +9,12 @@ const useChart = (year) => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5555/admin/statistics/yearly-users?year=${year}`
+          `http://localhost:5555/admin/statistics/yearly-users?year=${year}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
         );
         const result = await response.data;
         setData(result);

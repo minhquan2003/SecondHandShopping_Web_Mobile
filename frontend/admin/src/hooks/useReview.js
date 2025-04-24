@@ -14,7 +14,11 @@ const useReview = (page = 1) => {
       try {
         setLoading(true);
         setError(null);
-        const response = await axios.get(url);
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
 
         const data = response.data;
         if (data.success && Array.isArray(data.reviews)) {
@@ -35,9 +39,17 @@ const useReview = (page = 1) => {
 
   const deleteReview = async (selectedIds) => {
     try {
-      await axios.delete("http://localhost:5555/admin/reviews", {
-        reviewIds: selectedIds,
-      });
+      await axios.delete(
+        "http://localhost:5555/admin/reviews",
+        {
+          reviewIds: selectedIds,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       setReviews((prev) =>
         prev.filter((review) => !selectedIds.includes(review._id))
