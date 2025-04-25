@@ -58,7 +58,8 @@ import {
   fetchOrderStats,
   fetchAllOrders,
 } from "../controllers/order/adminOrderController.js";
-import { authenticateJWT } from "../middlewares/middleware.js";
+import { authorize } from "../middlewares/authorize.js";
+import { validateLoginUser } from "../middlewares/checkAuth.js";
 
 import {
   fetchAllReviews,
@@ -67,51 +68,51 @@ import {
 
 const adminRouter = express.Router();
 
-adminRouter.post("/login", loginAdmin);
-adminRouter.post("/logout", authenticateJWT, logoutAdmin);
+adminRouter.post("/login", validateLoginUser, loginAdmin);
+adminRouter.post("/logout", logoutAdmin);
 
-adminRouter.get("/all-users", getAllUsers);
-adminRouter.get("/all-partners", getUsersWithPartnerRole);
-adminRouter.get("/all-requestpartners", getUsersWithRequestPartner);
-adminRouter.get("/all-banner", getAllBannedUsers);
-adminRouter.put("/ban-user", banUserAccount);
-adminRouter.put("/unban-user", unbanUserAccount);
-adminRouter.delete("/delete-account", deleteUserAccount);
-adminRouter.get("/search", searchUsersByKeyword);
-adminRouter.put("/approve-partner", switchToPartner);
-adminRouter.put("/delete-role-partner", switchPartnerToUser);
-adminRouter.put("/switch-to-user", switchToUser);
+adminRouter.get("/all-users", authorize, getAllUsers);
+adminRouter.get("/all-partners", authorize, getUsersWithPartnerRole);
+adminRouter.get("/all-requestpartners", authorize, getUsersWithRequestPartner);
+adminRouter.get("/all-banner", authorize, getAllBannedUsers);
+adminRouter.put("/ban-user", authorize, banUserAccount);
+adminRouter.put("/unban-user", authorize, unbanUserAccount);
+adminRouter.delete("/delete-account", authorize, deleteUserAccount);
+adminRouter.get("/search", authorize, searchUsersByKeyword);
+adminRouter.put("/approve-partner", authorize, switchToPartner);
+adminRouter.put("/delete-role-partner", authorize, switchPartnerToUser);
+adminRouter.put("/switch-to-user", authorize, switchToUser);
 
-adminRouter.put("/approve-products", approveProducts);
-adminRouter.get("/products", getAllProducts);
-adminRouter.put("/hide-products", hideProducts);
-adminRouter.get("/pending-products", getPendingProducts);
-adminRouter.delete("/delete-products", removeProducts);
+adminRouter.put("/approve-products", authorize, approveProducts);
+adminRouter.get("/products", authorize, getAllProducts);
+adminRouter.put("/hide-products", authorize, hideProducts);
+adminRouter.get("/pending-products", authorize, getPendingProducts);
+adminRouter.delete("/delete-products", authorize, removeProducts);
 
-adminRouter.get("/all-feedback", getFeedbacks);
+adminRouter.get("/all-feedback", authorize, getFeedbacks);
 
-adminRouter.get("/categories", getCategories);
-adminRouter.post("/category/", createCategory);
-adminRouter.put("/category/:id", editCategory);
-adminRouter.delete("/category", removeCategory);
+adminRouter.get("/categories", authorize, getCategories);
+adminRouter.post("/category/", authorize, createCategory);
+adminRouter.put("/category/:id", authorize, editCategory);
+adminRouter.delete("/category", authorize, removeCategory);
 
-adminRouter.get("/notifications/", fetchAllNotifications);
-adminRouter.post("/notifications/", postNotification);
-adminRouter.delete("/notifications", removeNotification);
+adminRouter.get("/notifications/", authorize, fetchAllNotifications);
+adminRouter.post("/notifications/", authorize, postNotification);
+adminRouter.delete("/notifications", authorize, removeNotification);
 
-adminRouter.get("/regulations/", getRegulations);
-adminRouter.post("/regulation/", addRegulation);
-adminRouter.put("/regulation/:id", editRegulation);
-adminRouter.delete("/regulation", removeRegulation);
+adminRouter.get("/regulations/", authorize, getRegulations);
+adminRouter.post("/regulation/", authorize, addRegulation);
+adminRouter.put("/regulation/:id", authorize, editRegulation);
+adminRouter.delete("/regulation", authorize, removeRegulation);
 
-adminRouter.get("/statistics/yearly-users", getUserStatistics);
-adminRouter.get("/statistics", getStatisticsByYear);
+adminRouter.get("/statistics/yearly-users", authorize, getUserStatistics);
+adminRouter.get("/statistics", authorize, getStatisticsByYear);
 
-adminRouter.get("/top-selling-products", fetchTopSellingProducts);
-adminRouter.get("/order-stats", fetchOrderStats);
-adminRouter.get("/orders", fetchAllOrders);
+adminRouter.get("/top-selling-products", authorize, fetchTopSellingProducts);
+adminRouter.get("/order-stats", authorize, fetchOrderStats);
+adminRouter.get("/orders", authorize, fetchAllOrders);
 
-adminRouter.get("/reviews", fetchAllReviews);
-adminRouter.delete("/reviews", removeReview);
+adminRouter.get("/reviews", authorize, fetchAllReviews);
+adminRouter.delete("/reviews", authorize, removeReview);
 
 export default adminRouter;

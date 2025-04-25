@@ -14,7 +14,11 @@ const useNotification = (page = 1) => {
       try {
         setLoading(true);
         setError(null);
-        const response = await axios.get(url);
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
 
         const data = await response.data;
         if (data.success && Array.isArray(data.notifications)) {
@@ -38,7 +42,12 @@ const useNotification = (page = 1) => {
     try {
       const response = await axios.post(
         "http://localhost:5555/admin/notifications/",
-        payload
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
       return response.data;
     } catch (err) {
@@ -56,6 +65,11 @@ const useNotification = (page = 1) => {
         "http://localhost:5555/admin/notifications",
         {
           notificationIds: selectedIds,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
       );
       if (!response.ok) throw new Error("Failed to delete notification");

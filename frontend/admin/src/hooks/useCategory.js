@@ -20,7 +20,11 @@ function useCategory(page = 1, fieldSort = "", orderSort = "", searchKey = "") {
         if (searchKey) {
           url += `&filter=category_name&filter=${searchKey}`;
         }
-        const response = await axios.get(url);
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
 
         const data = await response.data;
         if (data.success && Array.isArray(data.categories)) {
@@ -42,7 +46,12 @@ function useCategory(page = 1, fieldSort = "", orderSort = "", searchKey = "") {
     try {
       const response = await axios.post(
         "http://localhost:5555/admin/category/",
-        newCategory
+        newCategory,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
       if (response.data.success) {
         // Cập nhật ngay lập tức mà không cần load lại trang
@@ -60,7 +69,12 @@ function useCategory(page = 1, fieldSort = "", orderSort = "", searchKey = "") {
     try {
       const response = await axios.put(
         `http://localhost:5555/admin/category/${id}`,
-        updatedCategory
+        updatedCategory,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
       if (response.data.success) {
         setCategories((prevCategories) =>
@@ -78,7 +92,12 @@ function useCategory(page = 1, fieldSort = "", orderSort = "", searchKey = "") {
     try {
       // Gửi request đến backend để xóa category
       const response = await axios.delete(
-        `http://localhost:5555/admin/category/${id}`
+        `http://localhost:5555/admin/category/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
 
       // Kiểm tra nếu xóa thành công, cập nhật lại danh sách categories

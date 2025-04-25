@@ -35,7 +35,11 @@ const useUser = (
       try {
         setLoading(true);
         setError(null);
-        const response = await axios.get(url);
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
         const data = response.data;
 
         if (data.success && Array.isArray(data.users)) {
@@ -59,9 +63,17 @@ const useUser = (
   // Ban user
   const banUser = async (selectedIds) => {
     try {
-      await axios.put("http://localhost:5555/admin/ban-user", {
-        userIds: selectedIds,
-      });
+      await axios.put(
+        "http://localhost:5555/admin/ban-user",
+        {
+          userIds: selectedIds,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       setUsers((prev) =>
         prev.filter((user) => !selectedIds.includes(user._id))
@@ -75,9 +87,17 @@ const useUser = (
   // Unban user
   const unbanUser = async (selectedIds) => {
     try {
-      await axios.put("http://localhost:5555/admin/unban-user", {
-        userIds: selectedIds,
-      });
+      await axios.put(
+        "http://localhost:5555/admin/unban-user",
+        {
+          userIds: selectedIds,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       setUsers((prev) =>
         prev.filter((user) => !selectedIds.includes(user._id))
@@ -91,9 +111,17 @@ const useUser = (
   // Delete users
   const deleteUsers = async (selectedIds) => {
     try {
-      await axios.delete("http://localhost:5555/admin/delete-account", {
-        data: { userIds: selectedIds },
-      });
+      await axios.delete(
+        "http://localhost:5555/admin/delete-account",
+        {
+          data: { userIds: selectedIds },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       setUsers((prev) =>
         prev.filter((user) => !selectedIds.includes(user._id))

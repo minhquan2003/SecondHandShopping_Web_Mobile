@@ -20,7 +20,7 @@ export const useAuth = () => {
       const data = await response.json();
       localStorage.setItem("token", data.token);
       window.location.href = "/"; // Redirect to dashboard
-    } catch (err) {
+    } catch {
       setError("Không thể kết nối đến máy chủ. Vui lòng thử lại sau.");
     }
   };

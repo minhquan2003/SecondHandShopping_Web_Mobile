@@ -31,7 +31,11 @@ const usePartners = (
       try {
         setLoading(true);
         setError(null);
-        const response = await axios.get(url);
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
         const data = response.data;
 
         if (data.success && Array.isArray(data.partners)) {
@@ -54,9 +58,17 @@ const usePartners = (
   // Function to approve a partner
   const approvePartner = async (selectedIds) => {
     try {
-      await axios.put(`http://localhost:5555/admin/approve-partner`, {
-        userIds: selectedIds,
-      });
+      await axios.put(
+        `http://localhost:5555/admin/approve-partner`,
+        {
+          userIds: selectedIds,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       setPartners((prev) =>
         prev.filter((partner) => !selectedIds.includes(partner._id))
@@ -70,9 +82,17 @@ const usePartners = (
   // Function to deny a partner
   const denyPartner = async (selectedIds) => {
     try {
-      await axios.put(`http://localhost:5555/admin/switch-to-user`, {
-        userIds: selectedIds,
-      });
+      await axios.put(
+        `http://localhost:5555/admin/switch-to-user`,
+        {
+          userIds: selectedIds,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       setPartners((prev) =>
         prev.filter((partner) => !selectedIds.includes(partner._id))
@@ -85,9 +105,17 @@ const usePartners = (
 
   const deletePartner = async (selectedIds) => {
     try {
-      await axios.delete(`http://localhost:5555/admin/delete-role-partner`, {
-        userIds: selectedIds,
-      });
+      await axios.delete(
+        `http://localhost:5555/admin/delete-role-partner`,
+        {
+          userIds: selectedIds,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       setPartners((prev) =>
         prev.filter((partner) => !selectedIds.includes(partner._id))
