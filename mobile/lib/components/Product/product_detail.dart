@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mobile/components/PostProduct/post_edit_product.dart';
 import 'package:mobile/components/Product/product_list.dart';
+import 'package:mobile/components/SellerPage/seller_page.dart';
 import '../Checkout/checkout.dart';
 import '../../utils/convert.dart';
 import '../Cart/cart.dart';
@@ -250,6 +251,14 @@ class _ProductDetailState extends State<ProductDetail> {
                         hintText: 'Nhập số lượng',
                       ),
                     ),
+                    Center(child: ElevatedButton.icon(
+                      onPressed: 
+                      () => {
+                        Navigator.push(context, 
+                          MaterialPageRoute(builder: (context) => SellerPage(idSeller: product['user_id'],)),)
+                      }, 
+                      label: Text('Xem trang người bán'), 
+                    ),),
                     if(product['user_id'] == loginInfo.id)
                       Column(children: [
                         Center(child: Text('Đây là sản phẩm của bạn')),
