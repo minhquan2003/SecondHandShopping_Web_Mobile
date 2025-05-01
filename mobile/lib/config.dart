@@ -1,4 +1,4 @@
-const String ip = '192.168.2.247';
+const String ip = '192.168.1.14';
 // const String ip = '192.168.1.248';
 // const String ip = '192.168.2.242';
 // const String ip = '192.168.158.141';

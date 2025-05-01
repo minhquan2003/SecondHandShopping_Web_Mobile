@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/components/Messenger/conversations.dart';
 import 'package:mobile/components/Order/purchase_order.dart';
 import 'package:mobile/components/Order/sale_order.dart';
 import 'package:mobile/providers/login_info.dart';
@@ -65,6 +66,22 @@ class _MainScreenState extends State<MainScreen> {
         ),
         backgroundColor: const Color.fromARGB(255, 255, 238, 84),
         actions: [
+          IconButton(
+            icon: Icon(Icons.message),
+            onPressed: () {
+              if (loginInfo.name == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text('Hãy đăng nhập để có trải nghiệm tốt hơn')),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Conversations()),
+                );
+              }
+            },
+          ),
           IconButton(
             icon: Icon(Icons.notifications),
             onPressed: () {

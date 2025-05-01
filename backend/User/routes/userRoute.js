@@ -17,7 +17,8 @@ userRoute.post("/", addUser);
 userRoute.post("/email", getUserByEmail);
 
 userRoute.get("/", getUsers);
-userRoute.get("/:id", authorize, getUserById);
+userRoute.get("/:id", getUserById);
+// userRoute.get("/:id", authorize, getUserById);
 userRoute.post("/comparePassword", comparePassword);
 
 userRoute.put("/:id", authorize, updateUserById);
