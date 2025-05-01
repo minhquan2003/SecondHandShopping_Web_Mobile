@@ -1,5 +1,6 @@
 // hooks/useChart.js
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 const useChartOrderProduct = (year) => {
   const [data, setData] = useState([]);
@@ -8,8 +9,13 @@ const useChartOrderProduct = (year) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5555/admin/statistics?year=${year}`
+        const response = await axios(
+          `http://localhost:5555/admin/statistics?year=${year}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
         );
         const result = await response.json();
         setData(result);

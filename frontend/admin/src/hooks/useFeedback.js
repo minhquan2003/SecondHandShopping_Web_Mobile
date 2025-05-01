@@ -22,7 +22,11 @@ const useFeedback = (page = 1, fieldSort, orderSort, searchKey) => {
       try {
         setLoading(true);
         setError(null);
-        const response = await axios.get(url);
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
 
         const data = await response.data;
         if (data.success && Array.isArray(data.feedbacks)) {

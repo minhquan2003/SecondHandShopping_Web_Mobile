@@ -14,6 +14,11 @@ const useTopSellingProducts = (timeFrame) => {
           `http://localhost:5555/admin/top-selling-products`,
           {
             params: { timeFrame },
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
           }
         );
         setTopProducts(response.data.data);
@@ -46,7 +51,12 @@ const usePurchaseOverview = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          "http://localhost:5555/admin/order-stats"
+          "http://localhost:5555/admin/order-stats",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
         );
         setOverviewData(response.data.data);
         setLoading(false);
@@ -85,7 +95,11 @@ const useOrders = (
       try {
         setLoading(true);
         setError(null);
-        const response = await axios.get(url);
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
 
         const data = await response.data;
         if (data.success && Array.isArray(data.orderdetails)) {

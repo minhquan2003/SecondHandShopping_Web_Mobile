@@ -32,7 +32,11 @@ const useProducts = (
       try {
         setLoading(true);
         setError(null); // Reset error before fetch
-        const response = await axios.get(url);
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
 
         const data = response.data;
 
@@ -55,9 +59,17 @@ const useProducts = (
 
   const approveProducts = async (selectedIds) => {
     try {
-      await axios.put("http://localhost:5555/admin/approve-products", {
-        productIds: selectedIds,
-      });
+      await axios.put(
+        "http://localhost:5555/admin/approve-products",
+        {
+          productIds: selectedIds,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       setProducts((prev) =>
         prev.filter((product) => !selectedIds.includes(product._id))
@@ -70,9 +82,17 @@ const useProducts = (
 
   const hideProducts = async (selectedIds) => {
     try {
-      await axios.put("http://localhost:5555/admin/hide-products", {
-        productIds: selectedIds,
-      });
+      await axios.put(
+        "http://localhost:5555/admin/hide-products",
+        {
+          productIds: selectedIds,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       setProducts((prev) =>
         prev.filter((product) => !selectedIds.includes(product._id))
@@ -85,9 +105,17 @@ const useProducts = (
 
   const deleteSelectedProducts = async (selectedIds) => {
     try {
-      await axios.delete("http://localhost:5555/admin/delete-products", {
-        productIds: selectedIds,
-      });
+      await axios.delete(
+        "http://localhost:5555/admin/delete-products",
+        {
+          productIds: selectedIds,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       setProducts((prev) =>
         prev.filter((product) => !selectedIds.includes(product._id))
