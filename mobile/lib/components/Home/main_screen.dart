@@ -12,6 +12,8 @@ import '../Profile/menu_profile.dart';
 import '../Profile/before_login.dart';
 import '../Regulation/regulation.dart';
 import '../Notification/notification.dart';
+import '../UI/searchbar_widget.dart';
+import '../Search/search_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -56,10 +58,24 @@ class _MainScreenState extends State<MainScreen> {
       appBar: AppBar(
         title: Row(
           children: [
-            Image.network(
-              'https://res.cloudinary.com/dd6pnq2is/image/upload/v1741941433/logo_w30ahh.png',
-              height: 40, // Điều chỉnh chiều cao hình ảnh
+            // Image.network(
+            //   'https://res.cloudinary.com/dd6pnq2is/image/upload/v1741941433/logo_w30ahh.png',
+            //   height: 40, // Điều chỉnh chiều cao hình ảnh
+            // ),
+            Expanded(
+              child: SearchbarWidget(
+                hintText: "Tìm kiếm",
+                icon: Icons.search,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SearchScreen()),
+                  );
+                },
+              ),
             ),
+
             SizedBox(width: 8), // Khoảng cách giữa logo và văn bản
           ],
         ),

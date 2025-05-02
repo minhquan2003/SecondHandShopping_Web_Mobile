@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert'; // Để chuyển đổi JSON
-import 'product_card.dart';
+import '../UI/product_card.dart';
 
 class ProductList extends StatefulWidget {
   final String urlBase;
@@ -26,7 +26,7 @@ class _ProductListState extends State<ProductList> {
 
   Future<void> fetchProducts() async {
     final response = await http.get(Uri.parse(widget.urlBase));
-    
+
     if (response.statusCode == 200) {
       setState(() {
         products = json.decode(response.body);
@@ -39,7 +39,7 @@ class _ProductListState extends State<ProductList> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading 
+    return isLoading
         ? const Center(child: CircularProgressIndicator())
         : Padding(
             padding: const EdgeInsets.all(4.0),

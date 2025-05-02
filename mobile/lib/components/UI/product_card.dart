@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'product_detail.dart'; // Import màn hình mới
+import '../Product/product_detail.dart'; // Import màn hình mới
 import '../../utils/convert.dart';
 
 class ProductCard extends StatelessWidget {
@@ -14,7 +14,8 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // Lấy các thuộc tính từ đối tượng product
     final String name = product['name'];
-    final String price = "${formatPrice(product['price'])} đ"; // Chuyển giá thành chuỗi với đơn vị
+    final String price =
+        "${formatPrice(product['price'])} đ"; // Chuyển giá thành chuỗi với đơn vị
     final String imageUrl = product['image_url'];
 
     return GestureDetector(
@@ -66,13 +67,17 @@ class ProductCard extends StatelessWidget {
                         color: Colors.black,
                       ),
                       maxLines: 1, // Giới hạn số dòng là 1
-                      overflow: TextOverflow.ellipsis, // Sử dụng ba chấm khi vượt quá chiều dài
+                      overflow: TextOverflow
+                          .ellipsis, // Sử dụng ba chấm khi vượt quá chiều dài
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     price,
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.red),
+                    style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red),
                   ),
                   const SizedBox(height: 4),
                 ],
