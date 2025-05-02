@@ -22,15 +22,24 @@ class _ChatState extends State<Chat>{
   late Map<String, dynamic> convervation;
   late List<dynamic> messages = [];
   bool isLoading = true;
+  late LoginInfo loginInfo;
+
+  late TextEditingController _mess = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     convervation = widget.conversation;
-    fetchConversations();
+    fetchMess();
   }
 
-  Future<void> fetchConversations() async {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    loginInfo = Provider.of<LoginInfo>(context);
+  }
+
+  Future<void> fetchMess() async {
     try {
       final responseConver = await http.get(Uri.parse('http://$ip:5555/messages/${convervation['_id']}'));
       setState(() {
@@ -44,6 +53,30 @@ class _ChatState extends State<Chat>{
         isLoading = false; // Tắt trạng thái loading
       });
     }
+  }
+
+  void sendMess() async {
+    print(_mess.text);
+    final response = await http.post(Uri.parse('http://$ip:5555/messages'), // Thay đổi endpoint nếu cần
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'conversationId': convervation['_id'],
+        'content': _mess.text,
+        'senderId': loginInfo.id,
+        'receiverId': convervation['participant1'] == loginInfo.id ? convervation['participant2'] : convervation['participant1']
+      }),);
+      if(response.statusCode == 201){
+        final responseRead = await http.post(Uri.parse('http://$ip:5555/messages/read/${convervation['_id']}'), // Thay đổi endpoint nếu cần
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'senderId': loginInfo.id,
+        }),);
+        if(response.statusCode == 200){
+          print('Gửi thành công');
+        }else{print('Gửi không thành công');}
+      }
+     _mess.clear();
+
   }
 
   @override
@@ -75,13 +108,27 @@ class _ChatState extends State<Chat>{
             ),
           ),
           Row(
-            children: [
-              ElevatedButton(
-                onPressed: () {},
-                child: Text('Gửi'),
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: _mess,
+                  decoration: InputDecoration(
+                    hintText: 'Nhập tin nhắn...',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
               ),
-            ],
-          ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                sendMess();
+              },
+              child: Text('Gửi'),
+            ),
+          ],
+        ),
         ],
       )
     );
