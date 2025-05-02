@@ -26,7 +26,8 @@ class ProductDetail extends StatefulWidget {
 class _ProductDetailState extends State<ProductDetail> {
   late Map<String, dynamic> product;
   int quantity = 1;
-  final TextEditingController _quantityController = TextEditingController(text: '1');
+  final TextEditingController _quantityController =
+      TextEditingController(text: '1');
   late List<dynamic> comments = [];
 
   @override
@@ -46,7 +47,8 @@ class _ProductDetailState extends State<ProductDetail> {
         });
       } else {
         _quantityController.text = '1';
-        _quantityController.selection = TextSelection.fromPosition(TextPosition(offset: 1));
+        _quantityController.selection =
+            TextSelection.fromPosition(TextPosition(offset: 1));
       }
     });
     comments = [];
@@ -61,7 +63,8 @@ class _ProductDetailState extends State<ProductDetail> {
 
   Future<List<dynamic>> getCartItemsByUserId(String userId) async {
     try {
-      final response = await http.get(Uri.parse('http://$ip:5555/carts/$userId'));
+      final response =
+          await http.get(Uri.parse('http://$ip:5555/carts/$userId'));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -77,7 +80,8 @@ class _ProductDetailState extends State<ProductDetail> {
 
   Future<void> fetchComments() async {
     try {
-      final response = await http.get(Uri.parse('http://$ip:5555/reviews/product/${product['_id']}'));
+      final response = await http
+          .get(Uri.parse('http://$ip:5555/reviews/product/${product['_id']}'));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -93,9 +97,11 @@ class _ProductDetailState extends State<ProductDetail> {
     }
   }
 
-  void addToCart(String ub, String us, String pid, String pn, int quantityMax, int pqs, int pp, String pu) async {
+  void addToCart(String ub, String us, String pid, String pn, int quantityMax,
+      int pqs, int pp, String pu) async {
     final productInCart = await getCartItemsByUserId(ub);
-    final isProductInCart = productInCart.any((item) => item['product_id'] == pid);
+    final isProductInCart =
+        productInCart.any((item) => item['product_id'] == pid);
 
     if (isProductInCart) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -103,7 +109,7 @@ class _ProductDetailState extends State<ProductDetail> {
       );
       return;
     }
-  
+
     if (pqs <= 0 || pqs > quantityMax) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Số lượng nhập không hợp lệ!')),
@@ -131,7 +137,8 @@ class _ProductDetailState extends State<ProductDetail> {
       );
       if (response.statusCode == 201) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Sản phẩm đã được thêm vào giỏ hàng thành công!')),
+          SnackBar(
+              content: Text('Sản phẩm đã được thêm vào giỏ hàng thành công!')),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -147,12 +154,15 @@ class _ProductDetailState extends State<ProductDetail> {
 
   void deleteProductById(String id) async {
     try {
-      final response = await http.delete(Uri.parse('http://$ip:5555/products/$id'),);
+      final response = await http.delete(
+        Uri.parse('http://$ip:5555/products/$id'),
+      );
 
       if (response.statusCode == 200) {
         return json.decode(response.body); // Trả về sản phẩm
       } else {
-        throw Exception('Không có sản phẩm nào. Mã trạng thái: ${response.statusCode}');
+        throw Exception(
+            'Không có sản phẩm nào. Mã trạng thái: ${response.statusCode}');
       }
     } catch (error) {
       print('Error delete product: $error');
@@ -172,7 +182,8 @@ class _ProductDetailState extends State<ProductDetail> {
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
               if (loginInfo.name == null) {
-                final snackBar = SnackBar(content: Text('Hãy đăng nhập để có trải nghiệm tốt hơn'));
+                final snackBar = SnackBar(
+                    content: Text('Hãy đăng nhập để có trải nghiệm tốt hơn'));
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
               } else {
                 Navigator.push(
@@ -205,7 +216,8 @@ class _ProductDetailState extends State<ProductDetail> {
                     const SizedBox(height: 16),
                     Text(
                       product['name'],
-                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -220,7 +232,8 @@ class _ProductDetailState extends State<ProductDetail> {
                     const SizedBox(height: 8),
                     Text(
                       'Mô tả:',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -251,113 +264,133 @@ class _ProductDetailState extends State<ProductDetail> {
                         hintText: 'Nhập số lượng',
                       ),
                     ),
-                    Center(child: ElevatedButton.icon(
-                      onPressed: 
-                      () => {
-                        Navigator.push(context, 
-                          MaterialPageRoute(builder: (context) => SellerPage(idSeller: product['user_id'],)),)
-                      }, 
-                      label: Text('Xem trang người bán'), 
-                    ),),
-                    if(product['user_id'] == loginInfo.id)
-                      Column(children: [
-                        Center(child: Text('Đây là sản phẩm của bạn')),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                          ElevatedButton.icon(onPressed: 
-                            () => {
-                              Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => PostEditProduct(product: product)))
-                            }, 
-                            label: Text('Chỉnh sửa'),
-                            icon: Icon(Icons.edit),
-                          ),
-                          ElevatedButton.icon(
-                            onPressed: 
-                            () => {
-                              deleteProductById(product['_id'])
-                            }, 
-                            label: Text('Xoá'),
-                            icon: Icon(Icons.delete),
+                    Center(
+                      child: ElevatedButton.icon(
+                        onPressed: () => {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SellerPage(
+                                      idSeller: product['user_id'],
+                                    )),
                           )
-                        ],),
-                      ],
+                        },
+                        label: Text('Xem trang người bán'),
+                      ),
+                    ),
+                    if (product['user_id'] == loginInfo.id)
+                      Column(
+                        children: [
+                          Center(child: Text('Đây là sản phẩm của bạn')),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              ElevatedButton.icon(
+                                onPressed: () => {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => PostEditProduct(
+                                              product: product)))
+                                },
+                                label: Text('Chỉnh sửa'),
+                                icon: Icon(Icons.edit),
+                              ),
+                              ElevatedButton.icon(
+                                onPressed: () =>
+                                    {deleteProductById(product['_id'])},
+                                label: Text('Xoá'),
+                                icon: Icon(Icons.delete),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    Container(
+                      constraints: BoxConstraints(maxWidth: 800),
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 28),
+                      padding: EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            blurRadius: 8,
+                            spreadRadius: 2,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Đánh giá',
+                            style: TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 16),
+                          if (comments.isNotEmpty)
+                            Column(
+                              children: comments.map((review) {
+                                return Container(
+                                  margin: EdgeInsets.only(bottom: 16),
+                                  padding: EdgeInsets.symmetric(vertical: 8),
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(color: Colors.grey)),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text('Rating: ',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold)),
+                                          Row(
+                                            children: List.generate(5, (index) {
+                                              return Icon(
+                                                index < review['rating']
+                                                    ? Icons.star
+                                                    : Icons.star_border,
+                                                color: index < review['rating']
+                                                    ? Colors.yellow
+                                                    : Colors.grey,
+                                              );
+                                            }),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(review['comment']),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        'Ngày ${review['createdAt']}',
+                                        style: TextStyle(
+                                            color: Colors.grey[600],
+                                            fontSize: 12),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                            )
+                          else
+                            Text('Chưa có đánh giá nào.'),
+                        ],
+                      ),
                     ),
                     Container(
-                        constraints: BoxConstraints(maxWidth: 800),
-                        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 28),
-                        padding: EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              blurRadius: 8,
-                              spreadRadius: 2,
-                              offset: Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Đánh giá',
-                              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 16),
-                            if (comments.isNotEmpty)
-                              Column(
-                                children: comments.map((review) {
-                                  return Container(
-                                    margin: EdgeInsets.only(bottom: 16),
-                                    padding: EdgeInsets.symmetric(vertical: 8),
-                                    decoration: BoxDecoration(
-                                      border: Border(bottom: BorderSide(color: Colors.grey)),
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Text('Rating: ', style: TextStyle(fontWeight: FontWeight.bold)),
-                                            Row(
-                                              children: List.generate(5, (index) {
-                                                return Icon(
-                                                  index < review['rating'] ? Icons.star : Icons.star_border,
-                                                  color: index < review['rating'] ? Colors.yellow : Colors.grey,
-                                                );
-                                              }),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(height: 4),
-                                        Text(review['comment']),
-                                        SizedBox(height: 4),
-                                        Text(
-                                          'Ngày ${review['createdAt']}',
-                                          style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
-                              )
-                            else
-                              Text('Chưa có đánh giá nào.'),
-                          ],
-                        ),
+                      height: 400,
+                      child: ProductList(
+                        urlBase:
+                            'http://$ip:5555/products/category/${product['category_id']}',
                       ),
-                      Container(
-                        height: 400, // Đặt chiều cao cho ProductList
-                        child: Expanded(child: 
-                        ProductList(
-                          urlBase: 'http://$ip:5555/products/category/${product['category_id']}',
-                        ),)
-                      ),
-                    
+                    ),
                   ],
                 ),
               ),
@@ -374,7 +407,9 @@ class _ProductDetailState extends State<ProductDetail> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (loginInfo.name == null) {
-                        final snackBar = SnackBar(content: Text('Hãy đăng nhập để có trải nghiệm tốt hơn'));
+                        final snackBar = SnackBar(
+                            content: Text(
+                                'Hãy đăng nhập để có trải nghiệm tốt hơn'));
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       } else {
                         addToCart(
@@ -390,44 +425,51 @@ class _ProductDetailState extends State<ProductDetail> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green, // Màu 
+                      backgroundColor: Colors.green, // Màu
                       minimumSize: Size(double.infinity, 50),
                       // padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(0),
                       ),
                     ),
-                    child: const Text('Thêm vào giỏ hàng', style: TextStyle(color: Colors.white)),
+                    child: const Text('Thêm vào giỏ hàng',
+                        style: TextStyle(color: Colors.white)),
                   ),
                 ),
                 Expanded(
                   flex: 2,
                   child: ElevatedButton(
-                    onPressed: () {
-                      List<dynamic> product1 = [{
-                        'user_buyer': loginInfo.id ?? '',
-                        'user_seller': product['user_id'],
-                        'product_id': product['_id'],
-                        'product_name': product['name'],
-                        'product_quantity': quantity,
-                        'product_price': product['price'],
-                        'product_imageUrl': product['image_url'],
-                      }];                     
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => CheckOut(products: product1)),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red, // Màu nền
-                      // padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                      minimumSize: Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0),
+                      onPressed: () {
+                        List<dynamic> product1 = [
+                          {
+                            'user_buyer': loginInfo.id ?? '',
+                            'user_seller': product['user_id'],
+                            'product_id': product['_id'],
+                            'product_name': product['name'],
+                            'product_quantity': quantity,
+                            'product_price': product['price'],
+                            'product_imageUrl': product['image_url'],
+                          }
+                        ];
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  CheckOut(products: product1)),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red, // Màu nền
+                        // padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                        minimumSize: Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(0),
+                        ),
                       ),
-                    ),
-                    child: const Text('Đặt hàng', style: TextStyle(color: Colors.white,))
-                  ),
+                      child: const Text('Đặt hàng',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ))),
                 )
               ],
             ),
