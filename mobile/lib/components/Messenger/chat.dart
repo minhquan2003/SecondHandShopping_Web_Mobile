@@ -84,7 +84,48 @@ class _ChatState extends State<Chat>{
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
-        title: Text(convervation['user']?['name']),
+        title: Row(
+          children: [
+            ClipOval(
+              child: Image.network(
+                convervation['user']['avatar_url'] ?? '', // Kiểm tra nếu có URL
+                width: 50.0, // Thay đổi kích thước cho phù hợp
+                height: 50.0,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: 50.0,
+                    height: 50.0,
+                    color: Colors.grey, // Màu nền khi lỗi tải hình
+                  );
+                },
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child; // Hiển thị hình khi tải xong
+                  return Container(
+                    width: 50.0,
+                    height: 50.0,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.grey, // Màu nền khi đang tải
+                    ),
+                    child: Center(child: CircularProgressIndicator()), // Hiển thị vòng tròn khi tải
+                  );
+                },
+              ),
+            ),
+            SizedBox(width: 10), // Khoảng cách giữa avatar và tên
+            Expanded(
+              child: Text(
+                convervation['user']?['name'] ?? 'Tên người dùng', // Hiển thị tên người dùng, có giá trị mặc định
+                style: TextStyle(
+                  fontSize: 18, // Kích thước chữ
+                  fontWeight: FontWeight.bold, // Đậm
+                ),
+                overflow: TextOverflow.ellipsis, // Tránh tràn văn bản
+              ),
+            ),
+          ],
+        ),
       ),
       body: Column(
         children: [
