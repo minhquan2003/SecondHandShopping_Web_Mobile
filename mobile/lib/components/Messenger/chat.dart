@@ -5,6 +5,7 @@ import '../../providers/login_info.dart';
 import 'package:http/http.dart' as http;
 import '../../config.dart';
 import '../../utils/convert.dart';
+import 'package:intl/intl.dart';
 
 class Chat extends StatefulWidget {
   final Map<String, dynamic> conversation;
@@ -71,7 +72,7 @@ class _ChatState extends State<Chat>{
         body: jsonEncode({
           'senderId': loginInfo.id,
         }),);
-        if(response.statusCode == 200){
+        if(responseRead.statusCode == 200){
           print('Gửi thành công');
         }else{print('Gửi không thành công');}
       }
@@ -83,7 +84,7 @@ class _ChatState extends State<Chat>{
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
-        title: Text('Nhắn tin'),
+        title: Text(convervation['user']?['name']),
       ),
       body: Column(
         children: [
@@ -92,20 +93,38 @@ class _ChatState extends State<Chat>{
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 final mess = messages[index];
-                return ListTile(
-                  title: Text(mess['_id'] ?? 'Người mua không xác định'),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(mess['conversationId'] ?? 'Không có ID'),
-                      Text(mess['content'] ?? 'Không có tin nhắn cuối'),
-                      Text(convervation['user']?['name'] ?? 'Không có tên'), // Kiểm tra null trước khi truy cập
-                    ],
+                final bool isMe = mess['senderId'] == loginInfo.id; // Kiểm tra xem tin nhắn có phải của mình không
+
+                return Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Thêm padding cho tin nhắn
+                  child: Align(
+                    alignment: isMe ? Alignment.centerRight : Alignment.centerLeft, // Căn chỉnh tin nhắn
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: isMe ? Colors.blue[100] : Colors.grey[300], // Màu nền tin nhắn
+                        borderRadius: BorderRadius.circular(8), // Bo tròn góc tin nhắn
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Thêm padding cho nội dung tin nhắn
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            mess['content'],
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          SizedBox(height: 4), // Khoảng cách giữa nội dung và thời gian
+                          Text(
+                            // Định dạng thời gian
+                            DateFormat('HH:mm dd/MM/yyyy').format(DateTime.parse(mess['createdAt'])),
+                            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 );
               },
-            ),
+            )
           ),
           Row(
           children: [
