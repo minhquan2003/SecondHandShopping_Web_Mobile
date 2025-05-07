@@ -97,11 +97,8 @@
 
 // export default CategoryList;
 
-import React, { useState } from "react";
+import { useState } from "react";
 import useCategory from "../../hooks/useCategory";
-import { SiTicktick } from "react-icons/si";
-import { IoClose } from "react-icons/io5";
-import { GiCancel } from "react-icons/gi";
 import { TbListDetails } from "react-icons/tb";
 import { FaSort } from "react-icons/fa";
 import { FaSearch } from "react-icons/fa";
@@ -160,7 +157,7 @@ const CategoryList = () => {
 
       <div className="flex items-center">
         <select
-          className="border border-black p-2 mb-4"
+          className="text-sm border border-black p-2 mb-4"
           defaultValue="choose"
           onChange={(e) => {
             if (e.target.value == "deleteCategories") {
@@ -177,7 +174,7 @@ const CategoryList = () => {
         <div className="w-full flex border-2 border-gray-200 mb-4 p-1 ml-4">
           <div className="flex w-full mx-10 rounded bg-white">
             <input
-              className=" w-full border-none bg-transparent px-4 py-1 text-gray-400 outline-none focus:outline-none "
+              className="text-sm w-full border-none bg-transparent px-4 py-1 text-gray-400 outline-none focus:outline-none "
               type="search"
               name="search"
               placeholder="Search by username..."
@@ -205,15 +202,15 @@ const CategoryList = () => {
                   }
                 />
               </th>
-              <th className="text-sm px-4 py-2 text-center font-bold text-gray-600 border">
+              <th className="text-sm px-4 py-2 text-center font-bold border">
                 Image
               </th>
-              <th className="text-sm px-4 py-2 text-center font-bold text-gray-600 border">
+              <th className="text-sm px-4 py-2 text-center font-bold border">
                 <span className="inline-flex items-center gap-x-2">
                   Name <FaSort onClick={() => handleSort("category_name")} />
                 </span>
               </th>
-              <th className="text-sm px-2 py-2 text-center font-bold text-gray-600 border">
+              <th className="text-sm px-2 py-2 text-center font-boldborder">
                 Custom
               </th>
             </tr>
@@ -222,7 +219,7 @@ const CategoryList = () => {
             {Array.isArray(categories) && categories.length > 0 ? (
               categories.map((category) => (
                 <tr key={category._id} className="border">
-                  <td className="px-4 py-2 text-center">
+                  <td className="text-sm px-4 py-2 text-center">
                     <input
                       type="checkbox"
                       checked={selectedCheckBox.includes(category._id)}
@@ -236,7 +233,7 @@ const CategoryList = () => {
                       className="w-16 h-16 rounded mr-4"
                     />
                   </td>
-                  <td className="border px-4 py-2 text-center">
+                  <td className="text-sm border px-4 py-2">
                     {category.category_name}
                   </td>
                   <td className="border px-2 py-2 text-center">

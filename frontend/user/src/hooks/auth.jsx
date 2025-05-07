@@ -15,6 +15,10 @@ export const useAuth = () => {
         password,
       });
       console.log("Login response:", response.data);
+
+      const token = response.data.token;
+
+      localStorage.setItem("token", token);
       const userResponse = await axios.post("/users/email", { email });
       if (userResponse.data.ban == true) {
         alert(

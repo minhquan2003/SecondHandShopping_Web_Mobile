@@ -263,7 +263,7 @@ const NotificationList = () => {
 
       <div className="">
         <select
-          className="border border-black p-2 mb-4"
+          className="text-sm border border-black p-2 mb-4"
           defaultValue="choose"
           onChange={(e) => {
             if (e.target.value === "deleteRolePartners") {
@@ -295,15 +295,15 @@ const NotificationList = () => {
                   onChange={handleSelectAll}
                 />
               </th>
-              <th className="border px-2 py-2">Notification</th>
-              <th className="border px-4 py-2">Detail</th>
+              <th className="text-sm border px-2 py-2">Notification</th>
+              <th className="text-sm border px-4 py-2">Detail</th>
             </tr>
           </thead>
           <tbody>
             {Array.isArray(notifications) && notifications.length > 0 ? (
               notifications.map((notification) => (
                 <tr key={notification._id} className="border">
-                  <td className="px-4 py-2 text-center">
+                  <td className="text-sm px-4 py-2 text-center">
                     <input
                       type="checkbox"
                       checked={selectedCheckBox.includes(notification._id)}
@@ -311,7 +311,7 @@ const NotificationList = () => {
                     />
                   </td>
 
-                  <td className="border px-2 py-2 text-center">
+                  <td className="border px-2 py-2 text-sm ">
                     {notification.message}
                   </td>
                   <th className="border px-4 py-2">
@@ -339,17 +339,17 @@ const NotificationList = () => {
       {/* Pagination */}
       <div className="flex justify-center mt-4">
         <button
-          className="px-3 py-1 mx-1 bg-gray-200 rounded disabled:opacity-50"
+          className="text-sm px-3 py-1 mx-1 bg-gray-200 rounded disabled:opacity-50"
           disabled={page === 1}
           onClick={() => setPage(page - 1)}
         >
           Previous
         </button>
-        <span className="px-3 py-1 mx-2">
+        <span className="text-sm px-3 py-1 mx-2">
           Page {page} of {totalPages}
         </span>
         <button
-          className="px-3 py-1 mx-1 bg-gray-200 rounded disabled:opacity-50"
+          className="text-sm px-3 py-1 mx-1 bg-gray-200 rounded disabled:opacity-50"
           disabled={page >= totalPages}
           onClick={() => setPage(page + 1)}
         >
@@ -364,20 +364,24 @@ const NotificationList = () => {
             <table className="table-auto w-full border-collapse border border-gray-300">
               <tbody>
                 <tr>
-                  <td className="border px-4 py-2 font-bold">User Received</td>
-                  <td className="border px-4 py-2">
+                  <td className="text-sm border px-4 py-2 font-bold">
+                    User Received
+                  </td>
+                  <td className="text-sm border px-4 py-2">
                     {selectedNotification.user_id_receive}
                   </td>
                 </tr>
                 <tr>
-                  <td className="border px-4 py-2 font-bold">Content</td>
-                  <td className="border px-4 py-2">
+                  <td className="text-sm border px-4 py-2 font-bold">
+                    Content
+                  </td>
+                  <td className="text-sm border px-4 py-2">
                     {selectedNotification.message}
                   </td>
                 </tr>
                 <tr>
-                  <td className="border px-4 py-2 font-bold">Read?</td>
-                  <td className="border px-4 py-2">
+                  <td className="text-sm border px-4 py-2 font-bold">Read?</td>
+                  <td className="text-sm border px-4 py-2">
                     {selectedNotification.readed}
                   </td>
                 </tr>

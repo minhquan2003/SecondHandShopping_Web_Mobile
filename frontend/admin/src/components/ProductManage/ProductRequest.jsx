@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import useProducts from "../../hooks/useProduct";
-import { SiTicktick } from "react-icons/si";
 import { IoClose } from "react-icons/io5";
-import { GiCancel } from "react-icons/gi";
 import { TbListDetails } from "react-icons/tb";
 import { FaSort } from "react-icons/fa";
 import { FaSearch } from "react-icons/fa";
@@ -84,7 +82,7 @@ const ProductRequest = () => {
 
       <div className="flex items-center">
         <select
-          className="border border-black p-2 mb-4"
+          className="text-sm border border-black p-2 mb-4"
           defaultValue="choose"
           onChange={(e) => {
             if (e.target.value == "deleteProducts") {
@@ -106,7 +104,7 @@ const ProductRequest = () => {
         <div className="w-full flex border-2 border-gray-200 mb-4 p-1 ml-4">
           <div className="flex w-full mx-10 rounded bg-white">
             <input
-              className=" w-full border-none bg-transparent px-4 py-1 text-gray-400 outline-none focus:outline-none "
+              className=" text-sm w-full border-none bg-transparent px-4 py-1 text-gray-400 outline-none focus:outline-none "
               type="search"
               name="search"
               placeholder="Search by username..."
@@ -134,36 +132,36 @@ const ProductRequest = () => {
                   }
                 />
               </th>
-              <th className="border px-4 py-2 text-center whitespace-nowrap">
+              <th className="text-sm border px-4 py-2 text-center whitespace-nowrap">
                 Image
               </th>
               <th className="border px-4 py-2 text-center whitespace-nowrap">
-                <span className="inline-flex items-center gap-x-2">
+                <span className="text-sm inline-flex items-center gap-x-2">
                   Name <FaSort onClick={() => handleSort("name")} />
                 </span>
               </th>
               <th className="border px-4 py-2 text-center whitespace-nowrap">
-                <span className="inline-flex items-center gap-x-2">
+                <span className="text-sm inline-flex items-center gap-x-2">
                   Category{" "}
                   <FaSort onClick={() => handleSort("category_name")} />
                 </span>
               </th>
               <th className="border px-4 py-2 text-center whitespace-nowrap">
-                <span className="inline-flex items-center gap-x-2">
+                <span className="text-sm inline-flex items-center gap-x-2">
                   Price <FaSort onClick={() => handleSort("price")} />
                 </span>
               </th>
               <th className="border px-4 py-2 text-center whitespace-nowrap">
-                <span className="inline-flex items-center gap-x-2">
+                <span className="text-sm inline-flex items-center gap-x-2">
                   Quantity <FaSort onClick={() => handleSort("quantity")} />
                 </span>
               </th>
               <th className="border px-4 py-2 text-center whitespace-nowrap">
-                <span className="inline-flex items-center gap-x-2">
+                <span className="text-sm inline-flex items-center gap-x-2">
                   Posted By <FaSort onClick={() => handleSort("username")} />
                 </span>
               </th>
-              <th className="border px-4 py-2 text-center whitespace-nowrap">
+              <th className="text-sm border px-4 py-2 text-center whitespace-nowrap">
                 Detail
               </th>
             </tr>
@@ -186,19 +184,17 @@ const ProductRequest = () => {
                       className="w-20 h-20 object-cover rounded"
                     />
                   </td>
-                  <td className="border px-4 py-2 text-center">
-                    {product.name}
-                  </td>
-                  <td className="border px-4 py-2 text-center">
+                  <td className="border px-4 py-2 text-sm ">{product.name}</td>
+                  <td className="border px-4 py-2 text-sm ">
                     {product.category_name}
                   </td>
-                  <td className="border px-4 py-2 text-center">
+                  <td className="border px-4 py-2 text-sm ">
                     {product.price.toLocaleString()} VND
                   </td>
-                  <td className="border px-4 py-2 text-center">
+                  <td className="border px-4 py-2 text-sm ">
                     {product.quantity}
                   </td>
-                  <td className="border px-4 py-2 text-center">
+                  <td className="border px-4 py-2 text-sm ">
                     {product.username}
                   </td>
                   <td className="border px-2 py-2 text-center">
@@ -225,17 +221,17 @@ const ProductRequest = () => {
       {/* Pagination */}
       <div className="flex justify-center mt-4">
         <button
-          className="px-3 py-1 mx-1 bg-gray-200 rounded disabled:opacity-50"
+          className="text-sm px-3 py-1 mx-1 bg-gray-200 rounded disabled:opacity-50"
           disabled={page === 1}
           onClick={() => setPage(page - 1)}
         >
           Previous
         </button>
-        <span className="px-3 py-1 mx-2">
+        <span className="text-sm px-3 py-1 mx-2">
           Page {page} of {totalPages}
         </span>
         <button
-          className="px-3 py-1 mx-1 bg-gray-200 rounded disabled:opacity-50"
+          className="text-sm px-3 py-1 mx-1 bg-gray-200 rounded disabled:opacity-50"
           disabled={page >= totalPages}
           onClick={() => setPage(page + 1)}
         >

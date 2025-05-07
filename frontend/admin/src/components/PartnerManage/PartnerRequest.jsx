@@ -162,7 +162,7 @@ const PartnerRequest = () => {
             {Array.isArray(partners) && partners.length > 0 ? (
               partners.map((user) => (
                 <tr key={user._id} className="border">
-                  <td className="px-4 py-2 text-center">
+                  <td className="text-sm px-4 py-2 text-center">
                     <input
                       type="checkbox"
                       checked={selectedCheckBox.includes(user._id)}
