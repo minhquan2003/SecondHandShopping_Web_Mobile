@@ -14,8 +14,6 @@ const useTopSellingProducts = (timeFrame) => {
           `http://localhost:5555/admin/top-selling-products`,
           {
             params: { timeFrame },
-          },
-          {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },

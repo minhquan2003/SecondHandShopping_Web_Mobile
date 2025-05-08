@@ -85,7 +85,7 @@ const RegulationList = ({ refreshRegulations }) => {
         value={searchKeyword}
         onChange={handleSearchChange}
         placeholder="Search by title"
-        className="mb-4 w-full p-2 border rounded"
+        className="text-sm mb-4 w-full p-2 border rounded"
       />
       {loading ? (
         <div>Loading...</div>
@@ -98,17 +98,25 @@ const RegulationList = ({ refreshRegulations }) => {
           <table className="w-full table-auto border-collapse">
             <thead>
               <tr className="bg-gray-100">
-                <th className="border px-4 py-2 text-left">Title</th>
-                <th className="border px-4 py-2 text-left">Description</th>
-                <th className="border px-4 py-2 text-center">Actions</th>
+                <th className="text-sm border px-4 py-2 text-center">Title</th>
+                <th className="text-sm border px-4 py-2 text-center">
+                  Description
+                </th>
+                <th className="text-sm border px-4 py-2 text-center">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
               {displayedRegulations.map((regulation) => (
                 <tr key={regulation._id} className="hover:bg-gray-50">
-                  <td className="border px-4 py-2">{regulation.title}</td>
-                  <td className="border px-4 py-2">{regulation.description}</td>
-                  <td className="border px-4 py-2 text-center">
+                  <td className="text-sm border px-4 py-2">
+                    {regulation.title}
+                  </td>
+                  <td className="text-sm border px-4 py-2">
+                    {regulation.description}
+                  </td>
+                  <td className="text-sm border px-4 py-2 text-center">
                     <button
                       onClick={() => handleCustom(regulation._id, regulation)}
                       className="text-blue-600 hover:text-blue-800"

@@ -1,4 +1,7 @@
 // backend/controllers/productController.js
+import jwt from "jsonwebtoken";
+import ProductViews from "../models/ProductView.js";
+
 import {
   createProduct,
   getProducts,
@@ -36,13 +39,27 @@ const getAllProducts = async (req, res) => {
   }
 };
 
-// Lấy sản phẩm theo ID
 const getProductById = async (req, res) => {
   try {
     const product = await getOneProductById(req.params.id);
     if (!product) {
       return res.status(404).send({ message: "Product not found" });
     }
+
+    // Lưu lượt xem nếu người dùng đã đăng nhập
+    if (req.user && req.user.id) {
+      const { id: user_id } = req.user;
+      const product_id = req.params.id;
+
+      await ProductViews.findOneAndUpdate(
+        { user_id, product_id },
+        {
+          view_product: true,
+        },
+        { upsert: true, new: true }
+      );
+    }
+
     return res.status(200).send(product);
   } catch (error) {
     console.error(error.message);

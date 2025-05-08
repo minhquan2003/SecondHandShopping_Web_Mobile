@@ -194,19 +194,13 @@
 
 // export default FeedbackList;
 
-import React, { useState } from "react";
+import { useState } from "react";
 import useFeedback from "../../hooks/useFeedback";
-import { SiTicktick } from "react-icons/si";
-import { IoClose } from "react-icons/io5";
-import { GiCancel } from "react-icons/gi";
-import { TbListDetails } from "react-icons/tb";
 import { FaSort } from "react-icons/fa";
 import { FaSearch } from "react-icons/fa";
 
 const FeedbackList = () => {
   const [page, setPage] = useState(1);
-  const [selectedFeedback, setSelectedFeedback] = useState(null);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedCheckBox, setSelectedCheckBox] = useState([]);
   const [fieldSort, setFieldSort] = useState("");
   const [orderSort, setOrderSort] = useState("asc");
@@ -249,7 +243,10 @@ const FeedbackList = () => {
       </h2>
 
       <div className="flex items-center">
-        <select className="border border-black p-2 mb-4" defaultValue="choose">
+        <select
+          className="text-sm border border-black p-2 mb-4"
+          defaultValue="choose"
+        >
           <option value="choose" disabled>
             Choose action...
           </option>
@@ -259,7 +256,7 @@ const FeedbackList = () => {
         <div className="w-full flex border-2 border-gray-200 mb-4 p-1 ml-4">
           <div className="flex w-full mx-10 rounded bg-white">
             <input
-              className=" w-full border-none bg-transparent px-4 py-1 text-gray-400 outline-none focus:outline-none "
+              className="text-sm w-full border-none bg-transparent px-4 py-1 text-gray-400 outline-none focus:outline-none "
               type="search"
               name="search"
               placeholder="Search by username..."
@@ -288,12 +285,12 @@ const FeedbackList = () => {
                 />
               </th>
               <th className="border px-4 py-2 text-center whitespace-nowrap">
-                <span className="inline-flex items-center gap-x-2">
+                <span className="text-sm inline-flex items-center gap-x-2">
                   Username <FaSort onClick={() => handleSort("username")} />
                 </span>
               </th>
               <th className="border px-4 py-2 text-center whitespace-nowrap">
-                <span className="inline-flex items-center gap-x-2">
+                <span className="text-sm inline-flex items-center gap-x-2">
                   Message <FaSort onClick={() => handleSort("message")} />
                 </span>
               </th>
@@ -303,17 +300,17 @@ const FeedbackList = () => {
             {Array.isArray(feedbacks) && feedbacks.length > 0 ? (
               feedbacks.map((feedback) => (
                 <tr key={feedback._id} className="border">
-                  <td className="px-4 py-2 text-center">
+                  <td className="text-sm px-4 py-2 text-center">
                     <input
                       type="checkbox"
                       checked={selectedCheckBox.includes(feedback._id)}
                       onChange={() => handleSelectOne(feedback._id)}
                     />
                   </td>
-                  <td className="border px-4 py-2 text-center">
+                  <td className="border px-4 py-2 text-sm ">
                     {feedback.username}
                   </td>
-                  <td className="border px-4 py-2 text-center">
+                  <td className="border px-4 py-2 text-sm ">
                     {feedback.message}
                   </td>
                 </tr>
@@ -332,17 +329,17 @@ const FeedbackList = () => {
       {/* Pagination */}
       <div className="flex justify-center mt-4">
         <button
-          className="px-3 py-1 mx-1 bg-gray-200 rounded disabled:opacity-50"
+          className="text-sm px-3 py-1 mx-1 bg-gray-200 rounded disabled:opacity-50"
           disabled={page === 1}
           onClick={() => setPage(page - 1)}
         >
           Previous
         </button>
-        <span className="px-3 py-1 mx-2">
+        <span className="text-sm px-3 py-1 mx-2">
           Page {page} of {totalPages}
         </span>
         <button
-          className="px-3 py-1 mx-1 bg-gray-200 rounded disabled:opacity-50"
+          className="text-sm px-3 py-1 mx-1 bg-gray-200 rounded disabled:opacity-50"
           disabled={page >= totalPages}
           onClick={() => setPage(page + 1)}
         >
