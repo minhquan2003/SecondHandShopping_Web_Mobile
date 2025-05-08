@@ -130,30 +130,30 @@ class _MainScreenState extends State<MainScreen> {
               }
             },
           ),
-          IconButton(
-            icon: Icon(loginInfo.name == null
-                ? Icons.login
-                : Icons.logout), // Thay đổi icon theo trạng thái đăng nhập
-            onPressed: () {
-              if (loginInfo.name == null) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Login()),
-                );
-              } else {
-                Provider.of<LoginInfo>(context, listen: false).logout();
-              }
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.rule),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Regulation()),
-              );
-            },
-          ),
+          // IconButton(
+          //   icon: Icon(loginInfo.name == null
+          //       ? Icons.login
+          //       : Icons.logout), // Thay đổi icon theo trạng thái đăng nhập
+          //   onPressed: () {
+          //     if (loginInfo.name == null) {
+          //       Navigator.push(
+          //         context,
+          //         MaterialPageRoute(builder: (context) => Login()),
+          //       );
+          //     } else {
+          //       Provider.of<LoginInfo>(context, listen: false).logout();
+          //     }
+          //   },
+          // ),
+          // IconButton(
+          //   icon: Icon(Icons.rule),
+          //   onPressed: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(builder: (context) => Regulation()),
+          //     );
+          //   },
+          // ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.menu), // Icon menu
             onSelected: (String value) {
@@ -167,10 +167,10 @@ class _MainScreenState extends State<MainScreen> {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => SaleOrder()));
                   break;
-                case 'Ba':
-                  // Thực hiện hành động cho 'Ba'
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Bạn đã chọn: Ba')),
+                case 'Quy định chung':
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Regulation()),
                   );
                   break;
                 case 'Bốn':
@@ -182,7 +182,7 @@ class _MainScreenState extends State<MainScreen> {
               }
             },
             itemBuilder: (BuildContext context) {
-              return {'Đơn mua', 'Đơn bán', 'Ba', 'Bốn'}.map((String choice) {
+              return {'Đơn mua', 'Đơn bán', 'Quy định chung', 'Bốn'}.map((String choice) {
                 return PopupMenuItem<String>(
                   value: choice,
                   child: Text(choice),
