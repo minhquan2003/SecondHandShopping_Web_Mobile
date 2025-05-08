@@ -69,3 +69,21 @@ export const authorize = (req, res, next) => {
     return next(new CustomError("Token is not valid.", 401));
   }
 };
+
+export const authorizeOptional = (req, res, next) => {
+  const authHeader = req.header("authorization");
+  if (!authHeader) return next(); // Không có token thì bỏ qua
+
+  const token = authHeader.startsWith("Bearer ")
+    ? authHeader.split(" ")[1]
+    : authHeader;
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+  } catch (err) {
+    // Token không hợp lệ thì tiếp tục mà không có req.user
+  }
+
+  next();
+};
