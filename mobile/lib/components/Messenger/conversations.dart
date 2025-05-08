@@ -96,16 +96,45 @@ class _ConversationsState extends State<Conversations> {
                           MaterialPageRoute(builder: (context) => Chat(conversation: conver,)));
                         },
                         child: ListTile(
-                          title: Text(conver['name'] ?? 'Người mua không xác định'),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
+                          subtitle: Row(
                             children: [
-                              Text(conver['_id'] ?? 'Không có ID'),
-                              Text(conver['lastMessage'] ?? 'Không có tin nhắn cuối'),
-                              Text(conver['user']?['name'] ?? 'Không có tên'), // Kiểm tra null trước khi truy cập
-                            ],
-                          ),
+                                ClipOval(
+                                child: Image.network(
+                                  conver['user']['avatar_url'] ?? '', // Kiểm tra nếu có URL
+                                  width: 70.0,
+                                  height: 70.0,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      width: 70.0,
+                                      height: 70.0,
+                                      color: Colors.grey, // Màu nền khi lỗi tải hình
+                                    );
+                                  },
+                                  loadingBuilder: (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child; // Hiển thị hình khi tải xong
+                                    return Container(
+                                      width: 70.0,
+                                      height: 70.0,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.grey, // Màu nền khi đang tải
+                                      ),
+                                      child: Center(child: CircularProgressIndicator()), // Hiển thị vòng tròn khi tải
+                                    );
+                                  },
+                                ),
+                              ),
+                              SizedBox(width: 10), 
+                              Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(conver['user']['name'] ?? 'Người mua không xác định'),
+                                Text(conver['lastMessage']),
+                                Text(conver['createdAt'])
+                              ],),
+                          ],)
                         ),
                       );
                     },

@@ -4,6 +4,7 @@ import {
     getOrderById,
     getOrdersByUserIdBuyer,
     getOrdersByUserIdSeller,
+    getOrdersByUserIdSeller1,
     getOrdersByPhone,
     getOrdersByStatusOrder,
     updateOrder,
@@ -67,6 +68,23 @@ const getOrdersByUserIdSellerController = async (req, res) => {
     }
 };
 
+const getOrdersByUserIdSellerController1 = async (req, res) => {
+    const { userId } = req.query; // Thay đổi ở đây
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    try {
+        const { orders, totalPages } = await getOrdersByUserIdSeller1(userId, page, limit);
+        res.status(200).json({
+            data: orders,
+            totalPages,
+            currentPage: page,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // Lấy đơn hàng theo số điện thoại
 const getOrdersByPhoneController = async (req, res) => {
     try {
@@ -125,6 +143,7 @@ export {
     getOrderByIdController,
     getOrdersByUserIdBuyerController,
     getOrdersByUserIdSellerController,
+    getOrdersByUserIdSellerController1,
     getOrdersByPhoneController,
     getOrdersByStatusOrderController,
     updateOrderController,
