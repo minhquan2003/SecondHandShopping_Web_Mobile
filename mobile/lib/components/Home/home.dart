@@ -56,8 +56,7 @@ class Home extends StatelessWidget {
                 ),
               ];
             },
-            body: ProductList(
-                urlBase: 'http://$ip:5555/products/'), // Danh sách sản phẩm
+            body: ProductList(urlBase: 'http://$ip:5555/products/'), // Danh sách sản phẩm
           ),
         );
       },

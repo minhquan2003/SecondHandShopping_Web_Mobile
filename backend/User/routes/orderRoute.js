@@ -4,6 +4,7 @@ import {
     getAllOrdersController,
     getOrderByIdController,
     getOrdersByUserIdBuyerController,
+    getOrdersByUserIdBuyerController1,
     getOrdersByUserIdSellerController,
     getOrdersByUserIdSellerController1,
     getOrdersByPhoneController,
@@ -18,6 +19,7 @@ orderRoute.post('/', createOrderController);
 orderRoute.get('/', getAllOrdersController);
 orderRoute.get('/:id', getOrderByIdController);
 orderRoute.get('/buyer/:userId', getOrdersByUserIdBuyerController);
+orderRoute.get('/buyer1/page/', getOrdersByUserIdBuyerController1);
 orderRoute.get('/seller/:userId', getOrdersByUserIdSellerController);
 orderRoute.get('/seller1/page/', getOrdersByUserIdSellerController1);
 orderRoute.get('/phone/:phone', getOrdersByPhoneController);

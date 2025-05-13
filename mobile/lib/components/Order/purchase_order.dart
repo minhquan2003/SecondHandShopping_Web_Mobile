@@ -17,7 +17,7 @@ class _PurchaseOrderState extends State<PurchaseOrder> with SingleTickerProvider
   late LoginInfo loginInfo;
   late List<dynamic> purchaseOrder = [];
   late TabController _tabController;
-  bool isLoading = true;
+  // bool isLoading = true;
 
   final List<String> statuses = [
     "All",
@@ -29,6 +29,10 @@ class _PurchaseOrderState extends State<PurchaseOrder> with SingleTickerProvider
     "Request Cancel",
     "Cancelled",
   ];
+
+    int currentPage = 1; // Biến để theo dõi trang hiện tại
+    bool isLoading = false; // Biến để theo dõi trạng thái tải
+    bool isLoadingMore = false; // Biến để theo dõi trạng thái tải thêm dữ liệu
 
   @override
   void initState() {
@@ -44,8 +48,12 @@ class _PurchaseOrderState extends State<PurchaseOrder> with SingleTickerProvider
   }
 
 
-  Future<List<dynamic>> fetchPurchaseOrders() async {
-    final response = await http.get(Uri.parse('http://$ip:5555/orders/buyer/${loginInfo.id}'));
+  Future<void> fetchPurchaseOrders() async {
+    if (isLoading) return; // Ngăn tải lại khi đang tải dữ liệu
+    isLoading = true;
+
+    // final response = await http.get(Uri.parse('http://$ip:5555/orders/buyer/${loginInfo.id}'));
+    final response = await http.get(Uri.parse('http://$ip:5555/orders/buyer1/page?page=$currentPage&limit=10&userId=${loginInfo.id}'));
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
       List<dynamic> purchaseOrders = result['data'];
@@ -64,16 +72,9 @@ class _PurchaseOrderState extends State<PurchaseOrder> with SingleTickerProvider
             final responseProduct = await http.get(Uri.parse('http://$ip:5555/products/${orderDetail['product_id']}'));
             if (responseProduct.statusCode == 200) {
               final resultProduct = json.decode(responseProduct.body);
-
-              // Adding orderDetail and product to the order
               order['orderDetail'] = orderDetail;
               order['product'] = resultProduct;
               isLoading = false;
-            } else {
-              // Handle product fetch error
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Không thể tải thông tin sản phẩm!')),
-              );
             }
           }
         } else {
@@ -85,16 +86,17 @@ class _PurchaseOrderState extends State<PurchaseOrder> with SingleTickerProvider
 
       // Update the state with the modified purchase orders
       setState(() {
-        purchaseOrder = purchaseOrders;
+        purchaseOrder.addAll(purchaseOrders);
+        currentPage++; // Tăng trang hiện tại
+        isLoadingMore = false; // Kết thúc trạng thái tải thêm
       });
-
-      return purchaseOrders; // Return the modified list
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Không thể tải được danh sách sản phẩm!')),
       );
-      return [];
     }
+
+    isLoading = false; // Kết thúc trạng thái tải
   }
   // Future<void> fetchPurchaseOrders() async {
   //   final response = await http.get(Uri.parse('http://$ip:5555/orders/buyer/${loginInfo.id}'));
@@ -133,52 +135,78 @@ class _PurchaseOrderState extends State<PurchaseOrder> with SingleTickerProvider
         controller: _tabController,
         children: statuses.map((status) {
           final filteredOrders = getFilteredOrders(status);
-          return Container(
-            child: isLoading 
-                ?Center(child: CircularProgressIndicator())
-                : filteredOrders.isEmpty ? 
-                Center(child: Text('Không có đơn hàng nào.'))
-                : ListView.builder(
-                    itemCount: filteredOrders.length,
-                    itemBuilder: (context, index) {
-                      final order = filteredOrders[index];
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => PurchaseOrderDetail(order: order)));
-                          print(order);
-                        },
-                      child: Row(children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Image.network(
-                            order['product']['image_url'],
-                            width: 70,
-                            height: 70,
-                            fit: BoxFit.contain,
+          return NotificationListener<ScrollNotification>(
+            onNotification: (ScrollNotification scrollInfo) {
+              if (!isLoading && scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+                isLoadingMore = true; // Bắt đầu tải thêm dữ liệu
+                fetchPurchaseOrders(); // Tải thêm dữ liệu khi cuộn đến cuối
+              }
+              return false;
+            },
+            child: Container(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: filteredOrders.isEmpty 
+                    ?Center(child: CircularProgressIndicator())
+                    : filteredOrders.isEmpty ? 
+                    Center(child: Text('Không có đơn hàng nào.'))
+                    : ListView.builder(
+                        itemCount: filteredOrders.length,
+                        itemBuilder: (context, index) {
+                          final order = filteredOrders[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => PurchaseOrderDetail(order: order)));
+                              print(order);
+                            },
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: order['product'] != null && order['product']['image_url'] != null
+                                    ? Image.network(
+                                        order['product']['image_url'],
+                                        width: 70,
+                                        height: 70,
+                                        fit: BoxFit.contain,
+                                        errorBuilder: (context, error, stackTrace) {
+                                          return Container(
+                                            width: 70,
+                                            height: 70,
+                                            color: Colors.grey, // Màu nền khi có lỗi tải hình
+                                          );
+                                        },
+                                      )
+                                    : Container(
+                                        width: 70,
+                                        height: 70,
+                                        color: Colors.grey, // Màu nền khi không có URL
+                                      ),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text('${order['product']?['name'] ?? 'Tên sản phẩm không xác định'}'),
+                                  Text('Tổng tiền: ${formatPrice(order['total_amount'])} đ\nTrạng thái: ${order['status_order']}'),
+                                ],
+                              ),
+                            ],
                           ),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                          Text('${order['product']['name']}'),
-                          Text('Tổng tiền: ${formatPrice(order['total_amount'])} đ\nTrạng thái: ${order['status_order']}')
-                        ],),
-                      ],)
-                      // ListTile(
-                      //   title: Text(order['name'] ?? 'Người mua không xác định'),
-                      //   subtitle: Column(
-                      //     crossAxisAlignment: CrossAxisAlignment.start,
-                      //     mainAxisAlignment: MainAxisAlignment.start,
-                      //     children: [
-                      //     Text('${order['product']['name']}'),
-                      //     Text('Tổng tiền: ${formatPrice(order['total_amount'])} đ\nTrạng thái: ${order['status_order']}')
-                      //   ],),
-                      // ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
+                  if (isLoadingMore) // Hiển thị vòng tròn loading khi tải thêm
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
+                ],
+              ),
+            ),
           );
         }).toList(),
       ),

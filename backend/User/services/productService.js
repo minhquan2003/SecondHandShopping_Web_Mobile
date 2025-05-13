@@ -13,6 +13,17 @@ const getProducts = async () => {
   });
 };
 
+const getProducts1 = async (page, limit) => {
+    const skip = (page - 1) * limit;
+    const products = await Products.find({status: true, approve: true, quantity: { $gt: 0 },}).skip(skip).limit(limit);
+    const total = await Products.countDocuments({status: true, approve: true, quantity: { $gt: 0 },});
+  
+    return {
+      products,
+        totalPages: Math.ceil(total / limit),
+    };
+};
+
 const getOneProductById = async (idProduct) => {
   return await Products.findOne({ _id: idProduct });
 };
@@ -131,6 +142,7 @@ const deleteOneProduct = async (id) => {
 export {
   createProduct,
   getProducts,
+  getProducts1,
   getOneProductById,
   getProductsByCategory,
   getProductsByUserId,

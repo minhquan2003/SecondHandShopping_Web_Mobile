@@ -5,6 +5,7 @@ import ProductViews from "../models/ProductView.js";
 import {
   createProduct,
   getProducts,
+  getProducts1,
   getOneProductById,
   getProductsByUserIdSoldOut,
   getProductsByCategory,
@@ -37,6 +38,22 @@ const getAllProducts = async (req, res) => {
     console.error(error.message);
     res.status(500).send({ message: error.message });
   }
+};
+
+const getAllProducts1 = async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    try {
+        const { products, totalPages } = await getProducts1(page, limit);
+        res.status(200).json({
+            data: products,
+            totalPages,
+            currentPage: page,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };
 
 const getProductById = async (req, res) => {
@@ -207,6 +224,7 @@ const deleteProduct = async (req, res) => {
 export {
   addProduct,
   getAllProducts,
+  getAllProducts1,
   getProductById,
   getProductsByIdCategory,
   getProductsByUserIdController,

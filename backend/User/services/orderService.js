@@ -21,6 +21,17 @@ const getOrdersByUserIdBuyer = async (userIdBuyer) => {
     return await Orders.find({ user_id_buyer: userIdBuyer, status: true });
 };
 
+const getOrdersByUserIdBuyer1 = async (userIdBuyer, page, limit) => {
+    const skip = (page - 1) * limit;
+    const orders = await Orders.find({ user_id_buyer: userIdBuyer, status: true }).skip(skip).limit(limit);
+    const total = await Orders.countDocuments({ user_id_buyer: userIdBuyer, status: true });
+  
+    return {
+        orders,
+        totalPages: Math.ceil(total / limit),
+    };
+};
+
 // Lấy các đơn hàng theo user_id_seller
 const getOrdersByUserIdSeller = async (userIdSeller) => {
     return await Orders.find({ user_id_seller: userIdSeller, status: true });
@@ -66,6 +77,7 @@ export {
     getAllOrders,
     getOrderById,
     getOrdersByUserIdBuyer,
+    getOrdersByUserIdBuyer1,
     getOrdersByUserIdSeller,
     getOrdersByUserIdSeller1,
     getOrdersByPhone,
