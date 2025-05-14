@@ -11,7 +11,7 @@ import { IP } from '../../config';
 
 const socket = io(`http://localhost:5555`);
 
-const PurchaseOrder = () => {
+const PurchaseOrderDetail = () => {
     const { orderId } = useParams(); // Lấy mã đơn hàng từ URL
     const userInfoString = sessionStorage.getItem('userInfo');
     const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
@@ -243,4 +243,4 @@ const PurchaseOrder = () => {
     );
 };
 
-export default PurchaseOrder;
+export default PurchaseOrderDetail;

@@ -14,8 +14,8 @@ import PostProductPage from './pages/PostProduct/index';
 import Order from "./components/Order/Order";
 import ProductByName from '../src/components/Search/Search';
 import SellerPage from "./components/SellerPage/SellerPage";
-import PurchaseOrder from "./components/Order/PurchaseOrder";
-import SalesOder from "./components/Order/SalesOder";
+import PurchaseOrder from "./components/Order/PurchaseOrderDetail";
+import SalesOder from "./components/Order/SalesOderDetail";
 import EditSalePage from "./components/EditPageSale/EditPageSale";
 import PaymentInfo from "./components/Checkout/InfoPayment";
 import Feedback from "./components/Feedback/Feedback";
@@ -24,6 +24,8 @@ import ChangePassword from "./components/AuthForm/ChangePassword";
 import Regulation from "./components/Regulation/Regulation";
 import Message from "./components/Message/Message";
 import Chat from "./components/Message/Chat";
+import PurchaseOrderDetail from "./components/Order/PurchaseOrderDetail";
+import SalesOrderDetail from "./components/Order/SalesOderDetail";
 
 const App = () => {
   const userInfoString = sessionStorage.getItem('userInfo');
@@ -45,8 +47,8 @@ const App = () => {
           <Route path="/order/:id" element={userInfo ? <Order /> : <Navigate to="/" replace />} />
           <Route path="/search" element={<ProductByName />} />
           <Route path="/seller/:sellerId" element={<SellerPage />} />
-          <Route path="/purchaseOrder/:orderId" element={userInfo ? <PurchaseOrder /> : <Navigate to="/" replace />} />
-          <Route path="/salesOder/:orderId" element={ userInfo ? <SalesOder /> : <Navigate to="/" replace />} />
+          <Route path="/purchaseOrder/:orderId" element={userInfo ? <PurchaseOrderDetail /> : <Navigate to="/" replace />} />
+          <Route path="/salesOder/:orderId" element={ userInfo ? <SalesOrderDetail /> : <Navigate to="/" replace />} />
           <Route path="/editSale/:sellerId" element={ userInfo ? <EditSalePage /> : <Navigate to="/" replace />} />
           <Route path="/payment/:orderId" element={ <PaymentInfo />} />
           <Route path="/edit/product/:productId" element={ userInfo ? <PostProductPage /> : <Navigate to="/" replace />} />

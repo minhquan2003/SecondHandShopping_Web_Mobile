@@ -12,17 +12,17 @@ const ProductCard = ({ id, name, description, price, quantity, image_url, partne
                         src={image_url} 
                         alt={name} 
                         className="object-cover" 
-                        style={{ width: '245px', height: '200px' }} // Thiết lập kích thước cố định cho ảnh
+                        style={{ width: '245px', height: '200px' }}
                     />
                 </div>
                 <div className="w-full h-[45%] p-4 overflow-y-auto">
-                <h2 className="text-xl font-semibold text-gray-800 line-clamp-2">{name}</h2>
-                    {String(partner) === "true" ? (  // So sánh partner với chuỗi "true"
+                    <h2 className="text-lg font-semibold text-gray-800 line-clamp-2">{name}</h2>
+                    {/* {String(partner) === "true" ? (
                         <p className="text-sm text-green-600 mt-1 flex items-center">
-                            <FaCheckCircle className="mr-1" /> {/* Biểu tượng check */}
+                            <FaCheckCircle className="mr-1" />
                             Đảm bảo chất lượng
                         </p>
-                    ) : null}
+                    ) : null} */}
                     <p className="text-lg font-bold text-red-500 mt-2">{price.toLocaleString('vi-VN')} VNĐ</p>
                     <p className="text-gray-500">Số lượng: {quantity}</p>
                 </div>
@@ -38,7 +38,7 @@ ProductCard.propTypes = {
     price: PropTypes.number.isRequired,
     quantity: PropTypes.number.isRequired,
     image_url: PropTypes.string.isRequired,
-    partner: PropTypes.bool.isRequired, // Thêm propType cho partner
+    partner: PropTypes.bool.isRequired,
 };
 
 export default ProductCard;

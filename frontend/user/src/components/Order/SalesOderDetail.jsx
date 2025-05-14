@@ -10,7 +10,7 @@ import { IP } from '../../config';
 
 const socket = io(`http://localhost:5555`); // Đảm bảo cổng đúng
 
-const SalesOrder = () => {
+const SalesOrderDetail = () => {
     const { orderId } = useParams();
     const userInfoString = sessionStorage.getItem('userInfo');
     const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
@@ -229,4 +229,4 @@ const SalesOrder = () => {
     );
 };
 
-export default SalesOrder;
+export default SalesOrderDetail;

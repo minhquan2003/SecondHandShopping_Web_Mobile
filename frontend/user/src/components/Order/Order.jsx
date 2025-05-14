@@ -307,9 +307,6 @@ const Order = () => {
                                         <div className="text-gray-700">
                                             <strong>Trạng thái đơn hàng:</strong> <span className="font-normal">{order.status_order}</span>
                                         </div>
-                                        <div className="text-gray-700">
-                                            <strong>Trạng thái đơn hàng:</strong> <span className="font-normal">{order.product.name}</span>
-                                        </div>
                                     </li>
                                 </Link>
                             ))}

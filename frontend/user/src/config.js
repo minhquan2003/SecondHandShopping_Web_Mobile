@@ -1,3 +1,3 @@
-export const IP = "192.168.1.191" || "localhost";
+export const IP = "192.168.1.119" || "localhost";
 // 192.168.2.247
 //192.168.1.191
