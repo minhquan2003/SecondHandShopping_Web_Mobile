@@ -95,13 +95,13 @@ const Header = () => {
       </div>
 
       {/* Header Main */}
-      <header className="bg-yellow-400 text-black justify-center flex items-center p-4 space-x-10">
+      <header className="bg-yellow-400 text-black justify-center flex items-center p-4 space-x-5">
         <div className="flex items-center">
         <div onClick={() => handleLogoClick()} className="cursor-pointer">
           <img
             src={logo}
             alt="Logo"
-            className="w-16 h-16 rounded-full" // Kích thước 16 và bo tròn
+            className="w-20 h-20 rounded-full" // Kích thước 16 và bo tròn
           />
         </div>
           {/* <nav className="ml-6">

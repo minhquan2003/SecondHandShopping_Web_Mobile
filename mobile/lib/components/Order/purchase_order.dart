@@ -30,9 +30,9 @@ class _PurchaseOrderState extends State<PurchaseOrder> with SingleTickerProvider
     "Cancelled",
   ];
 
-    int currentPage = 1; // Biến để theo dõi trang hiện tại
-    bool isLoading = false; // Biến để theo dõi trạng thái tải
-    bool isLoadingMore = false; // Biến để theo dõi trạng thái tải thêm dữ liệu
+  int currentPage = 1; // Biến để theo dõi trang hiện tại
+  bool isLoading = false; // Biến để theo dõi trạng thái tải
+  bool isLoadingMore = false; // Biến để theo dõi trạng thái tải thêm dữ liệu
 
   @override
   void initState() {
