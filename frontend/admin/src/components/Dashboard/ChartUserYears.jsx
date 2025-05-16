@@ -10,7 +10,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import useChart from "../../hooks/useChart";
+import { useChart } from "../../hooks/useDashboard";
 
 // Register chart components
 ChartJS.register(
@@ -41,13 +41,26 @@ const ChartUserYears = () => {
 
   // Chuẩn bị dữ liệu cho biểu đồ
   const chartData = {
-    labels: data.map((item) => `Month ${item.month}`), // Nhãn trục X
+    labels: [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ], // Nhãn trục X
     datasets: [
       {
         label: "Total Created Users",
         data: data.map((item) => item.totalUsers), // Dữ liệu trục Y
-        borderColor: "#4caf50", // Màu đường
-        backgroundColor: "rgba(76, 175, 80, 0.2)", // Màu dưới đường
+        borderColor: "rgba(255, 99, 132, 0.5)", // Màu đường
+        backgroundColor: "rgba(255, 99, 132, 0.2)", // Màu dưới đường
         fill: true,
         tension: 0.4, // Làm đường cong mượt
       },
@@ -55,20 +68,17 @@ const ChartUserYears = () => {
   };
 
   return (
-    <div className="w-5/6 ml-[16.6666%] p-4 bg-gray-100 rounded-md px-8 border-b-2 border-black-300 pb-8">
-      <h2 className="text-2xl font-semibold mb-4 text-blue-600">
-        User Statistics - Year {selectedYear}
-      </h2>
+    <div className="">
+      <div className="flex items-center mb-4">
+        <h2 className="text-xl mr-4 font-semibold">
+          User Statistics - Year {selectedYear}
+        </h2>
 
-      <div className="mb-4">
-        <label htmlFor="year-select" className="mr-2">
-          Select Year:
-        </label>
         <select
           id="year-select"
           onChange={handleYearChange}
           value={selectedYear}
-          className="border border-gray-300 p-2 rounded-md"
+          className="p-2 border border-gray-300 rounded-md"
         >
           {years.map((year) => (
             <option key={year} value={year}>
@@ -81,7 +91,7 @@ const ChartUserYears = () => {
       {loading ? (
         <p>Loading data...</p>
       ) : (
-        <div style={{ width: "100%", height: "450px" }}>
+        <div style={{ width: "100%", height: "0 auto" }}>
           <Line data={chartData} />
         </div>
       )}

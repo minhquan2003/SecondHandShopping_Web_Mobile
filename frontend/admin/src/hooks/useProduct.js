@@ -12,6 +12,9 @@ const useProducts = (
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalPages, setTotalPages] = useState(1);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const refresh = () => setRefreshTrigger((prev) => prev + 1);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -55,7 +58,7 @@ const useProducts = (
     };
 
     fetchProducts();
-  }, [type, page, fieldSort, orderSort, searchKey]);
+  }, [type, page, fieldSort, orderSort, searchKey, refreshTrigger]);
 
   const approveProducts = async (selectedIds) => {
     try {
@@ -75,6 +78,7 @@ const useProducts = (
         prev.filter((product) => !selectedIds.includes(product._id))
       );
       alert("Selected products approve successfully!");
+      refresh();
     } catch {
       alert("Failed to approve selected products");
     }
@@ -98,6 +102,7 @@ const useProducts = (
         prev.filter((product) => !selectedIds.includes(product._id))
       );
       alert("Selected products hide successfully!");
+      refresh();
     } catch {
       alert("Failed to hide selected products.");
     }
@@ -105,22 +110,18 @@ const useProducts = (
 
   const deleteSelectedProducts = async (selectedIds) => {
     try {
-      await axios.delete(
-        "http://localhost:5555/admin/delete-products",
-        {
-          productIds: selectedIds,
+      await axios.delete("http://localhost:5555/admin/delete-products", {
+        data: { productIds: selectedIds },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      });
 
       setProducts((prev) =>
         prev.filter((product) => !selectedIds.includes(product._id))
       );
       alert("Selected products deleted successfully!");
+      refresh();
     } catch {
       alert("Failed to delete selected products.");
     }

@@ -1,144 +1,70 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useTopSellingProducts } from "../../hooks/useOrder";
-import { FiFilter } from "react-icons/fi";
+import { useState } from "react";
+import { useTopOrderProduct } from "../../hooks/useDashboard";
 
-const TopTenOrder = () => {
-  const [timeFrame, setTimeFrame] = useState("month"); // Default is "month"
-  const { topProducts, loading, error } = useTopSellingProducts(timeFrame);
-  const [showFilterMenu, setShowFilterMenu] = useState(false); // Toggle filter menu visibility
-  const filterMenuRef = useRef(null);
-  const filterButtonRef = useRef(null);
+const TopTenBuyer = () => {
+  const [month, setMonth] = useState(12);
+  const [year, setYear] = useState(2024);
+  const { topOrderProducts, loading, error } = useTopOrderProduct(month, year);
 
-  const handleFilterClick = () => {
-    setShowFilterMenu(!showFilterMenu);
+  const handleMonthChange = (e) => {
+    setMonth(parseInt(e.target.value));
   };
 
-  const handleTimeFrameChange = (newTimeFrame) => {
-    setTimeFrame(newTimeFrame); // Change the time frame when selecting
-    setShowFilterMenu(false); // Close the filter menu after selection
-  };
-
-  // Close filter menu if clicked outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        filterMenuRef.current &&
-        !filterMenuRef.current.contains(event.target) &&
-        filterButtonRef.current &&
-        !filterButtonRef.current.contains(event.target)
-      ) {
-        setShowFilterMenu(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  // Function to return the title based on timeFrame
-  const getTitle = () => {
-    switch (timeFrame) {
-      case "day":
-        return "Top 10 Products Today";
-      case "week":
-        return "Top 10 Products This Week";
-      case "month":
-        return "Top 10 Products This Month";
-      case "year":
-        return "Top 10 Products This Year";
-      default:
-        return "Top 10 Products";
-    }
+  const handleYearChange = (e) => {
+    setYear(parseInt(e.target.value));
   };
 
   return (
-    <div className="w-5/6 ml-[16.6666%] p-4 bg-gray-100 rounded-md px-8 border-b-2 border-black-300 pb-8">
-      <h2 className="text-2xl font-bold text-blue-600 mb-6">{getTitle()}</h2>
-      {/* Title changes based on timeFrame */}
-      {/* Filter Icon */}
-      <div className="relative">
-        <button
-          onClick={handleFilterClick}
-          ref={filterButtonRef}
-          className="text-xl mb-4 text-orange-600 bg-orange-100 p-1 rounded-lg"
-          aria-label="Filter by time frame"
+    <div className="">
+      <div className="flex gap-4 mb-4">
+        <h2 className="text-xl font-semibold">Top 10 Người Mua Hàng</h2>
+        <select
+          value={month}
+          onChange={handleMonthChange}
+          className="border p-1 rounded"
         >
-          <FiFilter />
-        </button>
+          {[...Array(12)].map((_, i) => (
+            <option key={i + 1} value={i + 1}>
+              Tháng {i + 1}
+            </option>
+          ))}
+        </select>
 
-        {/* Dropdown Menu for Time Frames */}
-        {showFilterMenu && (
-          <div
-            ref={filterMenuRef}
-            className="absolute left-0 top-full mt-2 bg-white border "
-          >
-            <ul className="space-y-2 p-4">
-              <li>
-                <button
-                  onClick={() => handleTimeFrameChange("day")}
-                  className="text-gray-700 hover:bg-gray-200 px-4 py-2 w-full text-left text-sm"
-                >
-                  Today
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => handleTimeFrameChange("week")}
-                  className="text-gray-700 hover:bg-gray-200 px-4 py-2 w-full text-left text-sm"
-                >
-                  This Week
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => handleTimeFrameChange("month")}
-                  className="text-gray-700 hover:bg-gray-200 px-4 py-2 w-full text-left text-sm"
-                >
-                  This Month
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => handleTimeFrameChange("year")}
-                  className="text-gray-700 hover:bg-gray-200 px-4 py-2 w-full text-left text-sm"
-                >
-                  This Year
-                </button>
-              </li>
-            </ul>
-          </div>
-        )}
+        <select
+          value={year}
+          onChange={handleYearChange}
+          className="border p-1 rounded"
+        >
+          {[2023, 2024, 2025].map((y) => (
+            <option key={y} value={y}>
+              Năm {y}
+            </option>
+          ))}
+        </select>
       </div>
-      {/* Loading/Error State */}
       {loading && <p className="text-gray-500">Loading...</p>}
       {error && <p className="text-red-500">Error: {error}</p>}
       {/* Product Table */}
       {!loading && !error && (
-        <table className="min-w-full bg-white border border-gray-200 rounded-md shadow-md">
+        <table className="min-w-full bg-white border border-gray-200 rounded-md">
           <thead>
             <tr className="bg-gray-100">
-              <th className="px-4 py-2 text-left">Product</th>
-              <th className="px-4 py-2 text-left">Image</th>
-              <th className="px-4 py-2 text-left">Sold</th>
+              <th className="px-4 py-2 text-left">Buyer</th>
+              {/* <th className="px-4 py-2 text-left">Image</th> */}
+              <th className="px-4 py-2 text-center">Orders</th>
             </tr>
           </thead>
           <tbody>
-            {topProducts.map((product) => (
-              <tr key={product.productId} className="border-t">
-                <td className="px-4 py-2 text-sm font-semibold text-gray-800">
-                  {product.name}
+            {topOrderProducts.map((buyer, index) => (
+              <tr key={index + 1} className="border-t">
+                <td className="px-4 py-2 text-sm text-gray-800 flex items-center">
+                  {buyer.name} ({buyer.username})
                 </td>
-                <td className="px-4 py-2">
-                  <img
-                    src={product.image_url}
-                    alt={product.name}
-                    className="w-12 h-12 object-cover rounded-md"
-                  />
-                </td>
-                <td className="px-4 py-2 text-sm text-gray-600">
-                  {product.totalQuantity}
+                {/* <td className="px-4 py-2">
+                  
+                </td> */}
+                <td className="px-4 py-2 text-sm text-gray-600 text-center">
+                  {buyer.orderCount}
                 </td>
               </tr>
             ))}
@@ -149,4 +75,4 @@ const TopTenOrder = () => {
   );
 };
 
-export default TopTenOrder;
+export default TopTenBuyer;

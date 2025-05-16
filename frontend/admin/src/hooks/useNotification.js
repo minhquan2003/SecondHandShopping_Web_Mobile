@@ -6,14 +6,17 @@ const useNotification = (page = 1) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalPages, setTotalPages] = useState(1);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const refresh = () => setRefreshTrigger((prev) => prev + 1);
 
   useEffect(() => {
     // Fetch all notifications
     const fetchNotifications = async () => {
-      const url = `http://localhost:5555/admin/notifications?page=${page}`;
       try {
         setLoading(true);
         setError(null);
+        let url = `http://localhost:5555/admin/notifications?page=${page}`;
         const response = await axios.get(url, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -29,12 +32,13 @@ const useNotification = (page = 1) => {
         }
       } catch (err) {
         setError(err.message);
+        setNotifications([]);
       } finally {
         setLoading(false);
       }
     };
     fetchNotifications();
-  }, [page]);
+  }, [page, refreshTrigger]);
 
   // Post a new notification
   const postNotification = async (payload) => {
@@ -61,23 +65,18 @@ const useNotification = (page = 1) => {
   // Remove a notification by setting its status to false
   const removeNotification = async (selectedIds) => {
     try {
-      const response = await axios.delete(
-        "http://localhost:5555/admin/notifications",
-        {
-          notificationIds: selectedIds,
+      await axios.delete("http://localhost:5555/admin/notifications", {
+        data: { notificationIds: selectedIds },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      if (!response.ok) throw new Error("Failed to delete notification");
+      });
 
       setNotifications((prev) =>
         prev.filter((notification) => !selectedIds.includes(notification._id))
       );
       alert("Selected notification deleted successfully");
+      refresh();
     } catch {
       alert("Failed to delete selected notifications");
     }

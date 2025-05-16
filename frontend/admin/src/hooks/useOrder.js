@@ -1,40 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const useTopSellingProducts = (timeFrame) => {
-  const [topProducts, setTopProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchTopProducts = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `http://localhost:5555/admin/top-selling-products`,
-          {
-            params: { timeFrame },
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        setTopProducts(response.data.data);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    if (timeFrame) {
-      fetchTopProducts();
-    }
-  }, [timeFrame]);
-
-  return { topProducts, loading, error };
-};
-
 const usePurchaseOverview = () => {
   const [overviewData, setOverviewData] = useState({
     totalOrders: 0,
@@ -120,4 +86,4 @@ const useOrders = (
   return { orders, loading, error, totalPages };
 };
 
-export { useTopSellingProducts, usePurchaseOverview, useOrders };
+export { usePurchaseOverview, useOrders };
