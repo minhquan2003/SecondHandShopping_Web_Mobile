@@ -1,69 +1,7 @@
 import Users from "../../../User/models/Users.js";
 import Products from "../../../User/models/Products.js";
 import Orders from "../../../User/models/Orders.js";
-
-// export const getUserStatisticsByYear = async (year) => {
-//   try {
-//     const startOfYear = new Date(`${year}-01-01T00:00:00Z`);
-//     const endOfYear = new Date(`${year}-12-31T23:59:59Z`);
-//     const startOfPreviousYear = new Date(`${year - 1}-01-01T00:00:00Z`);
-//     const endOfPreviousYear = new Date(`${year - 1}-12-31T23:59:59Z`);
-
-//     // Lấy tổng số người dùng tích lũy đến cuối năm trước
-//     const previousYearTotal = await Users.countDocuments({
-//       createdAt: { $lte: endOfPreviousYear },
-//     });
-
-//     // Lấy số lượng người dùng mới tạo trong từng tháng của năm hiện tại
-//     const statistics = await Users.aggregate([
-//       {
-//         $match: {
-//           createdAt: {
-//             $gte: startOfYear,
-//             $lte: endOfYear,
-//           },
-//         },
-//       },
-//       {
-//         $group: {
-//           _id: { $month: "$createdAt" },
-//           totalUsers: { $sum: 1 },
-//         },
-//       },
-//       {
-//         $project: {
-//           month: "$_id",
-//           totalUsers: 1,
-//           _id: 0,
-//         },
-//       },
-//       {
-//         $sort: { month: 1 },
-//       },
-//     ]);
-
-//     // Đảm bảo tất cả các tháng (1-12) đều có dữ liệu
-//     const fullStatistics = Array.from({ length: 12 }, (_, i) => ({
-//       month: i + 1,
-//       totalUsers: 0,
-//     }));
-
-//     statistics.forEach((stat) => {
-//       fullStatistics[stat.month - 1].totalUsers = stat.totalUsers;
-//     });
-
-//     // Tính tổng tích lũy, với tháng 1 bắt đầu từ tổng của năm trước
-//     let cumulativeTotal = previousYearTotal;
-//     const cumulativeStatistics = fullStatistics.map((stat) => {
-//       cumulativeTotal += stat.totalUsers;
-//       return { month: stat.month, totalUsers: cumulativeTotal };
-//     });
-
-//     return cumulativeStatistics;
-//   } catch (error) {
-//     throw new Error("Error calculating user statistics");
-//   }
-// };
+import Reviews from "../../../User/models/Reviews.js";
 
 export const getUserStatisticsByYear = async (year) => {
   try {
@@ -116,7 +54,8 @@ export const getUserStatisticsByYear = async (year) => {
   }
 };
 
-export const getMonthlyStatistics = async (year) => {
+//-----------------------------Stat order and product by month --------------------------------------
+export const getOrderMonthlyStatistics = async (year) => {
   try {
     // Aggregate products for the specified year with status true and approved true
     const productStats = await Products.aggregate([
@@ -146,7 +85,7 @@ export const getMonthlyStatistics = async (year) => {
       {
         $match: {
           status: true,
-          status_order: "Success",
+          //status_order: "Success",
           createdAt: {
             $gte: new Date(`${year}-01-01`),
             $lt: new Date(`${year + 1}-01-01`),
@@ -182,4 +121,144 @@ export const getMonthlyStatistics = async (year) => {
     console.error("Error fetching statistics:", error);
     throw error;
   }
+};
+
+//----------------------------Stat order status-----------------------------------
+export const getOrderStatusStats = async () => {
+  const totalOrders = await Orders.countDocuments();
+
+  if (totalOrders === 0) return [];
+
+  const result = await Orders.aggregate([
+    {
+      $group: {
+        _id: "$status_order",
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        status: "$_id",
+        count: 1,
+        percentage: {
+          $multiply: [{ $divide: ["$count", totalOrders] }, 100],
+        },
+      },
+    },
+  ]);
+
+  // Làm tròn phần trăm đến 2 chữ số sau dấu phẩy
+  const roundedResult = result.map((item) => ({
+    status: item.status,
+    count: item.count,
+    percentage: Math.round(item.percentage * 100) / 100,
+  }));
+
+  return roundedResult;
+};
+
+//----------------------------Rating review-----------------------------------
+export const getRatingDistribution = async () => {
+  // Aggregate ratings from 1 to 5
+  const result = await Reviews.aggregate([
+    { $match: { status: true } }, // Lọc đánh giá hợp lệ
+    {
+      $group: {
+        _id: "$rating",
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $sort: { _id: 1 }, // Sắp xếp theo rating (1 đến 5 sao)
+    },
+  ]);
+
+  // Tính tổng số đánh giá
+  const total = result.reduce((acc, item) => acc + item.count, 0);
+
+  // Tính phần trăm mỗi loại rating
+  const percentage = {};
+  for (let i = 1; i <= 5; i++) {
+    const found = result.find((r) => r._id === i);
+    const count = found ? found.count : 0;
+    percentage[i] = total ? ((count / total) * 100).toFixed(2) : 0;
+  }
+
+  return percentage;
+};
+
+//--------------------------Top user buy product-----------------------------------
+export const getTopUserOrder = async (month, year) => {
+  const matchStage = {
+    user_id_seller: { $ne: "" },
+  };
+
+  if (month && year) {
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 1);
+    matchStage.createdAt = { $gte: startDate, $lt: endDate };
+  }
+
+  const pipeline = [
+    { $match: matchStage },
+    {
+      $group: {
+        _id: "$user_id_seller",
+        orderCount: { $sum: 1 },
+      },
+    },
+    {
+      $sort: { orderCount: -1 },
+    },
+    {
+      $limit: 10,
+    },
+  ];
+
+  const result = await Orders.aggregate(pipeline);
+
+  for (const seller of result) {
+    const user = await Users.findById(seller._id).select("username name");
+    seller.username = user?.username || "Unknown";
+    seller.name = user?.name || "";
+  }
+
+  return result;
+};
+
+//------------------------Top user post product-----------------------------------
+export const getTopUserPost = async (month, year) => {
+  const matchStage = {
+    status: true,
+    approve: true,
+  };
+
+  if (month && year) {
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 1);
+    matchStage.createdAt = { $gte: startDate, $lt: endDate };
+  }
+
+  const pipeline = [
+    { $match: matchStage },
+    {
+      $group: {
+        _id: "$user_id",
+        productCount: { $sum: 1 },
+      },
+    },
+    { $sort: { productCount: -1 } },
+    { $limit: 10 },
+  ];
+
+  const result = await Products.aggregate(pipeline);
+
+  for (const item of result) {
+    const user = await Users.findById(item._id).select("username name");
+    item.username = user?.username || "Unknown";
+    item.name = user?.name || "";
+  }
+
+  return result;
 };

@@ -14,6 +14,9 @@ const useUser = (
   const [totalPages, setTotalPages] = useState(1);
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalBans, setTotalBans] = useState(0);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const refresh = () => setRefreshTrigger((prev) => prev + 1);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -58,7 +61,7 @@ const useUser = (
       }
     };
     fetchUsers();
-  }, [type, page, fieldSort, orderSort, searchKey]);
+  }, [type, page, fieldSort, orderSort, searchKey, refreshTrigger]);
 
   // Ban user
   const banUser = async (selectedIds) => {
@@ -79,6 +82,7 @@ const useUser = (
         prev.filter((user) => !selectedIds.includes(user._id))
       );
       alert("Selected users banned successfully");
+      refresh();
     } catch {
       alert("Failed to ban selected users");
     }
@@ -103,6 +107,7 @@ const useUser = (
         prev.filter((user) => !selectedIds.includes(user._id))
       );
       alert("Selected users unbanned successfully");
+      refresh();
     } catch {
       alert("Failed to unban selected users");
     }
@@ -111,22 +116,18 @@ const useUser = (
   // Delete users
   const deleteUsers = async (selectedIds) => {
     try {
-      await axios.delete(
-        "http://localhost:5555/admin/delete-account",
-        {
-          data: { userIds: selectedIds },
+      await axios.delete("http://localhost:5555/admin/delete-account", {
+        data: { userIds: selectedIds },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      });
 
       setUsers((prev) =>
         prev.filter((user) => !selectedIds.includes(user._id))
       );
       alert("Selected users deleted successfully");
+      refresh();
     } catch {
       alert("Failed to delete selected users.");
     }

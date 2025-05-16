@@ -26,7 +26,10 @@ import {
   getPendingProducts,
 } from "../controllers/product/adminProductController.js";
 
-import { getFeedbacks } from "../controllers/feedback/adminFeedbackController.js";
+import {
+  getFeedbacks,
+  sendFeedbackReply,
+} from "../controllers/feedback/adminFeedbackController.js";
 
 import {
   getCategories,
@@ -50,7 +53,11 @@ import {
 
 import {
   getUserStatistics,
-  getStatisticsByYear,
+  getOrderStatisticsByYear,
+  getOrderStatusChart,
+  getRatingPieChart,
+  getTopUserPostProduct,
+  getTopBuyer,
 } from "../controllers/chart/adminChartController.js";
 
 import {
@@ -90,6 +97,7 @@ adminRouter.get("/pending-products", authorize, getPendingProducts);
 adminRouter.delete("/delete-products", authorize, removeProducts);
 
 adminRouter.get("/all-feedback", authorize, getFeedbacks);
+adminRouter.post("/reply", authorize, sendFeedbackReply);
 
 adminRouter.get("/categories", authorize, getCategories);
 adminRouter.post("/category/", authorize, createCategory);
@@ -106,7 +114,15 @@ adminRouter.put("/regulation/:id", authorize, editRegulation);
 adminRouter.delete("/regulation", authorize, removeRegulation);
 
 adminRouter.get("/statistics/yearly-users", authorize, getUserStatistics);
-adminRouter.get("/statistics", authorize, getStatisticsByYear);
+adminRouter.get(
+  "/statistics-order-product",
+  authorize,
+  getOrderStatisticsByYear
+);
+adminRouter.get("/orders/status-chart", authorize, getOrderStatusChart);
+adminRouter.get("/rating-distribution", authorize, getRatingPieChart);
+adminRouter.get("/top-user-order", authorize, getTopBuyer);
+adminRouter.get("/top-user-product-post", authorize, getTopUserPostProduct);
 
 adminRouter.get("/top-selling-products", authorize, fetchTopSellingProducts);
 adminRouter.get("/order-stats", authorize, fetchOrderStats);

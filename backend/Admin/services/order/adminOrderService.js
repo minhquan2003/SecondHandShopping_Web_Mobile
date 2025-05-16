@@ -135,48 +135,6 @@ export const getTopSellingProducts = async (timeFrame) => {
   }
 };
 
-// export const getAllOrders = async (page = 1, limit = 10) => {
-//   const query = { status: true };
-//   const skip = (page - 1) * limit;
-//   const orderdetails = await OrderDetails.find(query)
-//     .skip(skip)
-//     .limit(limit)
-//     .lean();
-
-//   for (const orderdetail of orderdetails) {
-//     const order = await Orders.findById(orderdetail.order_id).lean();
-
-//     if (!order) {
-//       console.error(`Order not found for order_id: ${orderdetail.order_id}`);
-//       continue; // Bỏ qua vòng lặp nếu không tìm thấy order
-//     }
-
-//     const product = await Products.findById(orderdetail.product_id).lean();
-//     const user_seller = await Users.findById(order.user_id_seller).lean();
-//     const user_buyer = await Users.findById(order.user_id_buyer).lean();
-
-//     orderdetail.name_seller = user_seller?.name || "Unknown Phone";
-//     orderdetail.name_buyer = user_buyer?.name || "Unknown Phone";
-//     orderdetail.phone_buyer = order?.phone || "Unknown Phone";
-//     orderdetail.address_buyer = user_buyer?.address || "Unknown Phone";
-//     orderdetail.status_order = order?.status_order || "Unknown Phone";
-//     orderdetail.note = order?.phone || "Unknown Phone";
-//     orderdetail.product_name = product?.name || "Unknown Phone";
-//   }
-
-//   const totalOrders = await OrderDetails.countDocuments(query);
-//   const totalPages = Math.ceil(totalOrders / limit);
-
-//   return {
-//     orderdetails,
-//     totalOrders,
-//     totalPages,
-//     limit,
-//     skip,
-//     currentPage: page,
-//   };
-// };
-
 export const getAllOrders = async (page = 1, limit = 10, sort, filter) => {
   try {
     const query = { status: true };

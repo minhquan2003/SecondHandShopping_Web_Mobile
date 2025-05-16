@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   FaTachometerAlt,
   FaUsers,
   FaBoxOpen,
-  FaHandshake,
   FaComments,
   FaListAlt,
   FaBell,
-  FaCogs,
+  FaShoppingCart,
   FaSignOutAlt,
 } from "react-icons/fa";
+import { BiSolidCategoryAlt } from "react-icons/bi";
+import { MdRateReview } from "react-icons/md";
 import { useAuth } from "../hooks/useAuth";
 
 const LeftSidebar = () => {
@@ -47,10 +48,12 @@ const LeftSidebar = () => {
               to="/"
               onClick={() => handleLinkClick("/")}
               className={`flex items-center text-sm p-2 rounded ${
-                activeLink === "/" ? "bg-blue-500 text-white" : "text-gray-500"
+                activeLink === "/"
+                  ? "bg-blue-500 text-white"
+                  : "text-gray-500 hover:bg-blue-300 hover:text-white"
               }`}
             >
-              <FaTachometerAlt className="mr-2" /> Dashboard
+              <FaTachometerAlt className="mr-2" /> Trang Quản Trị
             </Link>
           </li>
           <li>
@@ -60,49 +63,10 @@ const LeftSidebar = () => {
               className={`flex items-center text-sm p-2 rounded ${
                 activeLink === "/admin/users"
                   ? "bg-blue-500 text-white"
-                  : "text-gray-500"
+                  : "text-gray-500 hover:bg-blue-300 hover:text-white"
               }`}
             >
-              <FaUsers className="mr-2" /> Users Account
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/admin/posts"
-              onClick={() => handleLinkClick("/admin/posts")}
-              className={`flex items-center text-sm p-2 rounded ${
-                activeLink === "/admin/posts"
-                  ? "bg-blue-500 text-white"
-                  : "text-gray-500"
-              }`}
-            >
-              <FaBoxOpen className="mr-2" /> Product Posts
-            </Link>
-          </li>
-          {/* <li>
-            <Link
-              to="/admin/partner"
-              onClick={() => handleLinkClick("/admin/partner")}
-              className={`flex items-center text-sm p-2 rounded ${
-                activeLink === "/admin/partner"
-                  ? "bg-blue-500 text-white"
-                  : "text-gray-500"
-              }`}
-            >
-              <FaHandshake className="mr-2" /> Partner
-            </Link>
-          </li> */}
-          <li>
-            <Link
-              to="/admin/feedbacks"
-              onClick={() => handleLinkClick("/admin/feedbacks")}
-              className={`flex items-center text-sm p-2 rounded ${
-                activeLink === "/admin/feedbacks"
-                  ? "bg-blue-500 text-white"
-                  : "text-gray-500"
-              }`}
-            >
-              <FaComments className="mr-2" /> Customer Feedbacks
+              <FaUsers className="mr-2" /> Quản lý tài khoản
             </Link>
           </li>
           <li>
@@ -112,12 +76,39 @@ const LeftSidebar = () => {
               className={`flex items-center text-sm p-2 rounded ${
                 activeLink === "/admin/category"
                   ? "bg-blue-500 text-white"
-                  : "text-gray-500"
+                  : "text-gray-500 hover:bg-blue-300 hover:text-white"
               }`}
             >
-              <FaListAlt className="mr-2" /> Category Management
+              <BiSolidCategoryAlt className="mr-2" /> Quản lý danh mục
             </Link>
           </li>
+          <li>
+            <Link
+              to="/admin/posts"
+              onClick={() => handleLinkClick("/admin/posts")}
+              className={`flex items-center text-sm p-2 rounded ${
+                activeLink === "/admin/posts"
+                  ? "bg-blue-500 text-white"
+                  : "text-gray-500 hover:bg-blue-300 hover:text-white"
+              }`}
+            >
+              <FaBoxOpen className="mr-2" /> Quản lý bài đăng
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/admin/feedbacks"
+              onClick={() => handleLinkClick("/admin/feedbacks")}
+              className={`flex items-center text-sm p-2 rounded ${
+                activeLink === "/admin/feedbacks"
+                  ? "bg-blue-500 text-white"
+                  : "text-gray-500 hover:bg-blue-300 hover:text-white"
+              }`}
+            >
+              <FaComments className="mr-2" /> Quản lý phản hồi
+            </Link>
+          </li>
+
           <li>
             <Link
               to="/admin/order"
@@ -125,10 +116,10 @@ const LeftSidebar = () => {
               className={`flex items-center text-sm p-2 rounded ${
                 activeLink === "/admin/order"
                   ? "bg-blue-500 text-white"
-                  : "text-gray-500"
+                  : "text-gray-500 hover:bg-blue-300 hover:text-white"
               }`}
             >
-              <FaListAlt className="mr-2" /> Order Management
+              <FaShoppingCart className="mr-2" /> Quản lý đơn hàng
             </Link>
           </li>
           <li>
@@ -138,10 +129,10 @@ const LeftSidebar = () => {
               className={`flex items-center text-sm p-2 rounded ${
                 activeLink === "/admin/notifications"
                   ? "bg-blue-500 text-white"
-                  : "text-gray-500"
+                  : "text-gray-500 hover:bg-blue-300 hover:text-white"
               }`}
             >
-              <FaBell className="mr-2" /> Notifications
+              <FaBell className="mr-2" /> Quản lý thông báo
             </Link>
           </li>
           <li>
@@ -151,10 +142,10 @@ const LeftSidebar = () => {
               className={`flex items-center text-sm p-2 rounded ${
                 activeLink === "/admin/regulation"
                   ? "bg-blue-500 text-white"
-                  : "text-gray-500"
+                  : "text-gray-500 hover:bg-blue-300 hover:text-white"
               }`}
             >
-              <FaListAlt className="mr-2" /> Regulation Management
+              <FaListAlt className="mr-2" /> Quản lý quy định
             </Link>
           </li>
           <li>
@@ -164,10 +155,10 @@ const LeftSidebar = () => {
               className={`flex items-center text-sm p-2 rounded ${
                 activeLink === "/admin/review"
                   ? "bg-blue-500 text-white"
-                  : "text-gray-500"
+                  : "text-gray-500 hover:bg-blue-300 hover:text-white"
               }`}
             >
-              <FaListAlt className="mr-2" /> Review Management
+              <MdRateReview className="mr-2" /> Quản lý đánh giá sản phẩm
             </Link>
           </li>
           <li>
@@ -181,9 +172,9 @@ const LeftSidebar = () => {
                   logout();
                 }
               }}
-              className="flex items-center text-sm p-2 rounded text-gray-500 hover:bg-red-500 hover:text-white"
+              className="w-full flex items-center text-sm p-2 rounded text-red-500 hover:bg-red-500 hover:text-white"
             >
-              <FaSignOutAlt className="mr-2" /> Log Out
+              <FaSignOutAlt className="mr-2" /> Đăng xuất
             </button>
           </li>
         </ul>

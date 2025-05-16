@@ -1,37 +1,61 @@
 import Regulations from "../../../User/models/Regulations.js";
 
 //--------------------------------Lấy tất cả quy định--------------------------------
-const getAllRegulations = async (page = 1, limit = 10) => {
-  // try {
-  //   const regulations = await Regulations.find({ status: true }) // Lọc theo status
-  //     .sort({ createdAt: -1 }); // Sắp xếp theo thời gian mới nhất
-
-  //   const totalRegulations = await Regulations.countDocuments({ status: true }); // Đếm chỉ các quy định có status = true
-
-  //   return {
-  //     regulations,
-  //     total: totalRegulations,
-  //   };
-  // } catch (error) {
-  //   throw new Error("Error fetching regulations: " + error.message);
-  // }
-
+const getAllRegulations = async (page = 1, limit = 10, sort, filter) => {
   try {
     const query = { status: true };
     const skip = (page - 1) * limit;
+    if (filter) {
+      const label = filter[0];
+      const value = filter[1];
+      query[label] = { $regex: value, $options: "i" };
+      const totalRegulations = await Regulations.countDocuments(query);
+      const totalPages = await Math.ceil(totalRegulations / limit);
+      const filterRegulations = await Regulations.find(query)
+        .skip(skip)
+        .limit(limit)
+        .lean();
+      return {
+        success: true,
+        totalRegulations,
+        totalPages,
+        skip,
+        limit,
+        currentPage: page,
+        regulations: filterRegulations,
+      };
+    }
+    const totalRegulations = await Regulations.countDocuments(query);
+    const totalPages = await Math.ceil(totalRegulations / limit);
+    if (sort) {
+      const objectSort = {};
+      objectSort[sort[1]] = sort[0];
+      const sortRegulations = await Regulations.find(query)
+        .skip(skip)
+        .limit(limit)
+        .sort(objectSort)
+        .lean();
+      return {
+        success: true,
+        totalRegulations,
+        totalPages,
+        skip,
+        limit,
+        currentPage: page,
+        regulations: sortRegulations,
+      };
+    }
     const regulations = await Regulations.find(query)
       .skip(skip)
       .limit(limit)
       .lean();
-
-    const totalRegulations = await Regulations.countDocuments(query);
-    const totalPages = await Math.ceil(totalRegulations / limit);
-
     return {
+      success: true,
       totalRegulations,
       totalPages,
-      currentPage: page,
+      skip,
       limit,
+      currentPage: page,
       regulations,
     };
   } catch (error) {

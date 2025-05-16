@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { useTopOrderProduct } from "../../hooks/useDashboard";
+import { useTopSellerProduct } from "../../hooks/useDashboard";
 
-const TopTenBuyer = () => {
+const TopTenSeller = () => {
   const [month, setMonth] = useState(12);
   const [year, setYear] = useState(2024);
-  const { topOrderProducts, loading, error } = useTopOrderProduct(month, year);
+  const { topSellerProducts, loading, error } = useTopSellerProduct(
+    month,
+    year
+  );
 
   const handleMonthChange = (e) => {
     setMonth(parseInt(e.target.value));
@@ -17,7 +20,7 @@ const TopTenBuyer = () => {
   return (
     <div className="">
       <div className="flex gap-4 mb-4">
-        <h2 className="text-xl font-semibold">Top 10 Người Mua Hàng</h2>
+        <h2 className="text-xl font-semibold">Top 10 Người Bán Hàng</h2>
         <select
           value={month}
           onChange={handleMonthChange}
@@ -49,22 +52,22 @@ const TopTenBuyer = () => {
         <table className="min-w-full bg-white border border-gray-200 rounded-md">
           <thead>
             <tr className="bg-gray-100">
-              <th className="px-4 py-2 text-left">Buyer</th>
+              <th className="px-4 py-2 text-left">Seller</th>
               {/* <th className="px-4 py-2 text-left">Image</th> */}
-              <th className="px-4 py-2 text-center">Orders</th>
+              <th className="px-4 py-2 text-center">Product Posts</th>
             </tr>
           </thead>
           <tbody>
-            {topOrderProducts.map((buyer, index) => (
+            {topSellerProducts.map((seller, index) => (
               <tr key={index + 1} className="border-t">
                 <td className="px-4 py-2 text-sm text-gray-800 flex items-center">
-                  {buyer.name} ({buyer.username})
+                  {seller.name} ({seller.username})
                 </td>
                 {/* <td className="px-4 py-2">
                   
                 </td> */}
                 <td className="px-4 py-2 text-sm text-gray-600 text-center">
-                  {buyer.orderCount}
+                  {seller.productCount}
                 </td>
               </tr>
             ))}
@@ -75,4 +78,4 @@ const TopTenBuyer = () => {
   );
 };
 
-export default TopTenBuyer;
+export default TopTenSeller;

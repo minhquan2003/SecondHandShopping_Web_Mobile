@@ -1,20 +1,35 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const useRegulation = (page = 1) => {
+const useRegulation = (
+  page = 1,
+  fieldSort = "",
+  orderSort = "",
+  searchKey = ""
+) => {
   const [regulations, setRegulations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalPages, setTotalPages] = useState(1);
   const [success, setSuccess] = useState(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const refresh = () => setRefreshTrigger((prev) => prev + 1);
 
   // Hàm fetch regulations
   useEffect(() => {
     const fetchRegulations = async () => {
-      let url = `http://localhost:5555/admin/regulations?${page}`;
+      let url = `http://localhost:5555/admin/regulations?page=${page}`;
+      if (fieldSort && orderSort) {
+        url += `&sort=${orderSort}&sort=${fieldSort}`;
+      }
+      if (searchKey) {
+        url += `&filter=title&filter=${searchKey}`;
+      }
       try {
         setLoading(true);
         setError(null);
+
         const response = await axios.get(url, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -37,24 +52,25 @@ const useRegulation = (page = 1) => {
       }
     };
     fetchRegulations();
-  }, [page]);
+  }, [page, fieldSort, orderSort, searchKey, refreshTrigger]);
 
   // Hàm post regulation
   const postRegulation = async (newRegulation) => {
-    setLoading(true);
     try {
       const response = await axios.post(
         "http://localhost:5555/admin/regulation/",
-        newRegulation
+        newRegulation,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
-      const addedRegulation = response.data.data;
-      setSuccess(true);
-
-      // Ensure we add only active regulations to the list immediately
-      if (addedRegulation.status === true) {
+      if (response.data.success) {
+        // Cập nhật ngay lập tức mà không cần load lại trang
         setRegulations((prevRegulations) => [
           ...prevRegulations,
-          addedRegulation,
+          response.data.data,
         ]);
       }
     } catch {
@@ -68,24 +84,18 @@ const useRegulation = (page = 1) => {
   // Hàm xóa regulation
   const deleteRegulation = async (selectedIds) => {
     try {
-      const response = await axios.delete(
-        "http://localhost:5555/admin/regulation",
-        {
-          regulationIds: selectedIds,
+      await axios.delete("http://localhost:5555/admin/regulation", {
+        data: { regulationIds: selectedIds },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      if (!response.ok) throw new Error("Failed to delete regulations");
+      });
 
       setRegulations((prev) =>
         prev.filter((regulation) => !selectedIds.includes(regulation._id))
       );
       alert("Selected regulations deleted successfully");
+      refresh();
     } catch {
       setError("Error deleting regulation");
     }
@@ -107,10 +117,6 @@ const useRegulation = (page = 1) => {
 
   const customRegulation = async (id, updatedData) => {
     try {
-      setLoading(true);
-      setError(null);
-      setSuccess(null);
-
       const response = await axios.put(
         `http://localhost:5555/admin/regulation/${id}`,
         updatedData,
@@ -121,15 +127,15 @@ const useRegulation = (page = 1) => {
         }
       );
 
-      if (response.status === 200) {
-        setSuccess("Regulation updated successfully!");
-      } else {
-        throw new Error("Failed to update regulation");
+      if (response.data.success) {
+        setRegulations((prevRegulations) =>
+          prevRegulations.map((regulation) =>
+            regulation._id === id ? response.data.data : regulation
+          )
+        );
       }
-    } catch (err) {
-      setError(err.response?.data?.message || "Error updating regulation");
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      console.error("Error updating regulation:", error);
     }
   };
 

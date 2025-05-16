@@ -15,7 +15,7 @@ const fetchAllReviews = async (req, res) => {
     res.status(200).json({
       success: true,
       totalReviews: result.totalReviews,
-      toltalPages: result.totalPages,
+      totalPages: result.totalPages,
       limit: result.limit,
       currentPage: result.currentPage,
       skip: result.skip,

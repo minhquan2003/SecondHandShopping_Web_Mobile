@@ -1,4 +1,7 @@
-import { getAllFeedbacks } from "../../services/feedback/adminFeedbackService.js";
+import {
+  getAllFeedbacks,
+  replyToFeedback,
+} from "../../services/feedback/adminFeedbackService.js";
 
 const getFeedbacks = async (req, res) => {
   try {
@@ -21,4 +24,14 @@ const getFeedbacks = async (req, res) => {
   }
 };
 
-export { getFeedbacks };
+const sendFeedbackReply = async (req, res) => {
+  const { feedbackId, subject, message } = req.body;
+  try {
+    const result = await replyToFeedback(feedbackId, subject, message);
+    res.status(200).json({ success: true, message: result.message });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export { getFeedbacks, sendFeedbackReply };

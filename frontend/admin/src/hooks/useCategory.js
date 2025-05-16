@@ -6,6 +6,9 @@ function useCategory(page = 1, fieldSort = "", orderSort = "", searchKey = "") {
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(1);
   const [error, setError] = useState(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const refresh = () => setRefreshTrigger((prev) => prev + 1);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -40,7 +43,7 @@ function useCategory(page = 1, fieldSort = "", orderSort = "", searchKey = "") {
     };
 
     fetchCategories();
-  }, [page, fieldSort, orderSort, searchKey]);
+  }, [page, fieldSort, orderSort, searchKey, refreshTrigger]);
 
   const createCategory = async (newCategory) => {
     try {
@@ -88,26 +91,21 @@ function useCategory(page = 1, fieldSort = "", orderSort = "", searchKey = "") {
     }
   };
 
-  const deleteCategory = async (id) => {
+  const deleteCategory = async (selectedIds) => {
     try {
       // Gửi request đến backend để xóa category
-      const response = await axios.delete(
-        `http://localhost:5555/admin/category/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      await axios.delete("http://localhost:5555/admin/category", {
+        data: { categoryIds: selectedIds },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
-      // Kiểm tra nếu xóa thành công, cập nhật lại danh sách categories
-      if (response.data.success) {
-        setCategories((prevCategories) =>
-          prevCategories.filter((cat) => cat._id !== id)
-        );
-      } else {
-        alert(response.data.message); // Hiển thị thông báo lỗi từ backend
-      }
+      setCategories((prev) =>
+        prev.filter((category) => !selectedIds.includes(category._id))
+      );
+      alert("Selected category deleted successfully");
+      refresh();
     } catch (error) {
       console.error("Error deleting category:", error);
       alert("An error occurred while deleting the category.");

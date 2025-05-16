@@ -20,6 +20,10 @@ const feedbackSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    replied: {
+      type: Boolean,
+      default: false,
+    },
     status: {
       type: Boolean,
       required: true,

@@ -46,7 +46,28 @@ const useFeedback = (page = 1, fieldSort, orderSort, searchKey) => {
     fetchFeedback();
   }, [page, fieldSort, orderSort, searchKey]);
 
-  return { feedbacks, totalPages, loading, error }; // Trả về feedbackTotal
+  const ReplyFeedback = async (feedbackId, subject, message) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5555/admin/reply",
+        { feedbackId, subject, message },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (response.data.success) {
+        return response.data.message;
+      } else {
+        throw new Error("Failed to send reply");
+      }
+    } catch (err) {
+      setError(err.message + "hi");
+    }
+  };
+
+  return { feedbacks, totalPages, loading, error, ReplyFeedback }; // Trả về feedbackTotal
 };
 
 export default useFeedback;

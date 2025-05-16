@@ -1,7 +1,7 @@
 import { useState } from "react";
 import useNotification from "../../hooks/useNotification";
 
-const NotificationPost = () => {
+const NotificationPost = ({ closeForm }) => {
   const { postNotification, loading, error } = useNotification();
 
   const [message, setMessage] = useState("");
@@ -33,8 +33,8 @@ const NotificationPost = () => {
   };
 
   return (
-    <div className="w-2/3 mx-auto p-4 bg-gray-100 rounded-md">
-      <div className="rounded-md border border-gray-300 p-4">
+    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+      <div className="bg-white p-6 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
           Create new Notification
         </h2>
@@ -91,7 +91,7 @@ const NotificationPost = () => {
           )}
 
           {/* Submit Button */}
-          <div className="mt-auto">
+          <div className="text-center">
             <button
               type="submit"
               disabled={loading}
@@ -100,6 +100,13 @@ const NotificationPost = () => {
               } focus:outline-none w-full`}
             >
               {loading ? "Posting..." : "Post Notification"}
+            </button>
+            <button
+              type="button"
+              className="mt-4 text-gray-500"
+              onClick={closeForm}
+            >
+              Cancel
             </button>
           </div>
         </form>

@@ -7,32 +7,18 @@ import {
 
 // Lấy tất cả quy định với phân trang
 const getRegulations = async (req, res) => {
-  // try {
-  //   const result = await getAllRegulations();
-
-  //   res.status(200).json({
-  //     success: true,
-  //     total: result.total,
-  //     data: result.regulations,
-  //   });
-  // } catch (error) {
-  //   res.status(500).json({
-  //     success: false,
-  //     message: "Failed to fetch regulations",
-  //     error: error.message,
-  //   });
-  // }
-
   try {
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 10;
-    const result = await getAllRegulations(page, limit);
+    const sort = req.query.sort;
+    const filter = req.query.filter || null;
+    const result = await getAllRegulations(page, limit, sort, filter);
     res.status(200).json({
       success: true,
       totalRegulations: result.totalRegulations,
       totalPages: result.totalPages,
       limit: result.limit,
-      crrentPage: result.currentPage,
+      curentPage: result.currentPage,
       regulations: result.regulations,
     });
   } catch (error) {
