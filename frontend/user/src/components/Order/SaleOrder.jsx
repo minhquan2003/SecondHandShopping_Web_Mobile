@@ -25,27 +25,16 @@ const SaleOrder = () => {
         fetchSaleOrders();
     }, [currentPage]);
 
-    // const fetchSaleOrders = async () => {
-    //     try {
-    //         const sellResponse = await axios.get(`http://${IP}:5555/orders/seller1/page?page=$currentPage&limit=10&userId=${loginInfo.id}`);
-    //         setSellOrders(sellResponse.data.data);
-    //     } catch (error) {
-    //         console.error('Error fetching orders:', error);
-    //     }
-    // };
-
     const fetchSaleOrders = async () => {
         if (isLoading) return; // Prevent loading if already loading
         setIsLoading(true);
 
         try {
-            // Fetch purchase orders
             const buyResponse = await axios.get(`http://${IP}:5555/orders/seller1/page?page=${currentPage}&limit=${limit}&userId=${userInfo._id}`);
             
             if (buyResponse.status === 200) {
                 const purchaseOrders = buyResponse.data.data;
 
-                // Process each purchase order
                 const ordersWithDetails = await Promise.all(purchaseOrders.map(async (order) => {
                     const orderDetailResponse = await axios.get(`http://${IP}:5555/orderDetails/order/${order._id}`);
                     
@@ -81,9 +70,9 @@ const SaleOrder = () => {
     };
 
     const filteredSellOrders = sellOrders.filter(order => {
-        const matchesStatus = order.status_order === activeSellTab;
+        const matchesStatus = activeSellTab === 'All' || order.status_order === activeSellTab; // Include all orders if 'All' is selected
         const matchesSearch = order.name.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesPhone = order.phone.includes(searchPhone); // Lọc theo số điện thoại
+        const matchesPhone = order.phone.includes(searchPhone); // Filter by phone number
         return matchesStatus && matchesSearch && matchesPhone;
     });
 
@@ -118,15 +107,15 @@ const SaleOrder = () => {
         setEndDate('');
         setSortOrder('none');
         setSearchTerm('');
-        setActiveBuyStatus('All');
-        setSearchPhone(''); // Đặt lại số điện thoại tìm kiếm
+        setActiveSellTab('All'); // Reset to 'All'
+        setSearchPhone(''); // Reset phone search
     };
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
 
-    return(
+    return (
         <div>
             <div className="text-xl font-bold">Tìm kiếm đơn hàng</div>
             <div className="flex items-center mb-4 space-x-2">
@@ -175,7 +164,7 @@ const SaleOrder = () => {
                 </button>
             </div>
             <div className="flex mb-4 w-full">
-                {['Pending', 'Confirmed', 'Packaged', 'Shipping', 'Success', 'Request Cancel', 'Cancelled'].map(status => (
+                {['All', 'Pending', 'Confirmed', 'Packaged', 'Shipping', 'Success', 'Request Cancel', 'Cancelled'].map(status => (
                     <button
                         key={status}
                         className={`flex-1 px-4 py-2 text-black rounded-md ${activeSellTab === status ? 'text-blue-500 font-bold underline bg-blue-100' : 'bg-white text-black'}`}
@@ -198,6 +187,14 @@ const SaleOrder = () => {
                             <li className="flex border-b p-4 hover:bg-gray-100 transition duration-200">
                                 <div className="text-gray-700">
                                     <span className="font-normal"> <strong>{index + 1 + (currentPage - 1) * limit}</strong> - </span>
+                                </div>
+                                <img 
+                                    src={order.product.image_url} 
+                                    alt={order.product.name} 
+                                    className="w-16 h-16 object-cover rounded mr-4" 
+                                />
+                                <div className="text-gray-700">
+                                    <span className="font-normal"><strong>{order.product.name}</strong></span>
                                 </div>
                                 <div className="text-gray-700">
                                     <strong>Họ tên:</strong> <span className="font-normal">{order.name} - </span>

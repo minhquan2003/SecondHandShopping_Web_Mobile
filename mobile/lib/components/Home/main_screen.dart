@@ -5,7 +5,6 @@ import 'package:mobile/components/Order/sale_order.dart';
 import 'package:mobile/providers/login_info.dart';
 import 'package:provider/provider.dart';
 import 'home.dart';
-import '../Login/login.dart';
 import '../Cart/cart.dart';
 import '../SellerPage/edit_seller_page.dart';
 import '../PostProduct/post_edit_product.dart';
