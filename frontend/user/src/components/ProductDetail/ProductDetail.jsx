@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useProduct } from '../../hooks/Products'; // Nhập custom hook
 import { addToCart } from '../../hooks/Carts';
@@ -6,11 +6,12 @@ import BackButton from '../../commons/BackButton';
 import { useReviews } from '../../hooks/Review'; // Import custom hook cho reviews
 import { FaCheckCircle } from 'react-icons/fa';
 import { getCartItemsByUserId } from '../../hooks/Carts';
-import { useUserById } from '../../hooks/Users';
 import io from 'socket.io-client';
 import axios from 'axios';
 import { addConversation, addMessage } from '../../hooks/Message';
 import { IP } from '../../config';
+import ListProductCard from '../Home/ListProducts/ListProductCard';
+import { getProductByCategory } from '../../hooks/Products';
 
 const socket = io(`http://localhost:5555`);
 
@@ -22,6 +23,7 @@ const ProductDisplay = () => {
     const user_buyer_id = userInfo ? userInfo._id : '';
     const { product, loading, error } = useProduct(id); // Sử dụng custom hook
     const { reviews, loadingReviews, errorReviews } = useReviews(id); // Sử dụng hook cho reviews
+    const { products, loadings, errors } = getProductByCategory(product ? product.category_id : null);
     const [quantity, setQuantity] = useState(1);
     const navigate = useNavigate();
 
@@ -249,7 +251,9 @@ const ProductDisplay = () => {
                     )
                 )}
             </div>
-            
+            <div>
+                <ListProductCard data={{ products, loadings, errors }} />
+            </div>
         </div>
     );
 };

@@ -6,7 +6,7 @@ import { IP } from '../../config';
 
 const SaleOrder = () => {
     const [sellOrders, setSellOrders] = useState([]);
-    const [activeSellTab, setActiveSellTab] = useState('Pending');
+    const [activeSellTab, setActiveSellTab] = useState('All');
     const [sortOrder, setSortOrder] = useState('none');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
