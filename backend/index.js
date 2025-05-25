@@ -19,6 +19,7 @@ import paymentRoutes from "./User/routes/payment.js";
 import mailRoute from "./User/routes/mailRoute.js";
 import messageRouter from './User/routes/messageRoutes.js';
 import conversationRouter from "./User/routes/conversationRoutes.js";
+import VNPayAccountRouter from "./User/routes/vnPayAccountRoutes.js"
 
 import http from "http"; 
 import { Server } from "socket.io";
@@ -58,6 +59,7 @@ app.use("/payment", paymentRoutes);
 app.use("/mail", mailRoute);
 app.use("/conversations", conversationRouter);
 app.use("/messages", messageRouter);
+app.use('/api/vnpay', VNPayAccountRouter);
 
 // Admin
 app.use("/admin", adminRouter);

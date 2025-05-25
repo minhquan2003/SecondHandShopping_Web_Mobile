@@ -51,7 +51,7 @@ const ProductDisplay = () => {
                     product_name: product.name,
                     product_quantity: quantity,
                     product_price: product.price,
-                    product_imageUrl: product.image_url,
+                    product_imageUrl: product.image_url || product.video_url,
                 });
                 alert("Sản phẩm đã được thêm vào giỏ hàng!");
                 socket.emit('addCart');
@@ -97,6 +97,9 @@ const ProductDisplay = () => {
         return <p>Loading...</p>; // Hiển thị loading khi chưa có dữ liệu
     }
 
+    const media_url = product.image_url || product.video_url;
+    const isVideo = media_url?.toLowerCase().endsWith('.mp4') || media_url?.toLowerCase().endsWith('.mov') || media_url?.toLowerCase().endsWith('.webm');
+
     return (
         <div className="p-5 bg-gray-100 min-h-screen">
             <div className="flex items-center mb-4">
@@ -105,12 +108,14 @@ const ProductDisplay = () => {
             <div className="flex max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
                 {product && (
                     <>
-                        <img 
-                            src={product.image_url} 
-                            alt={product.name} 
-                            className="w-full md:w-1/2 object-cover rounded-lg shadow-lg" 
-                            style={{ maxHeight: '400px', objectFit: 'contain' }} 
-                        />
+                        {isVideo ? (
+                            <video controls className="w-full md:w-1/2 object-cover rounded-lg shadow-lg" style={{ maxHeight: '400px' }}>
+                                <source src={media_url} type="video/mp4" />
+                                Your browser does not support the video tag.
+                            </video>
+                        ) : (
+                            <img src={media_url} alt={product.name} className="w-full md:w-1/2 object-cover rounded-lg shadow-lg" style={{ maxHeight: '400px' }} />
+                        )}
                         <div className="ml-6 w-full md:w-1/2">
                             <h2 className="text-2xl font-semibold text-black">{product.name}</h2>
                             {String(product.partner) === "true" ? (  // So sánh partner với chuỗi "true"

@@ -26,6 +26,8 @@ import Message from "./components/Message/Message";
 import Chat from "./components/Message/Chat";
 import PurchaseOrderDetail from "./components/Order/PurchaseOrderDetail";
 import SalesOrderDetail from "./components/Order/SalesOderDetail";
+import AccountDetails from './components/Payment/AccountDetail'
+import VNPayRegister from './components/Payment/VNPayRegister'
 
 const App = () => {
   const userInfoString = sessionStorage.getItem('userInfo');
@@ -40,6 +42,8 @@ const App = () => {
           <Route path="/product/category/:categoryId" element={<ProductByCategogyPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/account" element={<AccountDetails />} />
+          <Route path="/account/register" element={<VNPayRegister />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/profile/:id" element={userInfo ? <EditProfilePage /> : <Navigate to="/" replace />} />

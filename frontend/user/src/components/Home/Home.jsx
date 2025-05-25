@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import ListProductCard from './ListProducts/ListProductCard';
 import ListCategories from './Categories/ListCategories';
-import { getProducts } from '../../hooks/Products';
+import ListVideoProducts from "./VideoProducts/ListVideoProducts";
+import { getProducts, getVideoProducts } from '../../hooks/Products';
 
 const Home = () => {
     const { products, loading, error } = getProducts();
+    const { vproducts, vloading, verror } = getVideoProducts();
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     // Array of image URLs
@@ -36,6 +38,7 @@ const Home = () => {
             </div>
             <div className="flex flex-col items-center w-full">
                 <ListCategories />
+                <ListVideoProducts data={{ vproducts, vloading, verror }} />
                 <ListProductCard data={{ products, loading, error }} />
             </div>
         </div>

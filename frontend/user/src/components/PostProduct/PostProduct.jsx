@@ -8,8 +8,8 @@ const ProductUpload = () => {
     const userInfoString = sessionStorage.getItem('userInfo');
     const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
     const { productId } = useParams();
-    const [image, setImage] = useState(null);
-    const [imgUrl, setImgUrl] = useState('');
+    const [media, setMedia] = useState(null);
+    const [mediaUrl, setMediaUrl] = useState('');
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
@@ -34,33 +34,37 @@ const ProductUpload = () => {
                     setCondition(product.condition);
                     setOrigin(product.origin);
                     setSelectedCategory(product.category_id);
-                    setImgUrl(product.image_url);
+                    setMediaUrl(product.image_url || product.video_url); // Lấy URL từ cả hai
                 }
-            }else{
-                setImage(null);
-                setImgUrl('');
-                setName('');
-                setDescription('');
-                setPrice('');
-                setQuantity('');
-                setBrand('');
-                setCondition('new');
-                setOrigin('');
-                setSelectedCategory('');
+            } else {
+                resetForm();
             }
         };
         fetchProduct();
     }, [productId]);
 
-    const handleImageChange = (e) => {
-        const selectedImage = e.target.files[0];
-        setImage(selectedImage);
+    const resetForm = () => {
+        setMedia(null);
+        setMediaUrl('');
+        setName('');
+        setDescription('');
+        setPrice('');
+        setQuantity('');
+        setBrand('');
+        setCondition('Mới');
+        setOrigin('');
+        setSelectedCategory('');
+    };
+
+    const handleMediaChange = (e) => {
+        const selectedMedia = e.target.files[0];
+        setMedia(selectedMedia);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!productId && !image) {
-            alert("Vui lòng chọn hình ảnh.");
+        if (!productId && !media) {
+            alert("Vui lòng chọn hình ảnh hoặc video.");
             return;
         }
 
@@ -70,23 +74,24 @@ const ProductUpload = () => {
         }
 
         const formData = new FormData();
-        formData.append("file", image);
+        formData.append("file", media);
         formData.append("upload_preset", "images_preset");
         formData.append("cloud_name", "dd6pnq2is");
 
         try {
-            const response = await fetch('https://api.cloudinary.com/v1_1/dd6pnq2is/image/upload', {
+            const uploadUrl = media.type.startsWith('image/') 
+                ? 'https://api.cloudinary.com/v1_1/dd6pnq2is/image/upload' 
+                : 'https://api.cloudinary.com/v1_1/dd6pnq2is/video/upload';
+
+            const response = await fetch(uploadUrl, {
                 method: "POST",
                 body: formData
             });
-            const uploadedImageUrl = await response.json();
-            setImgUrl(uploadedImageUrl.secure_url);
-            let partner = false;
-            // Assuming userInfo is defined somewhere in your component
-            if (userInfo.role === 'partner') {
-                partner = true;
-            }
 
+            const uploadedMediaUrl = await response.json();
+            setMediaUrl(uploadedMediaUrl.secure_url);
+            let partner = userInfo.role === 'partner';
+            
             const productData = {
                 name,
                 description,
@@ -94,7 +99,8 @@ const ProductUpload = () => {
                 quantity,
                 user_id: userInfo._id,
                 category_id: selectedCategory,
-                image_url: uploadedImageUrl.secure_url,
+                image_url: media.type.startsWith('image/') ? uploadedMediaUrl.secure_url : '',
+                video_url: media.type.startsWith('video/') ? uploadedMediaUrl.secure_url : '',
                 brand,
                 condition,
                 origin,
@@ -102,30 +108,18 @@ const ProductUpload = () => {
                 approve: false,
                 status: true
             };
-            
-            if(productId){
+
+            if (productId) {
                 await updateOneProduct(productId, productData);
                 alert("Bạn đã chỉnh sửa sản phẩm thành công.");
-                navigate(`/editSale/${userInfo._id}`)
-            }else{
+            } else {
                 await addProduct(productData);
                 alert("Bạn đã đăng sản phẩm thành công.");
-                navigate(`/editSale/${userInfo._id}`)
             }
-
-            // Reset các giá trị sau khi thêm sản phẩm
-            setImage(null);
-            setImgUrl('');
-            setName('');
-            setDescription('');
-            setPrice('');
-            setQuantity('');
-            setBrand('');
-            setCondition('new');
-            setOrigin('');
-            setSelectedCategory('');
+            navigate(`/editSale/${userInfo._id}`);
+            resetForm();
         } catch (error) {
-            console.error('Error uploading image:', error);
+            console.error('Error uploading media:', error);
         }
     };
 
@@ -134,23 +128,36 @@ const ProductUpload = () => {
             <h2 className="text-2xl font-bold mb-6 text-center">Đăng Sản Phẩm Mới</h2>
             <div className="flex flex-col md:flex-row md:space-x-8">
                 <div className="md:w-1/2 p-4 border border-gray-300 rounded-lg">
-                    <h3 className="text-xl font-semibold mb-4">Chọn Hình Ảnh</h3>
+                    <h3 className="text-xl font-semibold mb-4">Chọn Hình Ảnh hoặc Video</h3>
                     <input 
                         type="file" 
-                        accept="image/*" 
-                        id="image"
-                        onChange={handleImageChange} 
+                        accept="image/*,video/*" 
+                        onChange={handleMediaChange} 
                         className="mb-4 border border-gray-300 rounded p-2 w-full"
                     />
-                    {image && (
+                    {media && (
                         <div>
-                            <p className="text-sm text-gray-700">Đã chọn: {image.name}</p>
-                            <img src={URL.createObjectURL(image)} alt="Product" className="mt-2 w-full h-auto rounded"/>
+                            <p className="text-sm text-gray-700">Đã chọn: {media.name}</p>
+                            {media.type.startsWith('image/') ? (
+                                <img src={URL.createObjectURL(media)} alt="Product" className="mt-2 w-full h-auto rounded"/>
+                            ) : (
+                                <video controls className="mt-2 w-full h-auto rounded">
+                                    <source src={URL.createObjectURL(media)} type={media.type} />
+                                    Your browser does not support the video tag.
+                                </video>
+                            )}
                         </div>
                     )}
-                    {imgUrl && (
+                    {mediaUrl && (
                         <div>
-                            <img src={imgUrl} alt="Uploaded" className="mt-2 w-full h-auto rounded"/>
+                            {mediaUrl.endsWith('.mp4') ? (
+                                <video controls className="mt-2 w-full h-auto rounded">
+                                    <source src={mediaUrl} type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                </video>
+                            ) : (
+                                <img src={mediaUrl} alt="Uploaded" className="mt-2 w-full h-auto rounded"/>
+                            )}
                         </div>
                     )}
                 </div>
@@ -244,23 +251,23 @@ const ProductUpload = () => {
                                 ))}
                             </select>
                         </div>
-                        {productId ?
-                        <div className="flex">
-                        <button 
-                         className="border border-green-600 bg-gray-100 text-xl font-bold text-green-600 p-2 rounded hover:bg-gray-300 transition duration-200 w-full">
-                            Lưu
-                        </button>
-                        <button 
-                        onClick={()=> navigate(`/editSale/${userInfo._id}`)}
-                         className="bg-blue-500 ml-6 text-white p-2 rounded hover:bg-blue-600 transition duration-200 w-full">
-                            Thoát
-                        </button>
-                        </div>
-                        :
-                        <button type="submit" className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-200 w-full">
-                            Đăng Sản Phẩm
-                        </button>}
-                        
+                        {productId ? (
+                            <div className="flex">
+                                <button 
+                                    className="border border-green-600 bg-gray-100 text-xl font-bold text-green-600 p-2 rounded hover:bg-gray-300 transition duration-200 w-full">
+                                    Lưu
+                                </button>
+                                <button 
+                                    onClick={() => navigate(`/editSale/${userInfo._id}`)}
+                                    className="bg-blue-500 ml-6 text-white p-2 rounded hover:bg-blue-600 transition duration-200 w-full">
+                                    Thoát
+                                </button>
+                            </div>
+                        ) : (
+                            <button type="submit" className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-200 w-full">
+                                Đăng Sản Phẩm
+                            </button>
+                        )}
                     </form>
                 </div>
             </div>

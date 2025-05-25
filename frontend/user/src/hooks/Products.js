@@ -26,6 +26,30 @@ const getProducts = () => {
   return { products, loading, error };
 };
 
+const getVideoProducts = () => {
+  const [vproducts, setVProducts] = useState([]);
+  const [vloading, setVLoading] = useState(true);
+  const [verror, setVError] = useState(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get(`http://${IP}:5555/products/video`);
+        setVProducts(response.data);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+        setVError("Failed to load products. Please try again later.");
+      } finally {
+        setVLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  return { vproducts, vloading, verror };
+};
+
 const getProductsByIdSeller = (idSeller) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -292,6 +316,7 @@ const useSearchProducts = (brand, categoryId) => {
 export {
   useSearchProducts,
   getProducts,
+  getVideoProducts,
   deleteProductById,
   getProductById,
   useProduct,

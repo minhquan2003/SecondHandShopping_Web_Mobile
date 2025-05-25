@@ -30,7 +30,11 @@ const productSchema = new mongoose.Schema(
     },
     image_url: {
       type: String,
-      required: true,
+      required: false,
+    },
+    video_url: {
+      type: String,
+      required: false,
     },
     user_id: {
       type: String,

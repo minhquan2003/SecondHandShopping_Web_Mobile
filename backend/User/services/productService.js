@@ -13,6 +13,19 @@ const getProducts = async () => {
   });
 };
 
+const getVideoProducts = async () => {
+  return await Products.find({
+    status: true,
+    approve: true,
+    quantity: { $gt: 0 },
+    $or: [
+      { image_url: { $exists: false } }, // image_url không tồn tại
+      { image_url: "" },                 // image_url là chuỗi rỗng
+    ],
+    video_url: { $exists: true, $ne: "" }, // video_url tồn tại và không phải chuỗi rỗng
+  });
+};
+
 const getProducts1 = async (page, limit) => {
     const skip = (page - 1) * limit;
     const products = await Products.find({status: true, approve: true, quantity: { $gt: 0 },}).skip(skip).limit(limit);
@@ -142,6 +155,7 @@ const deleteOneProduct = async (id) => {
 export {
   createProduct,
   getProducts,
+  getVideoProducts,
   getProducts1,
   getOneProductById,
   getProductsByCategory,

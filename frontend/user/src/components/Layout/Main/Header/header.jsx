@@ -220,6 +220,16 @@ const Header = () => {
                         onClick={() => handleLinkClick(`/changepassword`)}>
                         Đổi mật khẩu
                       </button>
+                      <button 
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                        onClick={() => handleLinkClick(`/account`)}>
+                        Thông tin tài khoản
+                      </button>
+                      <button 
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                        onClick={() => handleLinkClick(`/account/register`)}>
+                        Đăng ký tài khoản
+                      </button>
                     </>
                   ) : (
                     <>
