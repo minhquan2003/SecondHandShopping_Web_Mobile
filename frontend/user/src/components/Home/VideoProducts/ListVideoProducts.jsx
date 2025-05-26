@@ -5,7 +5,7 @@ const ListVideoProducts = ({ data }) => {
     const { vproducts, vloading, verror } = data;
 
     return (
-        <div className="flex flex-col bg-white items-center rounded-lg mb-5">
+        <div className="flex flex-col bg-white items-start rounded-lg mb-5" style={{ width: '93%' }}>
             <h1 className="text-2xl font-bold mb-4">Danh sách sản phẩm video</h1>
             {vloading ? (
                 <div className="flex items-center justify-center h-64">
@@ -15,10 +15,10 @@ const ListVideoProducts = ({ data }) => {
                     <span className="ml-4 text-gray-500">Loading products...</span>
                 </div>
             ) : verror ? (
-                <div className="text-red-500 font-bold">Error: {error}</div>
+                <div className="text-red-500 font-bold">Error: {verror}</div>
             ) : (
                 <div className="mt-2 mb-2 bg-white justify-center items-center">
-                    <div className="flex flex-wrap justify-start items-center" style={{ width: '1225px'}}>
+                    <div className="flex flex-wrap justify-start items-center">
                         {Array.isArray(vproducts) && vproducts.map((product) => {
                             const mediaUrl = product.video_url || product.image_url;
                             return (

@@ -25,7 +25,7 @@ const Home = () => {
     }, []);
 
     return (
-        <div className="w-screen h-auto flex flex-col items-center bg-gray-100 overflow-x-hidden">
+        <div className="w-screen h-auto flex flex-col items-center bg-grey-200 overflow-x-hidden">
             <div className="relative w-[80vw] h-[460px] overflow-hidden rounded">
                 {images.map((image, index) => (
                     <img 

@@ -1,18 +1,24 @@
-import React from "react";
+import React, { useRef } from "react";
 import PropTypes from "prop-types";
 import { Link } from 'react-router-dom';
 import { FaCheckCircle } from 'react-icons/fa';
 
 const ProductCard = ({ id, name, description, price, quantity, media_url, partner }) => {
+    const videoRef = useRef(null);
     const isVideo = media_url.toLowerCase().endsWith('.mp4') || media_url.toLowerCase().endsWith('.mov') || media_url.toLowerCase().endsWith('.avi') || media_url.toLowerCase().endsWith('.wmv'); // Thêm các đuôi video khác nếu cần
-
 
     return (
         <Link to={`/product/${id}`} className="flex mt-2 mb-2 justify-center items-center hover:bg-gray-200 rounded-lg" style={{ width: '245px', height: '350px', textDecoration: 'none' }}>
             <div className="bg-white h-full w-[95%] border rounded-lg shadow-md p-2 m-2 transition-shadow duration-300">
                 <div className="w-full h-[55%] overflow-hidden rounded-t-lg">
                     {isVideo ? (
-                            <video controls className="object-cover w-full h-full">
+                            <video
+                                ref={videoRef}
+                                className="object-cover w-full h-full"
+                                onMouseEnter={() => videoRef.current?.play()} // Phát video khi rê chuột vào
+                                onMouseLeave={() => videoRef.current?.pause()} // Tạm dừng video khi chuột rời khỏi
+                                muted // Đảm bảo video tự phát không có âm thanh
+                                >
                                 <source src={media_url} type="video/mp4" />
                                 Your browser does not support the video tag.
                             </video>

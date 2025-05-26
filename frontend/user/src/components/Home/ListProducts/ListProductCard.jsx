@@ -5,7 +5,7 @@ const ListProductCard = ({ data }) => {
     const { products, loading, error } = data;
 
     return (
-        <div className="flex flex-col bg-white items-center rounded-lg">
+        <div className="flex flex-col bg-white items-start rounded-lg" style={{ width: '93%' }}>
             <h1 className="text-2xl font-bold mb-4">Danh sách sản phẩm</h1>
             {loading ? (
                 <div className="flex items-center justify-center h-64">
@@ -17,8 +17,8 @@ const ListProductCard = ({ data }) => {
             ) : error ? (
                 <div className="text-red-500 font-bold">Error: {error}</div>
             ) : (
-                <div className="mt-2 mb-2 bg-white justify-center items-center">
-                    <div className="flex flex-wrap justify-start items-center" style={{ width: '1225px'}}>
+                <div className="flex flex-wrap mt-2 mb-2 bg-white justify-center items-center">
+                    <div className="flex flex-wrap justify-start items-center">
                         {Array.isArray(products) && products.map((product) => {
                             const mediaUrl = product.video_url || product.image_url;
                             return (
