@@ -11,7 +11,7 @@ import axios from 'axios';
 import { addConversation, addMessage } from '../../hooks/Message';
 import { IP } from '../../config';
 import ListProductCard from '../Home/ListProducts/ListProductCard';
-import { getProductByCategory } from '../../hooks/Products';
+import { getProductByCategory1 } from '../../hooks/Products';
 
 const socket = io(`http://localhost:5555`);
 
@@ -23,7 +23,7 @@ const ProductDisplay = () => {
     const user_buyer_id = userInfo ? userInfo._id : '';
     const { product, loading, error } = useProduct(id); // Sử dụng custom hook
     const { reviews, loadingReviews, errorReviews } = useReviews(id); // Sử dụng hook cho reviews
-    const { products, loadings, errors } = getProductByCategory(product ? product.category_id : null);
+    const { products, loadings, errors } = getProductByCategory1(id);
     const [quantity, setQuantity] = useState(1);
     const navigate = useNavigate();
 
@@ -188,7 +188,7 @@ const ProductDisplay = () => {
                 )}
             </div>
 
-            <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mt-7">
+            <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mt-5">
             {/* name, description, price, quantity, category_id, image_url, user_id, createdAt, updatedAt, brand, 
             condition, origin, sellerInfo */}
                 <strong>Thông tin chi tiết sản phẩm</strong>
@@ -217,7 +217,7 @@ const ProductDisplay = () => {
             </div>
 
             {/* Hiển thị các review */}
-            <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mt-7">
+            <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mt-5 mb-5">
                 <h2 className="text-xl font-semibold">Đánh giá</h2>
                 {loadingReviews ? (
                     <p>Loading reviews...</p>
@@ -257,7 +257,7 @@ const ProductDisplay = () => {
                 )}
             </div>
             <div>
-                <ListProductCard data={{ products, loadings, errors }} />
+                <ListProductCard data={{ products, loading: loadings, error: errors }} w="100%" title="Sản phẩm liên quan"/>
             </div>
         </div>
     );

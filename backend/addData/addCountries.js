@@ -77,19 +77,4 @@ const addCountries = async () => {
 // Uncomment dòng dưới để chạy hàm
 // addCountries();
 
-const checkCountries = async () => {
-    try {
-        await mongoose.connect('mongodb+srv://minhquan31102003:f3n9fJaQYv7YYdIa@muabandocu.8c5m9.mongodb.net/?retryWrites=true&w=majority&appName=MuaBanDoCu');
-        const countries = await Countries.find({ name: 'Mỹ' });
-        console.log('Countries in database:', countries);
-    } catch (error) {
-        console.error('Error fetching countries:', error);
-    } finally {
-        await mongoose.connection.close();
-    }
-};
-
-// Uncomment dòng dưới để chạy hàm
-// checkCountries();
-
 export default addCountries;

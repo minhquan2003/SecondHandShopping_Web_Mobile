@@ -1,4 +1,4 @@
-import { getProductByName } from '../../hooks/Products';
+import { getProductByName, getAllCountries } from '../../hooks/Products';
 import { useSearchParams } from 'react-router-dom';
 import ListProductCard from '../Home/ListProducts/ListProductCard';
 import React, { useState, useEffect } from 'react';
@@ -7,15 +7,29 @@ const ProductByName = () => {
     const [searchParams] = useSearchParams();
     const name = searchParams.get('name');
     const { products, loading, error } = getProductByName(name);
+    const [countries, setCountries] = useState([]);
     const data = products || [];
     const [brand, setBrand] = useState('');
     const [minPrice, setMinPrice] = useState(0);
-    const [maxPrice, setMaxPrice] = useState(999); // 999 nghìn đồng
+    const [maxPrice, setMaxPrice] = useState(999);
     const [origin, setOrigin] = useState('');
     const [condition, setCondition] = useState('');
     const [filteredProducts, setFilteredProducts] = useState(data);
-    const [minUnit, setMinUnit] = useState('thousand'); // Đơn vị cho giá tối thiểu
-    const [maxUnit, setMaxUnit] = useState('million'); // Đơn vị cho giá tối đa
+    const [minUnit, setMinUnit] = useState('thousand');
+    const [maxUnit, setMaxUnit] = useState('million');
+
+    useEffect(() => {
+        const loadCountries = async () => {
+            try {
+                const countriesData = await getAllCountries();
+                setCountries(countriesData); // Cập nhật danh sách quốc gia
+            } catch (error) {
+                console.error("Error fetching countries:", error);
+            }
+        };
+
+        loadCountries();
+    }, []);
 
     useEffect(() => {
         setFilteredProducts(data);
@@ -133,6 +147,22 @@ const ProductByName = () => {
                             onChange={(e) => setOrigin(e.target.value)}
                             className="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                         />
+                        <select
+                            value={origin}
+                            onChange={(e) => setOrigin(e.target.value)}
+                            className="border border-gray-300 p-2 w-full mt-1 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        >
+                            <option value="">Chọn xuất xứ</option>
+                            {countries.length > 0 ? (
+                                countries.map((country) => (
+                                    <option key={country._id} value={country.name}>
+                                        {country.name}
+                                    </option>
+                                ))
+                            ) : (
+                                <option disabled>Không có quốc gia nào</option>
+                            )}
+                        </select>
                     </div>
                     <div className="flex-1">
                         <label className="block mb-1 text-sm font-medium" htmlFor="conditionSelect">Tình trạng:</label>

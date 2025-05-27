@@ -1,12 +1,12 @@
 import React from "react";
 import ProductCard from "./ProductCard";
 
-const ListProductCard = ({ data }) => {
+const ListProductCard = ({ data, w, title }) => {
     const { products, loading, error } = data;
 
     return (
-        <div className="flex flex-col bg-white items-start rounded-lg" style={{ width: '93%' }}>
-            <h1 className="text-2xl font-bold mb-4">Danh sách sản phẩm</h1>
+        <div className="flex flex-col bg-white items-start rounded-lg" style={{ width: w || '93%' }}>
+            <h1 className="text-2xl font-bold mb-4 ml-4 mt-4">{title || "Danh sách sản phẩm"}</h1>
             {loading ? (
                 <div className="flex items-center justify-center h-64">
                     <div className="inline-block relative w-20 h-20 animate-spin">

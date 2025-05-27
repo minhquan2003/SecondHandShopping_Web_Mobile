@@ -220,6 +220,38 @@ const getProductByCategory = (id) => {
   return { products, loading, error };
 };
 
+const getProductByCategory1 = (id) => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get(`http://${IP}:5555/products/${id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        const pro = response.data;
+        const response1 = await axios.get(
+          `http://${IP}:5555/products/category/${pro.category_id}`
+        );
+        setProducts(response1.data);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+        setError("Không có sản phẩm nào.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  return { products, loading, error };
+};
+
 const getProductById = async (id) => {
   try {
     const response = await axios.get(`http://${IP}:5555/products/${id}`);
@@ -313,6 +345,17 @@ const useSearchProducts = (brand, categoryId) => {
   return { products, loading, error };
 };
 
+const getAllCountries = async () => {
+  try {
+    const response = await axios.get(`http://${IP}:5555/countries`);
+    const countries = response.data;
+    return countries; // Trả về sản phẩm
+  } catch (err) {
+    console.error("Error fetching contries:", err);
+    throw new Error("Không có sản phẩm nào.");
+  }
+};
+
 export {
   useSearchProducts,
   getProducts,
@@ -322,10 +365,12 @@ export {
   useProduct,
   updateProduct,
   getProductByCategory,
+  getProductByCategory1,
   addProduct,
   getProductByName,
   getProductsByIdSeller,
   getProductsNotApproveByIdSeller,
   getProductsSoldOutByIdSeller,
   updateOneProduct,
+  getAllCountries
 };

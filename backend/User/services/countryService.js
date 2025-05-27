@@ -6,8 +6,22 @@ const countryService = {
     },
 
     getAllCountries: async () => {
-        return await Countries.find();
+        try {
+            const countries = await Countries.find();
+            // Sắp xếp theo thứ tự không phân biệt tiếng Việt
+            countries.sort((a, b) => {
+                return a.name.localeCompare(b.name, 'vi', { sensitivity: 'base' });
+            });
+            return countries;
+        } catch (err) {
+            console.error("Error fetching countries:", err);
+            throw new Error("Không có sản phẩm nào.");
+        }
     },
+
+    // getAllCountries: async () => {
+    //     return await Countries.find().sort({ name: 1 });;
+    // },
 
     getCountryById: async (id) => {
         return await Countries.findById(id);

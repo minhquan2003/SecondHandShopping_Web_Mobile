@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { addProduct } from '../../hooks/Products';
+import { addProduct, getAllCountries  } from '../../hooks/Products';
 import { getCategories } from '../../hooks/Categories';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getProductById, updateOneProduct } from '../../hooks/Products';
@@ -20,6 +20,9 @@ const ProductUpload = () => {
     const [selectedCategory, setSelectedCategory] = useState('');
     const { categories } = getCategories();
     const navigate = useNavigate();
+    const [countries, setCountries] = useState([]); // State cho quốc gia
+     const [isOtherOrigin, setIsOtherOrigin] = useState(false);
+    const [otherOrigin, setOtherOrigin] = useState('');
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -40,6 +43,11 @@ const ProductUpload = () => {
                 resetForm();
             }
         };
+        const fetchCountries = async () => {
+            const countryData = await getAllCountries();
+            setCountries(countryData); // Lưu danh sách quốc gia vào state
+        };
+         fetchCountries();
         fetchProduct();
     }, [productId]);
 
@@ -54,6 +62,8 @@ const ProductUpload = () => {
         setCondition('Mới');
         setOrigin('');
         setSelectedCategory('');
+         setIsOtherOrigin(false);
+        setOtherOrigin('');
     };
 
     const handleMediaChange = (e) => {
@@ -228,14 +238,35 @@ const ProductUpload = () => {
                             </select>
                         </div>
                         <div className="mb-4">
-                            <input 
-                                type="text" 
-                                placeholder="Xuất xứ" 
+                            <select 
                                 value={origin} 
-                                onChange={(e) => setOrigin(e.target.value)} 
+                                onChange={(e) => {
+                                    setOrigin(e.target.value);
+                                    setIsOtherOrigin(e.target.value === 'Khác'); // Kiểm tra nếu chọn "Khác"
+                                }} 
                                 className="border border-gray-300 p-2 w-full rounded"
-                            />
+                                required
+                            >
+                                <option value="">Chọn xuất xứ</option>
+                                {countries.map(country => (
+                                    <option key={country._id} value={country.name}>
+                                        {country.name}
+                                    </option>
+                                ))}
+                                <option value="Khác">Khác</option>
+                            </select>
                         </div>
+                        {isOtherOrigin && ( // Hiển thị input nếu chọn "Khác"
+                            <div className="mb-4">
+                                <input 
+                                    type="text" 
+                                    placeholder="Nhập xuất xứ khác" 
+                                    value={otherOrigin} 
+                                    onChange={(e) => setOtherOrigin(e.target.value)} 
+                                    className="border border-gray-300 p-2 w-full rounded"
+                                />
+                            </div>
+                        )}
                         <div className="mb-4">
                             <select 
                                 value={selectedCategory} 

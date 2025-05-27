@@ -6,7 +6,7 @@ const ListVideoProducts = ({ data }) => {
 
     return (
         <div className="flex flex-col bg-white items-start rounded-lg mb-5" style={{ width: '93%' }}>
-            <h1 className="text-2xl font-bold mb-4">Danh sách sản phẩm video</h1>
+            <h1 className="text-2xl font-bold mb-4 mt-4 ml-4">Danh sách sản phẩm video</h1>
             {vloading ? (
                 <div className="flex items-center justify-center h-64">
                     <div className="inline-block relative w-20 h-20 animate-spin">
