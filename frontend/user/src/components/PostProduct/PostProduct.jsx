@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { addProduct, getAllCountries  } from '../../hooks/Products';
-import { getCategories } from '../../hooks/Categories';
+import { getCategories, fetchSubcategories } from '../../hooks/Categories';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getProductById, updateOneProduct } from '../../hooks/Products';
 
@@ -23,6 +23,17 @@ const ProductUpload = () => {
     const [countries, setCountries] = useState([]); // State cho quốc gia
      const [isOtherOrigin, setIsOtherOrigin] = useState(false);
     const [otherOrigin, setOtherOrigin] = useState('');
+
+    const [subcategories, setSubcategories] = useState([]); // State cho danh mục con
+    const [selectedSubcategory, setSelectedSubcategory] = useState('');
+
+    
+
+    const handleCategoryChange = async (categoryId) => {
+        setSelectedCategory(categoryId);
+        const subCategories = await fetchSubcategories(categoryId);
+        setSubcategories(subCategories);
+    };
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -109,6 +120,7 @@ const ProductUpload = () => {
                 quantity,
                 user_id: userInfo._id,
                 category_id: selectedCategory,
+                subcategory_name: selectedSubcategory,
                 image_url: media.type.startsWith('image/') ? uploadedMediaUrl.secure_url : '',
                 video_url: media.type.startsWith('video/') ? uploadedMediaUrl.secure_url : '',
                 brand,
@@ -270,7 +282,7 @@ const ProductUpload = () => {
                         <div className="mb-4">
                             <select 
                                 value={selectedCategory} 
-                                onChange={(e) => setSelectedCategory(e.target.value)} 
+                                onChange={(e) => handleCategoryChange(e.target.value)}
                                 className="border border-gray-300 p-2 w-full rounded"
                                 required
                             >
@@ -278,6 +290,21 @@ const ProductUpload = () => {
                                 {categories.map(category => (
                                     <option key={category._id} value={category._id}>
                                         {category.category_name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="mb-4">
+                            <select 
+                                value={selectedSubcategory} 
+                                onChange={(e) => setSelectedSubcategory(e.target.value)} 
+                                className="border border-gray-300 p-2 w-full rounded"
+                                required
+                            >
+                                <option value="">Chọn danh mục con</option>
+                                {subcategories.map(subcategory => (
+                                    <option key={subcategory._id} value={subcategory.name}>
+                                        {subcategory.name}
                                     </option>
                                 ))}
                             </select>

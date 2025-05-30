@@ -129,11 +129,12 @@ const PurchaseOrder = () => {
                                 <div className="text-gray-700">
                                     <span className="font-normal"> <strong>{index + 1 + (currentPage - 1) * limit}</strong> - </span>
                                 </div>
+                                {order.product.image_url ? 
                                 <img 
                                     src={order.product.image_url} 
                                     alt={order.product.name} 
                                     className="w-16 h-16 object-cover rounded mr-4" 
-                                />
+                                />: null}
                                 <div className="text-gray-700">
                                     <strong></strong> <span className="font-normal">{order.product.name}</span>
                                 </div>

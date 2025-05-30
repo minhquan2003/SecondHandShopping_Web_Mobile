@@ -2,11 +2,6 @@ import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
   {
-    // product_id: {
-    //   type: String,
-    //   required: true,
-    //   unique: true,
-    // },
     name: {
       type: String,
       required: true,
@@ -25,6 +20,10 @@ const productSchema = new mongoose.Schema(
       min: 0
     },
     category_id: {
+      type: String,
+      required: false,
+    },
+    subcategory_name: {
       type: String,
       required: false,
     },

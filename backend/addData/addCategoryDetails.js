@@ -15,6 +15,7 @@ const addCategoryDetails = async () => {
             // { name: 'Lò vi sóng', category_id: '672b28af84ffd1107d91686e', image_url: 'https://example.com/image3.jpg', },
             // { name: 'Máy hút bụi', category_id: '672b28af84ffd1107d91686e', image_url: 'https://example.com/image4.jpg', },
             // { name: 'Bếp từ', category_id: '672b28af84ffd1107d91686e', image_url: 'https://example.com/image5.jpg', },
+            // { name: 'Máy sáy tóc', category_id: '672b28af84ffd1107d91686e', image_url: 'https://example.com/image5.jpg', },
             
             // Đồ nội thất
             // { name: 'Sofa', category_id: '672b29c984ffd1107d916871', image_url: 'https://example.com/sofa.jpg', },
@@ -22,6 +23,7 @@ const addCategoryDetails = async () => {
             // { name: 'Ghế gỗ', category_id: '672b29c984ffd1107d916871', image_url: 'https://example.com/ghe-go.jpg', },
             // { name: 'Tủ quần áo', category_id: '672b29c984ffd1107d916871', image_url: 'https://example.com/tu-quan-ao.jpg', },
             // { name: 'Kệ sách', category_id: '672b29c984ffd1107d916871', image_url: 'https://example.com/ke-sach.jpg', },
+            // { name: 'Đồ trang trí', category_id: '672b29c984ffd1107d916871', image_url: 'https://example.com/ke-sach.jpg', },
 
             // Dụng cụ bếp
             // { name: 'Nồi inox', category_id: '674c2cae063edd0f6e1dff0b', image_url: 'https://example.com/noi-inox.jpg' },
@@ -34,7 +36,7 @@ const addCategoryDetails = async () => {
             // { name: 'Dĩa', category_id: '674c2cae063edd0f6e1dff0b', image_url: 'https://example.com/dia.jpg' },
             // { name: 'Bộ bát', category_id: '674c2cae063edd0f6e1dff0b', image_url: 'https://example.com/bo-bat.jpg' },
             // { name: 'Ly thủy tinh', category_id: '674c2cae063edd0f6e1dff0b', image_url: 'https://example.com/ly-thuy-tinh.jpg' },
-            { name: 'Thau rổ', category_id: '674c2cae063edd0f6e1dff0b', image_url: 'https://example.com/thau-ro.jpg' },
+            // { name: 'Thau rổ', category_id: '674c2cae063edd0f6e1dff0b', image_url: 'https://example.com/thau-ro.jpg' },
             
             // Danh mục "Quần áo"
             // { name: 'Áo thun', category_id: '67605b4fc24a8ca151b055d6', image_url: 'https://example.com/ao-thun.jpg' },
@@ -45,6 +47,8 @@ const addCategoryDetails = async () => {
             // { name: 'Quần short', category_id: '67605b4fc24a8ca151b055d6', image_url: 'https://example.com/quan-short.jpg' },
             // { name: 'Đầm maxi', category_id: '67605b4fc24a8ca151b055d6', image_url: 'https://example.com/dam-maxi.jpg' },
             // { name: 'Áo len', category_id: '67605b4fc24a8ca151b055d6', image_url: 'https://example.com/ao-len.jpg' },
+            // { name: 'Quần dài', category_id: '67605b4fc24a8ca151b055d6', image_url: 'https://example.com/ao-len.jpg' },
+            // { name: 'Vest', category_id: '67605b4fc24a8ca151b055d6', image_url: 'https://example.com/ao-len.jpg' },
 
             // Danh mục "Đồ điện tử"
             // { name: 'Điện thoại di động', category_id: '67605f7bc24a8ca151b055d7', image_url: 'https://example.com/dien-thoai.jpg' },
@@ -54,6 +58,8 @@ const addCategoryDetails = async () => {
             // { name: 'Smartwatch', category_id: '67605f7bc24a8ca151b055d7', image_url: 'https://example.com/smartwatch.jpg' },
             // { name: 'Tai nghe', category_id: '67605f7bc24a8ca151b055d7', image_url: 'https://example.com/tai-nghe.jpg' },
             // { name: 'Máy chiếu', category_id: '67605f7bc24a8ca151b055d7', image_url: 'https://example.com/may-chieu.jpg' },
+            // { name: 'Thiết bị chơi game', category_id: '67605f7bc24a8ca151b055d7', image_url: 'https://example.com/may-chieu.jpg' },
+            // { name: 'Thiết bị giải trí', category_id: '67605f7bc24a8ca151b055d7', image_url: 'https://example.com/may-chieu.jpg' },
 
             // Danh mục "Đồ dùng cá nhân"
             // { name: 'Đồng hồ', category_id: '676ad8f877f31359ae29761d', image_url: 'https://example.com/dong-ho.jpg' },
@@ -63,6 +69,13 @@ const addCategoryDetails = async () => {
             // { name: 'Nước hoa', category_id: '676ad8f877f31359ae29761d', image_url: 'https://example.com/nuoc-hoa.jpg' },
             // { name: 'Bàn chải đánh răng', category_id: '676ad8f877f31359ae29761d', image_url: 'https://example.com/ban-chai.jpg' },
             // { name: 'Khăn tắm', category_id: '676ad8f877f31359ae29761d', image_url: 'https://example.com/khan-tam.jpg' },
+            // { name: 'Đồ thủ công', category_id: '676ad8f877f31359ae29761d', image_url: 'https://example.com/khan-tam.jpg' },
+            // { name: 'Dụng cụ nhạc', category_id: '676ad8f877f31359ae29761d', image_url: 'https://example.com/khan-tam.jpg' },
+            // { name: 'Nón bảo hiểm', category_id: '676ad8f877f31359ae29761d', image_url: 'https://example.com/khan-tam.jpg' },
+            // { name: 'Sách', category_id: '676ad8f877f31359ae29761d', image_url: 'https://example.com/khan-tam.jpg' },
+            // { name: 'Dụng cụ giải trí', category_id: '676ad8f877f31359ae29761d', image_url: 'https://example.com/khan-tam.jpg' },
+            // { name: 'Dụng cụ hỗ trợ sức khoẻ', category_id: '676ad8f877f31359ae29761d', image_url: 'https://example.com/khan-tam.jpg' },
+
 
             // Danh mục "Đồ dùng văn phòng"
             // { name: 'Bút bi', category_id: '676c315125a38eb0a1bc8787', image_url: 'https://example.com/but-bi.jpg' },
@@ -86,6 +99,8 @@ const addCategoryDetails = async () => {
 };
 
 // Uncomment dòng dưới để chạy hàm
-// addCategoryDetails();
+addCategoryDetails();
 
 export default addCategoryDetails;
+
+//{category_id: "676ad8f877f31359ae29761d", subcategory_name: { $exists: false }}

@@ -50,4 +50,14 @@ const getCategoryDetailByCategoryId = (categoryId) => {
     return { categoryDetail, loadings, errors };
 };
 
-export {getCategories, getCategoryDetailByCategoryId};
+const fetchSubcategories = async (categoryId) => {
+        if (categoryId) {
+            const response = await axios.get(`http://${IP}:5555/categoryDetails/parent/${categoryId}`);
+            const subcategoryData = response.data;
+            return subcategoryData; // Lưu danh mục con vào state
+        } else {
+            return []; // Nếu không có danh mục cha, reset danh mục con
+        }
+    };
+
+export {getCategories, getCategoryDetailByCategoryId, fetchSubcategories};

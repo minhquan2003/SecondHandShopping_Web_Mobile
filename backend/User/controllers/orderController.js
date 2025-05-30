@@ -64,7 +64,7 @@ const getOrdersByUserIdBuyerController1 = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
 
     try {
-        const { orders, totalPages } = await getOrdersByUserIdSeller1(userId, page, limit);
+        const { orders, totalPages } = await getOrdersByUserIdBuyer1(userId, page, limit);
         res.status(200).json({
             data: orders,
             totalPages,
