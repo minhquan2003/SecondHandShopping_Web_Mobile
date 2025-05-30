@@ -17,7 +17,7 @@ const productSchema = new mongoose.Schema(
     quantity: {
       type: Number,
       required: true,
-      min: 0
+      min: 0,
     },
     category_id: {
       type: String,
@@ -62,6 +62,10 @@ const productSchema = new mongoose.Schema(
     partner: {
       type: Boolean,
       default: false, // Không bắt buộc
+    },
+    weight: {
+      type: Number,
+      required: true, // Không bắt buộc
     },
   },
   {

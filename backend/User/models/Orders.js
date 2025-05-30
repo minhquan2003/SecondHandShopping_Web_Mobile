@@ -1,56 +1,85 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 // Định nghĩa schema cho Orders
-const orderSchema = new mongoose.Schema({
+const orderSchema = new mongoose.Schema(
+  {
     // order_id: {
     //     type: String,
     //     required: true,
     //     unique: true,
     // },
     user_id_buyer: {
-        type: String,
-        required: false,
-        default: '',
+      type: String,
+      required: false,
+      default: "",
     },
     user_id_seller: {
-        type: String,
-        required: false,
-        default: '',
+      type: String,
+      required: false,
+      default: "",
     },
     name: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     phone: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
+    },
+    provinceId: {
+      type: String,
+      require: false,
+    },
+    districtId: {
+      type: String,
+      require: false,
     },
     address: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     total_amount: {
-        type: Number,
-        required: true,
+      type: Number,
+      required: true,
+    },
+    shipping_method: {
+      type: String,
+      required: false,
+      default: "",
+    },
+    shipping_cost: {
+      type: Number,
+      required: false,
+      default: 0,
     },
     status_order: {
-        type: String,
-        enum: ['Pending', 'Confirmed', 'Packaged', 'Shipping', 'Success', 'Request Cancel', 'Cancelled'],
-        default: 'Pending'
+      type: String,
+      enum: [
+        "Pending",
+        "Confirmed",
+        "Packaged",
+        "Shipping",
+        "Success",
+        "Request Cancel",
+        "Cancelled",
+      ],
+      default: "Pending",
     },
     note: {
-        type: String,
-        default: '',
+      type: String,
+      default: "",
     },
     status: {
-        type: Boolean,
-        required: true,
-        default: true,
+      type: Boolean,
+      required: true,
+      default: true,
     },
-}, {
-    timestamps: true, 
-});
+  },
+  {
+    timestamps: true,
+  }
+);
 
-const Orders = mongoose.model('Orders', orderSchema);
+const Orders = mongoose.model("Orders", orderSchema);
 
 export default Orders;

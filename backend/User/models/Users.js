@@ -19,6 +19,14 @@ const userChema = mongoose.Schema(
       type: String,
       require: false,
     },
+    provinceId: {
+      type: String,
+      require: false,
+    },
+    districtId: {
+      type: String,
+      require: false,
+    },
     address: {
       type: String,
       require: false,
