@@ -66,11 +66,14 @@ const Cart = () => {
                                     onChange={() => handleCheckboxChange(item.id)} 
                                     className="mr-4"
                                 /> */}
-                                <img 
-                                    src={item.product_imageUrl} 
-                                    alt={item.product_name} 
-                                    className="w-16 h-16 object-cover rounded mr-4" 
-                                />
+                                {item.product_imageUrl?.toLowerCase().endsWith('.mp4') || item.product_imageUrl?.toLowerCase().endsWith('.mov') || item.product_imageUrl?.toLowerCase().endsWith('.webm') ? (
+                                    <video controls className="w-16 h-16 object-cover rounded mr-4">
+                                        <source src={item.product_imageUrl} type="video/mp4" />
+                                        Your browser does not support the video tag.
+                                    </video>
+                                ) : (
+                                    <img src={item.product_imageUrl} alt={item.name} className="w-16 h-16 object-cover rounded mr-4" />
+                                )}
                                 <div>
                                     <h3 className="font-semibold">{item.product_name}</h3>
                                     <p className="text-gray-500">Đơn giá: {item.product_price.toLocaleString()} VNĐ</p>

@@ -30,17 +30,25 @@ const EditSalePage = () => {
         }
     };
 
-    const ProductCard = ({ id, name, description, price, quantity, image_url, partner }) => {
+    const ProductCard = ({ id, name, description, price, quantity, media_url, partner }) => {
+        const isVideo = media_url?.toLowerCase().endsWith('.mp4') || media_url?.toLowerCase().endsWith('.mov') || media_url?.toLowerCase().endsWith('.webm');
         return (
             <div className="flex mt-2 mb-2 justify-center items-center" style={{ width: '300px', height: '450px' }}>
                 <div className="bg-white h-full border rounded-lg shadow-md p-2 m-2 transition-shadow duration-300">
                     <div className="w-full h-[55%] overflow-hidden rounded-t-lg">
-                        <img 
-                            src={image_url} 
-                            alt={name} 
-                            className="object-cover" 
-                            style={{ width: '250px', height: '200px' }} 
-                        />
+                        {isVideo ? (
+                            <video controls className="object-cover w-full h-full">
+                                <source src={media_url} type="video/mp4" />
+                                Your browser does not support the video tag.
+                            </video>
+                        ) : (
+                            <img 
+                                src={media_url} 
+                                alt={name} 
+                                className="object-cover" 
+                                style={{ width: '250px', height: '200px' }} 
+                            />
+                        )}
                     </div>
                     <div className="w-full h-[45%] p-4">
                         <div className="overflow-y-auto h-[75%]">
@@ -148,7 +156,7 @@ const EditSalePage = () => {
                                         description={product.description}
                                         price={product.price}
                                         quantity={product.quantity}
-                                        image_url={product.image_url}
+                                        media_url={product.image_url || product.video_url}
                                         partner={product.partner}
                                     />
                                 ))}
@@ -173,7 +181,7 @@ const EditSalePage = () => {
                                         description={product.description}
                                         price={product.price}
                                         quantity={product.quantity}
-                                        image_url={product.image_url}
+                                        media_url={product.image_url || product.video_url}
                                         partner={product.partner}
                                     />
                                 ))}
@@ -198,7 +206,7 @@ const EditSalePage = () => {
                                         description={product.description}
                                         price={product.price}
                                         quantity={product.quantity}
-                                        image_url={product.image_url}
+                                        media_url={product.image_url || product.video_url}
                                         partner={product.partner}
                                     />
                                 ))}

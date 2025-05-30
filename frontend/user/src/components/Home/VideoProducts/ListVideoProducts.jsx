@@ -1,25 +1,25 @@
 import React from "react";
-import ProductCard from "./ProductCard";
+import ProductCard from "../ListProducts/ProductCard";
 
-const ListProductCard = ({ data, w, title }) => {
-    const { products, loading, error } = data;
+const ListVideoProducts = ({ data }) => {
+    const { vproducts, vloading, verror } = data;
 
     return (
-        <div className="flex flex-col bg-white items-start rounded-lg" style={{ width: w || '93%' }}>
-            <h1 className="text-2xl font-bold mb-4 ml-4 mt-4">{title || "Danh sách sản phẩm"}</h1>
-            {loading ? (
+        <div className="flex flex-col bg-white items-start rounded-lg mb-5" style={{ width: '93%' }}>
+            <h1 className="text-2xl font-bold mb-4 mt-4 ml-4">Danh sách sản phẩm video</h1>
+            {vloading ? (
                 <div className="flex items-center justify-center h-64">
                     <div className="inline-block relative w-20 h-20 animate-spin">
                         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 border-4 border-gray-500 rounded-full"></div>
                     </div>
                     <span className="ml-4 text-gray-500">Loading products...</span>
                 </div>
-            ) : error ? (
-                <div className="text-red-500 font-bold">Error: {error}</div>
+            ) : verror ? (
+                <div className="text-red-500 font-bold">Error: {verror}</div>
             ) : (
-                <div className="flex flex-wrap mt-2 mb-2 bg-white justify-center items-center">
+                <div className="mt-2 mb-2 bg-white justify-center items-center">
                     <div className="flex flex-wrap justify-start items-center">
-                        {Array.isArray(products) && products.map((product) => {
+                        {Array.isArray(vproducts) && vproducts.map((product) => {
                             const mediaUrl = product.video_url || product.image_url;
                             return (
                                 <ProductCard
@@ -41,4 +41,4 @@ const ListProductCard = ({ data, w, title }) => {
     );
 };
 
-export default ListProductCard;
+export default ListVideoProducts;

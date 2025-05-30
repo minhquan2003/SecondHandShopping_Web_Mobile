@@ -1,31 +1,47 @@
-import { getProductByName } from '../../hooks/Products';
+import { getProductByName, getAllCountries } from '../../hooks/Products';
 import { useSearchParams } from 'react-router-dom';
 import ListProductCard from '../Home/ListProducts/ListProductCard';
-import { getCategories } from '../../hooks/Categories';
 import React, { useState, useEffect } from 'react';
 
 const ProductByName = () => {
     const [searchParams] = useSearchParams();
     const name = searchParams.get('name');
     const { products, loading, error } = getProductByName(name);
+    const [countries, setCountries] = useState([]);
     const data = products || [];
     const [brand, setBrand] = useState('');
-    const [minPrice, setMinPrice] = useState('');
-    const [maxPrice, setMaxPrice] = useState('');
+    const [minPrice, setMinPrice] = useState(0);
+    const [maxPrice, setMaxPrice] = useState(999);
     const [origin, setOrigin] = useState('');
     const [condition, setCondition] = useState('');
     const [filteredProducts, setFilteredProducts] = useState(data);
-    const { categories } = getCategories();
+    const [minUnit, setMinUnit] = useState('thousand');
+    const [maxUnit, setMaxUnit] = useState('million');
+
+    useEffect(() => {
+        const loadCountries = async () => {
+            try {
+                const countriesData = await getAllCountries();
+                setCountries(countriesData); // Cập nhật danh sách quốc gia
+            } catch (error) {
+                console.error("Error fetching countries:", error);
+            }
+        };
+
+        loadCountries();
+    }, []);
 
     useEffect(() => {
         setFilteredProducts(data);
     }, [data]);
 
     const handleFilter = () => {
+        const minMultiplier = minUnit === 'million' ? 1000000 : 1000;
+        const maxMultiplier = maxUnit === 'million' ? 1000000 : 1000;
+
         const newFilteredProducts = data.filter((product) => {
             const isInPriceRange =
-                (minPrice === '' || product.price >= Number(minPrice)) &&
-                (maxPrice === '' || product.price <= Number(maxPrice));
+                product.price >= (minPrice * minMultiplier) && product.price <= (maxPrice * maxMultiplier);
             const isInBrand = brand ? product.brand.toLowerCase().includes(brand.toLowerCase()) : true;
             const isInOrigin = origin ? product.origin.toLowerCase().includes(origin.toLowerCase()) : true;
             const isInCondition = condition ? product.condition === condition : true;
@@ -37,10 +53,12 @@ const ProductByName = () => {
 
     const handleResetFilters = () => {
         setBrand('');
-        setMinPrice('');
-        setMaxPrice('');
+        setMinPrice(0);
+        setMaxPrice(999);
         setOrigin('');
         setCondition('');
+        setMinUnit('thousand');
+        setMaxUnit('million');
         setFilteredProducts(data);
     };
 
@@ -68,10 +86,27 @@ const ProductByName = () => {
                         <input
                             id="minPriceInput"
                             type="number"
-                            placeholder="Giá tối thiểu"
+                            min="0"
+                            max="999"
                             value={minPrice}
-                            onChange={(e) => setMinPrice(e.target.value)}
+                            onChange={(e) => setMinPrice(Number(e.target.value))}
                             className="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        />
+                        <select
+                            value={minUnit}
+                            onChange={(e) => setMinUnit(e.target.value)}
+                            className="border border-gray-300 p-2 w-full mt-1 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        >
+                            <option value="thousand">Nghìn đồng</option>
+                            <option value="million">Triệu đồng</option>
+                        </select>
+                        <input
+                            type="range"
+                            min="0"
+                            max="999"
+                            value={minPrice}
+                            onChange={(e) => setMinPrice(Number(e.target.value))}
+                            className="w-full mt-2"
                         />
                     </div>
                     <div className="flex-1">
@@ -79,10 +114,27 @@ const ProductByName = () => {
                         <input
                             id="maxPriceInput"
                             type="number"
-                            placeholder="Giá tối đa"
+                            min="0"
+                            max="999"
                             value={maxPrice}
-                            onChange={(e) => setMaxPrice(e.target.value)}
+                            onChange={(e) => setMaxPrice(Number(e.target.value))}
                             className="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        />
+                        <select
+                            value={maxUnit}
+                            onChange={(e) => setMaxUnit(e.target.value)}
+                            className="border border-gray-300 p-2 w-full mt-1 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        >
+                            <option value="thousand">Nghìn đồng</option>
+                            <option value="million">Triệu đồng</option>
+                        </select>
+                        <input
+                            type="range"
+                            min="0"
+                            max="999"
+                            value={maxPrice}
+                            onChange={(e) => setMaxPrice(Number(e.target.value))}
+                            className="w-full mt-2"
                         />
                     </div>
                     <div className="flex-1">
@@ -95,6 +147,22 @@ const ProductByName = () => {
                             onChange={(e) => setOrigin(e.target.value)}
                             className="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                         />
+                        <select
+                            value={origin}
+                            onChange={(e) => setOrigin(e.target.value)}
+                            className="border border-gray-300 p-2 w-full mt-1 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        >
+                            <option value="">Chọn xuất xứ</option>
+                            {countries.length > 0 ? (
+                                countries.map((country) => (
+                                    <option key={country._id} value={country.name}>
+                                        {country.name}
+                                    </option>
+                                ))
+                            ) : (
+                                <option disabled>Không có quốc gia nào</option>
+                            )}
+                        </select>
                     </div>
                     <div className="flex-1">
                         <label className="block mb-1 text-sm font-medium" htmlFor="conditionSelect">Tình trạng:</label>
