@@ -334,7 +334,7 @@ const ProductDisplay = () => {
             product_name: product.name,
             product_quantity: quantity,
             product_price: product.price,
-            product_imageUrl: product.image_url,
+            product_imageUrl: product.image_url ? product.image_url : product.video_url,
             //product_weight: product.weight,
           });
           alert("Sản phẩm đã được thêm vào giỏ hàng!");

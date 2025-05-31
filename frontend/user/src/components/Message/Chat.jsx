@@ -4,6 +4,7 @@ import { addMessage } from '../../hooks/Message';
 import { useParams } from 'react-router-dom';
 import io from 'socket.io-client';
 import { IP } from '../../config';
+import nonAvata from "../../assets/img/nonAvata.jpg";
 
 const socket = io(`http://localhost:5555`);
 
@@ -99,17 +100,16 @@ const Chat = () => {
     };
 
     return (
-    <div className='w-full bg-green-100'>
+    <div className='w-full bg-main'>
+        {user != null ? (
+            <div className="flex items-center">
+                <img src={user.avatar_url == null ? nonAvata : user.avatar_url} alt="Avatar" className='rounded-full ml-5 mt-2 mb-2 ' style={{ border: '2px solid #eee', width: '50px', height: '50px' }} />
+                <p className="ml-3 text-xl font-bold">{user.name}</p>
+            </div>
+        ) : null}
         <div className='bg-red-100 h-[60%] overflow-y-auto' style={{ padding: '10px', flexGrow: 1 }}>
             {conversation && userId ? (
                 <>
-                    {user != null ? (
-                        <>
-                            <h2>Cuộc Hội Thoại với {user.name}</h2>
-                            <img src={user.avatar_url} alt="Avatar" style={{ width: '50px', height: '50px' }} />
-                        </>
-                    ) : null}
-
                     {messages.map((message) => (
                         <div key={message._id} style={{ margin: '5px 0', padding: '10px', border: '1px solid #eee', borderRadius: '5px' }}>
                             {userId === message.senderId ? (
