@@ -316,65 +316,34 @@ const ProductDisplay = () => {
     const totalPrice = product ? quantity * product.price : 0;
     
     const handleAddToCart = async () => {
-        if (userInfo) {
-            const productInCart = await getCartItemsByUserId(userInfo._id);
-            
-            // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
-            const isProductInCart = productInCart.some(item => item.product_id === product._id);
-            
-            if (isProductInCart) {
-                alert("Sản phẩm đã có trong giỏ hàng!");
-            } else {
-                addToCart({
-                    user_buyer: userInfo._id,
-                    user_seller: product.user_id,
-                    product_id: product._id,
-                    product_name: product.name,
-                    product_quantity: quantity,
-                    product_price: product.price,
-                    product_imageUrl: product.image_url || product.video_url,
-                    //product_weight: product.weight,
-                });
-                alert("Sản phẩm đã được thêm vào giỏ hàng!");
-                socket.emit('addCart');
-            }
-        } else {
-            alert("Bạn chưa đăng nhập!");
-        }
-    };
+      if (userInfo) {
+        const productInCart = await getCartItemsByUserId(userInfo._id);
 
-    const handleTextToSeller = async () => {
-        // Kiểm tra xem người dùng có phải là người bán không
-        if (product.user_id === userInfo._id) {
-            alert("Đây là sản phẩm của bạn!");
-            return;
-        }
-    
-        // Lấy danh sách các cuộc hội thoại
-        const response = await axios.get(`http://${IP}:5555/conversations/${userInfo._id}`);
-        const conversations = response.data;
-    
-        // Kiểm tra xem đã có cuộc hội thoại nào giữa userInfo._id và product.user_id chưa
-        const existingConversation = conversations.find(conversation => 
-            (conversation.participant1 === userInfo._id && conversation.participant2 === product.user_id) ||
-            (conversation.participant1 === product.user_id && conversation.participant2 === userInfo._id)
+        // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
+        const isProductInCart = productInCart.some(
+          (item) => item.product_id === product._id
         );
-    
-        if (existingConversation) {
-            // Nếu có cuộc hội thoại, chuyển đến trang nhắn tin
-            navigate(`/message/${userInfo._id}/${existingConversation._id}`);
-        } else {
-            // Nếu không, tạo cuộc hội thoại mới
-            const newConversation = await addConversation(userInfo._id, product.user_id);
-            // Chuyển đến trang nhắn tin với cuộc hội thoại mới
-            navigate(`/message/${userInfo._id}/${newConversation._id}`);
-        }
-    };
 
-    if (error) {
-        return <div className="text-red-500">{error}</div>; // Xử lý lỗi
-    }
-  };
+        if (isProductInCart) {
+          alert("Sản phẩm đã có trong giỏ hàng!");
+        } else {
+          addToCart({
+            user_buyer: userInfo._id,
+            user_seller: product.user_id,
+            product_id: product._id,
+            product_name: product.name,
+            product_quantity: quantity,
+            product_price: product.price,
+            product_imageUrl: product.image_url,
+            //product_weight: product.weight,
+          });
+          alert("Sản phẩm đã được thêm vào giỏ hàng!");
+          socket.emit("addCart");
+        }
+      } else {
+        alert("Bạn chưa đăng nhập!");
+      }
+    };
 
   const handleTextToSeller = async () => {
     // Kiểm tra xem người dùng có phải là người bán không

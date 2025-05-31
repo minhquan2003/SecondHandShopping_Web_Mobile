@@ -33,7 +33,7 @@ const cartSchema = new mongoose.Schema(
     },
     product_weight: {
       type: Number,
-      required: true,
+      required: false,
     },
     selected: {
       type: Boolean,

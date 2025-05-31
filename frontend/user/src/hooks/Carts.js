@@ -16,6 +16,7 @@ const addToCart = async (product) => {
     try {
         const response = await axios.post(`http://${IP}:5555/carts`, product);
     } catch (error) {
+        alert(error)
         console.error('Error fetching cart items:', error);
         throw error;
     }
