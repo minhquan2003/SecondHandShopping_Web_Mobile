@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import io from 'socket.io-client';
 import { IP } from '../../config';
+import nonAvata from "../../assets/img/nonAvata.jpg";
 
 const socket = io(`http://localhost:5555`);
 
-const ListMessage = ({ userId }) => {
+const ListMessage = () => {
+    const { userId} = useParams();
     const [conversations, setConversations] = useState([]);
     const [users, setUsers] = useState([]); // Mảng để lưu thông tin người dùng
     const navigate = useNavigate();
+
+    const [selectedConversationId, setSelectedConversationId] = useState(null);
 
     const formatDate = (date) => {
         return new Date(date).toLocaleDateString('vi-VN', {
@@ -80,34 +84,48 @@ const ListMessage = ({ userId }) => {
         };
 
     const handleSelectConversation = async (conversation) => {
+        setSelectedConversationId(conversation._id); // Cập nhật ID cuộc hội thoại được chọn
         const userSend = conversation.participant1 === userId ? conversation.participant2 : conversation.participant1;
         const senderId = userSend;
-        const id = conversation._id
-        // alert(`${userId} và ` + JSON.stringify(conversation))
-        // sessionStorage.setItem("conversation", JSON.stringify(conversation));
-        const aa = await axios.post(`http://${IP}:5555/messages/read/${id}`, {senderId});
-        // Chuyển hướng đến đường dẫn mới với mã cuộc trò chuyện
+        const id = conversation._id;
+        const aa = await axios.post(`http://${IP}:5555/messages/read/${id}`, { senderId });
         navigate(`/message/${userId}/${conversation._id}`);
     };
 
     return (
         <div style={{ width: '300px', borderRight: '1px solid #ccc', padding: '10px' }}>
-            <h2>Danh Sách Cuộc Hội Thoại</h2>
+            {/* <h2>Danh Sách Cuộc Hội Thoại</h2> */}
             {conversations.map((conversation, index) => {
                 const participantId = conversation.participant1 === userId ? conversation.participant2 : conversation.participant1;
                 const user = users[index]; // Lấy thông tin người dùng từ mảng
+
+                const isSelected = conversation._id === selectedConversationId; // Kiểm tra cuộc hội thoại có được chọn không
+
 
                 return (
                     <div 
                         key={conversation._id} 
                         className="conversation" 
                         onClick={() => handleSelectConversation(conversation)} // Gửi cuộc hội thoại khi chọn
-                        style={{ cursor: 'pointer', marginBottom: '10px', padding: '10px', border: '1px solid #eee', borderRadius: '5px' }}
-                    >
-                        <p>{user ? user.name : participantId}</p>
+                        style={{ cursor: 'pointer', marginBottom: '10px', padding: '10px', border: '1px solid #eee', borderRadius: '5px',
+                        backgroundColor: isSelected ? '#e0f7fa' : 'white', // Màu nền nổi bật nếu được chọn
+                        boxShadow: isSelected ? '0 4px 8px rgba(0, 0, 0, 0.2)' : 'none' // Đổ bóng nếu được chọn
+                         }}
+                    >   
+                        {user != null ? (
+                            <div className="flex items-center">
+                                <img src={user.avatar_url == null ? nonAvata : user.avatar_url} alt="Avatar" className='rounded-full ml-5 mt-2 mb-2 ' style={{ border: '2px solid #eee', width: '50px', height: '50px' }} />
+                                <p className="ml-3"><strong>{user.name}</strong></p>
+                            </div>
+                        ) : null}
+                        {/* <p>{user ? user.name : participantId}</p> */}
                         <p>Tin nhắn chưa đọc: {conversation.unRead}</p>
                         <span>
-                            <p>{conversation.lastMessage || 'Không có tin nhắn'}</p>
+                            <p>{conversation.lastMessage.endsWith('.mp4') ? 
+                                "Video" : 
+                                (conversation.lastMessage.endsWith('.png') ? 
+                                    "Hình ảnh"
+                                    :conversation.lastMessage) }</p>
                             <p>{conversation.lastMessageTimestamp ? formatDate(conversation.lastMessageTimestamp) : 'Chưa có tin nhắn'}</p>
                         </span>
                     </div>

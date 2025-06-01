@@ -26,4 +26,38 @@ const getCategories = () => {
     return { categories, loading, error };
 };
 
-export {getCategories};
+const getCategoryDetailByCategoryId = (categoryId) => {
+    const [categoryDetail, setCategoryDetail] = useState([]);
+    const [loadings, setLoading] = useState(true);
+    const [errors, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await axios.get(`http://${IP}:5555/categoryDetails/parent/${categoryId}`);
+                setCategoryDetail(response.data);
+            } catch (err) {
+                console.error("Error fetching products:", err);
+                setError("Failed to load products. Please try again later.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCategories();
+    }, []);
+    // alert(JSON.stringify(categories))
+    return { categoryDetail, loadings, errors };
+};
+
+const fetchSubcategories = async (categoryId) => {
+        if (categoryId) {
+            const response = await axios.get(`http://${IP}:5555/categoryDetails/parent/${categoryId}`);
+            const subcategoryData = response.data;
+            return subcategoryData; // Lưu danh mục con vào state
+        } else {
+            return []; // Nếu không có danh mục cha, reset danh mục con
+        }
+    };
+
+export {getCategories, getCategoryDetailByCategoryId, fetchSubcategories};

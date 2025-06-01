@@ -6,17 +6,23 @@ import { useUserById } from '../../hooks/Users';
 import { FaCheckCircle } from 'react-icons/fa';
 import nonAvata from '../../assets/img/nonAvata.jpg'
 
-const ProductCard1 = ({ id, name, description, price, quantity, image_url, partner }) => {
+const ProductCard1 = ({ id, name, description, price, quantity, media_url, partner }) => {
+    const isVideo = media_url.toLowerCase().endsWith('.mp4') || media_url.toLowerCase().endsWith('.mov') || media_url.toLowerCase().endsWith('.avi') || media_url.toLowerCase().endsWith('.wmv');
     return (
         <Link to={`/product/${id}`} className="flex mt-2 mb-2 justify-center items-center hover:bg-gray-200" style={{ width: '225px', height: '350px', textDecoration: 'none' }}>
             <div className="bg-white h-full w-[95%] border rounded-lg shadow-md p-2 m-2 transition-shadow duration-300">
                 <div className="w-full h-[55%] overflow-hidden rounded-t-lg">
-                    <img 
-                        src={image_url} 
-                        alt={name} 
-                        className="object-cover" 
-                        style={{ width: '225px', height: '200px' }} // Thiết lập kích thước cố định cho ảnh
-                    />
+                    {isVideo ? (
+                        <video controls className="object-cover" style={{ width: '225px', height: '200px' }}>
+                            <source src={media_url} type="video/mp4" />
+                            Your browser does not support the video tag.
+                        </video>
+                    ) : (
+                        <img src={media_url} 
+                            alt={name} 
+                            className="object-cover" 
+                            style={{ width: '225px', height: '200px' }}/>
+                    )}
                 </div>
                 <div className="w-full h-[45%] p-4 overflow-y-auto">
                     <h2 className="text-xl font-semibold text-gray-800">{name}</h2>
@@ -72,7 +78,7 @@ const SellerPage = () => {
                                         description={product.description}
                                         price={product.price}
                                         quantity={product.quantity}
-                                        image_url={product.image_url}
+                                        media_url={product.image_url || product.video_url}
                                         partner={product.partner}
                                     />
                                 ))}

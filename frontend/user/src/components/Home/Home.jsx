@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import ListProductCard from "./ListProducts/ListProductCard";
 import ListCategories from "./Categories/ListCategories";
-import { getProducts } from "../../hooks/Products";
+import ListVideoProducts from "./VideoProducts/ListVideoProducts";
+import { getProducts, getVideoProducts } from "../../hooks/Products";
 import RecommendedProducts from "./RecommendProduct/RecommendProduct";
 
 const Home = () => {
   const { products, loading, error } = getProducts();
+  const { vproducts, vloading, verror } = getVideoProducts();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Array of image URLs
@@ -24,7 +26,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="w-screen h-auto flex flex-col items-center bg-gray-100 overflow-x-hidden">
+    <div className="w-screen h-auto flex flex-col items-center bg-grey-200 overflow-x-hidden">
       <div className="relative w-[80vw] h-[460px] overflow-hidden rounded">
         {images.map((image, index) => (
           <img
@@ -40,6 +42,7 @@ const Home = () => {
       <div className="flex flex-col items-center w-full">
         <ListCategories />
         <RecommendedProducts />
+        <ListVideoProducts data={{ vproducts, vloading, verror }} />
         <ListProductCard data={{ products, loading, error }} />
       </div>
     </div>
