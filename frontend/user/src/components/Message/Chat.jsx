@@ -203,10 +203,9 @@ const Chat = () => {
                     </label>
                     {mediaPreview && (
                         <div className="flex items-center ml-2">
-                            <p>{mediaPreview}</p>
-                            {mediaPreview.endsWith('.mp4') ? (
+                            {media && media.type.startsWith('video/') ? ( // Kiểm tra kiểu tệp
                                 <video controls style={{ maxWidth: '100px', maxHeight: '50px', marginRight: '10px' }}>
-                                    <source src={mediaPreview} type="video/mp4" />
+                                    <source src={mediaPreview} type={media.type} />
                                     Your browser does not support the video tag.
                                 </video>
                             ) : (

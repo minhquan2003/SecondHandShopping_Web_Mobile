@@ -30,10 +30,12 @@ const productSchema = new mongoose.Schema(
     image_url: {
       type: String,
       required: false,
+      default: "",
     },
     video_url: {
       type: String,
       required: false,
+      default: "",
     },
     user_id: {
       type: String,

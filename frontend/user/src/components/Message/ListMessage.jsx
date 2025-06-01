@@ -128,15 +128,17 @@ const ListMessage = () => {
                                             )) }</p>
                                     <p className="ml-2">{conversation.lastMessageTimestamp ? formatDate(conversation.lastMessageTimestamp) : 'Chưa có tin nhắn'}</p>
                                 </span>
-                                {conversation.unRead > 0 && (
-                                    <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 text-xs">
-                                        {conversation.unRead}
-                                    </span>
-                                )}
+                                
                             </div>
                         </div>
                     ) : null}
+                    {conversation.unRead > 0 && (
+                        <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 text-xs">
+                            {conversation.unRead}
+                        </span>
+                    )}
                 </div>
+                
                 );
             })}
         </div>

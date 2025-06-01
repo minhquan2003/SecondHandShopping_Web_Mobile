@@ -145,7 +145,15 @@ const PurchaseOrderDetail = () => {
                 <div className="flex bg-white rounded-lg shadow-md w-4/5">
                     <div className="bg-white h-full w-4/6 flex rounded-lg shadow-md p-6">
                         <div className="bg-white w-2/5 rounded-lg p-6 flex flex-col items-center">
-                            <img src={product.image_url} alt={product.name} className="w-full h-auto rounded-md mb-4" />
+                            {/* <img src={product.image_url} alt={product.name} className="w-full h-auto rounded-md mb-4" /> */}
+                            {product.video_url?.toLowerCase().endsWith('.mp4') ? (
+                                <video controls className="w-full h-auto rounded-md mb-4">
+                                    <source src={product.video_url} type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                </video>
+                            ) : (
+                                <img src={product.image_url} className="w-full h-auto rounded-md mb-4"/>
+                            )}
                             <p><strong></strong>Số lượng:{" " + orderDetails.quantity}</p>
                         </div>
                         <div className="ml-4">
