@@ -17,10 +17,10 @@ import cors from "cors";
 import adminRouter from "./Admin/routes/Adminroute.js";
 import paymentRoutes from "./User/routes/payment.js";
 import mailRoute from "./User/routes/mailRoute.js";
-import messageRouter from './User/routes/messageRoutes.js';
+import messageRouter from "./User/routes/messageRoutes.js";
 import conversationRouter from "./User/routes/conversationRoutes.js";
 
-import http from "http"; 
+import http from "http";
 import { Server } from "socket.io";
 
 const app = express();
@@ -34,7 +34,11 @@ const io = new Server(server, {
 
 // CORS Options
 const corsOptions = {
-  origin: ["http://localhost:5173", "http://localhost:5174", "http://10.0.2.2:5555"],
+  origin: [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://10.0.2.2:5555",
+  ],
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
@@ -90,7 +94,8 @@ mongoose
   .then((conn) => {
     console.log("App connected to database");
     console.log(`MongoDB Connected: ${conn.connection.host}`);
-    server.listen(PORT, '0.0.0.0', () => { // Lắng nghe từ tất cả các địa chỉ IP
+    server.listen(PORT, "0.0.0.0", () => {
+      // Lắng nghe từ tất cả các địa chỉ IP
       console.log(`Server is running on http://localhost:${PORT}`);
     });
   })
@@ -120,7 +125,7 @@ mongoose
 // import messageRouter from './User/routes/messageRoutes.js';
 // import conversationRouter from "./User/routes/conversationRoutes.js";
 
-// import http from "http"; 
+// import http from "http";
 // import { Server } from "socket.io";
 
 // const app = express();
@@ -160,7 +165,6 @@ mongoose
 
 // // Admin
 // app.use("/admin", adminRouter);
-
 
 // // Socket.IO
 // io.on("connection", (socket) => {
