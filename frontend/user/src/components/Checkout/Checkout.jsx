@@ -864,7 +864,12 @@ const Checkout = () => {
       MA_DV_CHINH: "VHT",
       TEN_DICHVU: "Hỏa tốc thỏa thuận",
     },
+    {
+      MA_DV_CHINH: "OTHER",
+      TEN_DICHVU: "Khác (liên hệ người bán)",
+    },
   ]);
+
   const [selectedShipping, setSelectedShipping] = useState("");
   const [shippingCosts, setShippingCosts] = useState({});
 
@@ -908,6 +913,16 @@ const Checkout = () => {
         selectedShipping
       ) {
         const shippingCostMap = {};
+
+        // Nếu chọn OTHER, set phí = 0 cho tất cả người bán
+        if (selectedShipping === "OTHER") {
+          sellerIds.forEach((sellerId) => {
+            shippingCostMap[sellerId] = 0;
+          });
+          setShippingCosts(shippingCostMap);
+          return;
+        }
+
         for (const sellerId of sellerIds) {
           const sellerItems = groupedItems[sellerId].items;
           const sellerInfo = sellerInfos.find((info) => info._id === sellerId);
@@ -926,8 +941,8 @@ const Checkout = () => {
             const response = await axios.post(
               "http://localhost:5555/orders/getShippingPrices",
               {
-                SENDER_PROVINCE: Number(sellerInfo.provinceId) || 2, // Use seller's province
-                SENDER_DISTRICT: Number(sellerInfo.districtId) || 1231, // Use seller's district
+                SENDER_PROVINCE: Number(sellerInfo.provinceId) || 2,
+                SENDER_DISTRICT: Number(sellerInfo.districtId) || 1231,
                 RECEIVER_PROVINCE: Number(provinceId),
                 RECEIVER_DISTRICT: Number(districtId),
                 PRODUCT_TYPE: "HH",
@@ -955,6 +970,7 @@ const Checkout = () => {
             shippingCostMap[sellerId] = 0;
           }
         }
+
         setShippingCosts(shippingCostMap);
       } else {
         setShippingCosts({});
