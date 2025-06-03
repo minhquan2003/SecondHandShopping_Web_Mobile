@@ -316,7 +316,7 @@ const ProductDisplay = () => {
     const totalPrice = product ? quantity * product.price : 0;
     
     const handleAddToCart = async () => {
-      if (product.user_id === userInfo._id) {
+      if ( userInfo && (product.user_id === userInfo._id)) {
         alert("Đây là sản phẩm của bạn!");
         return;
       }
@@ -351,7 +351,7 @@ const ProductDisplay = () => {
 
   const handleTextToSeller = async () => {
     // Kiểm tra xem người dùng có phải là người bán không
-    if (product.user_id === userInfo._id) {
+    if ( userInfo && (product.user_id === userInfo._id)) {
       alert("Đây là sản phẩm của bạn!");
       return;
     }
@@ -415,7 +415,7 @@ const ProductDisplay = () => {
                         <div className="ml-6 w-full md:w-1/2">
                             <div className="flex">
                               <h2 className="text-2xl font-semibold text-black">{product.name}</h2>
-                              <p>{product.user_id == userInfo._id ? "Đây là sản phẩm của bạn" : null}</p>
+                              <p>{ userInfo && (product.user_id === userInfo._id) ? "Đây là sản phẩm của bạn" : null}</p>
                             </div>
                             {String(product.partner) === "true" ? (  // So sánh partner với chuỗi "true"
                                 <p className="text-sm text-green-600 mt-1 flex items-center">
@@ -460,7 +460,7 @@ const ProductDisplay = () => {
                                 <button
                                 onClick={() =>
                                 {
-                                  if (product.user_id === userInfo._id) {
+                                  if ( userInfo && (product.user_id === userInfo._id)) {
                                     alert("Đây là sản phẩm của bạn!");
                                     return;}
                                   navigate("/checkout", {
