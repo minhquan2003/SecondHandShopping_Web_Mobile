@@ -14,6 +14,7 @@ import '../Regulation/regulation.dart';
 import '../Notification/notification.dart';
 import '../UI/searchbar_widget.dart';
 import '../Search/search_screen.dart';
+import '../Login/login.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
