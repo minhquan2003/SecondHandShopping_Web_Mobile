@@ -42,27 +42,28 @@ const ChartUserYears = () => {
   // Chuẩn bị dữ liệu cho biểu đồ
   const chartData = {
     labels: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
+      "tháng 1",
+      "tháng 2",
+      "tháng 3",
+      "tháng 4",
+      "tháng 5",
+      "tháng 6",
+      "tháng 7",
+      "tháng 8",
+      "tháng 9",
+      "tháng 10",
+      "tháng 11",
+      "tháng 12",
     ], // Nhãn trục X
     datasets: [
       {
-        label: "Total Created Users",
+        label: "Tài khoản mới",
         data: data.map((item) => item.totalUsers), // Dữ liệu trục Y
         borderColor: "rgba(255, 99, 132, 0.5)", // Màu đường
         backgroundColor: "rgba(255, 99, 132, 0.2)", // Màu dưới đường
         fill: true,
         tension: 0.4, // Làm đường cong mượt
+        ResizeObserverSize: true, // Cho phép tự động điều chỉnh kích thước
       },
     ],
   };
@@ -70,9 +71,7 @@ const ChartUserYears = () => {
   return (
     <div className="">
       <div className="flex items-center mb-4">
-        <h2 className="text-xl mr-4 font-semibold">
-          User Statistics - Year {selectedYear}
-        </h2>
+        <h3 className="text-xl mr-4 font-semibold">Thống kê tài khoản mới</h3>
 
         <select
           id="year-select"

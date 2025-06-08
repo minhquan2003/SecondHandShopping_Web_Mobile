@@ -6,6 +6,7 @@ const useFeedback = (page = 1, fieldSort, orderSort, searchKey) => {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [totalFeedbacks, setTotalFeedbacks] = useState(0);
 
   useEffect(() => {
     const fetchFeedback = async () => {
@@ -32,6 +33,7 @@ const useFeedback = (page = 1, fieldSort, orderSort, searchKey) => {
         if (data.success && Array.isArray(data.feedbacks)) {
           setFeedbacks(data.feedbacks);
           setTotalPages(data.totalPages || 1);
+          setTotalFeedbacks(data.totalFeedbacks || 0);
         } else {
           throw new Error("Invalid response structure");
         }
@@ -67,7 +69,14 @@ const useFeedback = (page = 1, fieldSort, orderSort, searchKey) => {
     }
   };
 
-  return { feedbacks, totalPages, loading, error, ReplyFeedback }; // Trả về feedbackTotal
+  return {
+    feedbacks,
+    totalPages,
+    loading,
+    error,
+    ReplyFeedback,
+    totalFeedbacks,
+  }; // Trả về feedbackTotal
 };
 
 export default useFeedback;

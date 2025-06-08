@@ -51,6 +51,8 @@ class UserProfileProvider with ChangeNotifier {
         "email": updatedUser.email,
         "address": updatedUser.address,
         "avatar_url": updatedUser.avatarUrl,
+        "provinceId": updatedUser.provinceId,
+        "districtId": updatedUser.districtId,
       }),
     );
 

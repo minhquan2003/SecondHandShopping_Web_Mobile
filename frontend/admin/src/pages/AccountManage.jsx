@@ -17,7 +17,7 @@ const AccountManage = () => {
               : "bg-gray-200 text-gray-800"
           }`}
         >
-          Users List
+          Danh sách tài khoản
         </button>
         <button
           onClick={() => setView("ban")}
@@ -27,7 +27,7 @@ const AccountManage = () => {
               : "bg-gray-200 text-gray-800"
           }`}
         >
-          Ban User Management
+          Danh sách tài khoản bị cấm
         </button>
       </div>
 

@@ -32,9 +32,10 @@ class _PostEditProductState extends State<PostEditProduct> {
   final TextEditingController quantity = TextEditingController();
   final TextEditingController brand = TextEditingController();
   final TextEditingController origin = TextEditingController();
+  final TextEditingController weight = TextEditingController();
   String? selectedCategoryId;
   String? selectedCondition;
-  
+
   String? categoryImage;
   String? categoryName;
   File? _image;
@@ -44,7 +45,8 @@ class _PostEditProductState extends State<PostEditProduct> {
   void initState() {
     super.initState();
     fetchCategories();
-    imgUrl.text = 'https://www.chotot.com/_next/image?url=https%3A%2F%2Fstatic.chotot.com%2Fstorage%2Fchapy-pro%2Fnewcats%2Fv8%2F9000.png&w=256&q=95';
+    imgUrl.text =
+        'https://www.chotot.com/_next/image?url=https%3A%2F%2Fstatic.chotot.com%2Fstorage%2Fchapy-pro%2Fnewcats%2Fv8%2F9000.png&w=256&q=95';
   }
 
   @override
@@ -102,6 +104,7 @@ class _PostEditProductState extends State<PostEditProduct> {
           brand.text = widget.product['brand'];
           selectedCondition = widget.product['condition'];
           origin.text = widget.product['origin'];
+          weight.text = widget.product['weight']?.toString() ?? '';
           selectedCategoryId = widget.product['category_id'];
 
           // Lấy thông tin danh mục dựa trên category_id
@@ -125,17 +128,18 @@ class _PostEditProductState extends State<PostEditProduct> {
   }
 
   Future<void> postProduct(Map<String, dynamic> product) async {
-    final response = await http.post(Uri.parse(
-      'http://$ip:5555/products'), 
+    final response = await http.post(
+      Uri.parse('http://$ip:5555/products'),
       headers: {
         'Content-Type': 'application/json', // Đặt header cho JSON
       },
-      body: jsonEncode(product),);
-    if(response.statusCode == 201){
+      body: jsonEncode(product),
+    );
+    if (response.statusCode == 201) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Sản phẩm được lưu và đang chờ xét duyệt!')),
       );
-    }else{
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Sản phẩm không thêm được!')),
       );
@@ -154,7 +158,8 @@ class _PostEditProductState extends State<PostEditProduct> {
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Sản phẩm được thay đổi và đang chờ xét duyệt!')),
+          SnackBar(
+              content: Text('Sản phẩm được thay đổi và đang chờ xét duyệt!')),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -170,14 +175,18 @@ class _PostEditProductState extends State<PostEditProduct> {
   }
 
   Future<void> handle() async {
-    if(name.text.isEmpty || description.text.isEmpty || brand.text.isEmpty || origin.text.isEmpty || selectedCondition == null){
+    if (name.text.isEmpty ||
+        description.text.isEmpty ||
+        brand.text.isEmpty ||
+        origin.text.isEmpty ||
+        selectedCondition == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Hãy nhập đầy đủ thông tin!')),
       );
       return;
     }
 
-    if(selectedCategoryId == null){
+    if (selectedCategoryId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Hãy chọn loại danh mục sản phẩm!')),
       );
@@ -186,7 +195,8 @@ class _PostEditProductState extends State<PostEditProduct> {
 
     final priceText = price.text;
     final prices = int.tryParse(priceText);
-    if (prices == null || prices <= 0) { // Kiểm tra null và giá trị <= 0
+    if (prices == null || prices <= 0) {
+      // Kiểm tra null và giá trị <= 0
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Giá sản phẩm phải lớn hơn 0!')),
       );
@@ -195,25 +205,36 @@ class _PostEditProductState extends State<PostEditProduct> {
 
     final quantityText = quantity.text;
     final quantityValue = int.tryParse(quantityText); // Chuyển đổi số lượng
-    if (quantityValue == null || quantityValue <= 0) { // Kiểm tra null và số lượng <= 0
+    if (quantityValue == null || quantityValue <= 0) {
+      // Kiểm tra null và số lượng <= 0
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Số lượng phải lớn hơn 0!')),
       );
       return;
     }
 
+    final weightText = weight.text;
+    final weightValue = double.tryParse(weightText);
+    if (weightValue == null || weightValue <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Trọng lượng phải lớn hơn 0!')),
+      );
+      return;
+    }
+
     await _uploadImage();
-    if (_image == null && pro.isEmpty){
+    if (_image == null && pro.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Hãy chọn hình ảnh!')),
       );
       return;
-    };
+    }
+    ;
 
     var partner = false;
-            // Assuming userInfo is defined somewhere in your component
+    // Assuming userInfo is defined somewhere in your component
     if (loginInfo.role == 'partner') {
-        partner = true;
+      partner = true;
     }
 
     Map<String, dynamic> product = {
@@ -228,13 +249,14 @@ class _PostEditProductState extends State<PostEditProduct> {
       'condition': selectedCondition,
       "origin": origin.text,
       "partner": partner,
+      "weight": weight.text,
       "approve": false,
       "status": true
     };
 
-    if(pro.isEmpty){
+    if (pro.isEmpty) {
       postProduct(product);
-    }else{
+    } else {
       editProduct(pro['_id'], product);
     }
     _resetForm();
@@ -242,13 +264,15 @@ class _PostEditProductState extends State<PostEditProduct> {
 
   void _resetForm() {
     // Reset các TextEditingController
-    imgUrl.text = 'https://www.chotot.com/_next/image?url=https%3A%2F%2Fstatic.chotot.com%2Fstorage%2Fchapy-pro%2Fnewcats%2Fv8%2F9000.png&w=256&q=95';
+    imgUrl.text =
+        'https://www.chotot.com/_next/image?url=https%3A%2F%2Fstatic.chotot.com%2Fstorage%2Fchapy-pro%2Fnewcats%2Fv8%2F9000.png&w=256&q=95';
     name.clear();
     description.clear();
     price.clear();
     quantity.clear();
     brand.clear();
     origin.clear();
+    weight.clear();
     selectedCondition = null;
     selectedCategoryId = null;
     _image = null; // Đặt lại hình ảnh
@@ -265,18 +289,26 @@ class _PostEditProductState extends State<PostEditProduct> {
       body: loginInfo.name == null
           ? Center(child: Text('Hãy đăng nhập để có trải nghiệm tốt nhất'))
           : isLoading
-              ? Center(child: CircularProgressIndicator()) // Hiển thị loader trong khi tải
+              ? Center(
+                  child:
+                      CircularProgressIndicator()) // Hiển thị loader trong khi tải
               : NestedScrollView(
-                  headerSliverBuilder: (BuildContext context, bool innerBoxScrolled) {
+                  headerSliverBuilder:
+                      (BuildContext context, bool innerBoxScrolled) {
                     return <Widget>[
                       SliverAppBar(
                         flexibleSpace: FlexibleSpaceBar(
                           background: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                            Text('Đăng tin bán hàng', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
-                            Icon(Icons.edit)
-                          ]),
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Đăng tin bán hàng',
+                                  style: const TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Icon(Icons.edit)
+                              ]),
                         ),
                       ),
                     ];
@@ -289,41 +321,51 @@ class _PostEditProductState extends State<PostEditProduct> {
                           Container(
                             height: 220,
                             child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                            Text('Hình ảnh của sản phẩm'),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                              child: Stack(
-                                alignment: Alignment.center, // Căn giữa các widget con
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: (_image != null && product.isEmpty)
-                                    ? Image.file(
-                                        File(_image!.path), // Hiển thị hình ảnh đã chọn
-                                        width: double.infinity,
-                                        height: 200,
-                                        fit: BoxFit.contain,
-                                      )
-                                    :Image.network(
-                                      imgUrl.text, // Thay thế bằng URL hình ảnh hợp lệ
-                                      width: double.infinity,
-                                      height: 200,
-                                      fit: BoxFit.contain,
-                                    ),
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text('Hình ảnh của sản phẩm'),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0),
+                                  child: Stack(
+                                    alignment: Alignment
+                                        .center, // Căn giữa các widget con
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child:
+                                            (_image != null && product.isEmpty)
+                                                ? Image.file(
+                                                    File(_image!
+                                                        .path), // Hiển thị hình ảnh đã chọn
+                                                    width: double.infinity,
+                                                    height: 200,
+                                                    fit: BoxFit.contain,
+                                                  )
+                                                : Image.network(
+                                                    imgUrl
+                                                        .text, // Thay thế bằng URL hình ảnh hợp lệ
+                                                    width: double.infinity,
+                                                    height: 200,
+                                                    fit: BoxFit.contain,
+                                                  ),
+                                      ),
+                                      Positioned(
+                                        child: IconButton(
+                                          icon: Icon(Icons.add_a_photo,
+                                              size: 30,
+                                              color: Colors
+                                                  .white), // Biểu tượng thêm hình ảnh
+                                          onPressed: _pickImage,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  Positioned(
-                                    child: IconButton(
-                                      icon: Icon(Icons.add_a_photo, size: 30, color: Colors.white), // Biểu tượng thêm hình ảnh
-                                      onPressed: _pickImage,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],),),
+                                )
+                              ],
+                            ),
+                          ),
                           const SizedBox(height: 8),
                           TextField(
                             controller: name,
@@ -347,6 +389,15 @@ class _PostEditProductState extends State<PostEditProduct> {
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),
                               hintText: 'Đơn giá',
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          TextField(
+                            controller: weight,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              hintText: 'Trọng lượng 1 sản phẩm (g)',
                             ),
                           ),
                           const SizedBox(height: 8),
@@ -382,7 +433,8 @@ class _PostEditProductState extends State<PostEditProduct> {
                             }).toList(),
                             onChanged: (String? newValue) {
                               setState(() {
-                                selectedCondition = newValue; // Cập nhật lựa chọn
+                                selectedCondition =
+                                    newValue; // Cập nhật lựa chọn
                               });
                             },
                           ),
@@ -431,29 +483,29 @@ class _PostEditProductState extends State<PostEditProduct> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                            if (product.isNotEmpty)
-                            ...[
-                            ElevatedButton(
-                            onPressed: () {
-                              handle();
-                            },
-                            child: Text('Lưu thay đổi'),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                // Navigator.push(context,
-                                // MaterialPageRoute(builder: (context) => ProductDetail(product: product)));
-                              },
-                              child: Text('Xem trước khi lưu'),
-                            ),
-                            ]else
-                            ElevatedButton(
-                              onPressed: () {
-                                handle();
-                              },
-                              child: Text('Đăng tin'),
-                            ),
-                          ],)
+                              if (product.isNotEmpty) ...[
+                                ElevatedButton(
+                                  onPressed: () {
+                                    handle();
+                                  },
+                                  child: Text('Lưu thay đổi'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    // Navigator.push(context,
+                                    // MaterialPageRoute(builder: (context) => ProductDetail(product: product)));
+                                  },
+                                  child: Text('Xem trước khi lưu'),
+                                ),
+                              ] else
+                                ElevatedButton(
+                                  onPressed: () {
+                                    handle();
+                                  },
+                                  child: Text('Đăng tin'),
+                                ),
+                            ],
+                          )
                         ],
                       ),
                     ),

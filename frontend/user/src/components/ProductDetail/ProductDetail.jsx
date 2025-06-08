@@ -277,73 +277,73 @@
 
 // export default ProductDisplay;
 
-
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useProduct } from '../../hooks/Products'; // Nhập custom hook
-import { addToCart } from '../../hooks/Carts';
-import BackButton from '../../commons/BackButton';
-import { useReviews } from '../../hooks/Review'; // Import custom hook cho reviews
-import { FaCheckCircle } from 'react-icons/fa';
-import { getCartItemsByUserId } from '../../hooks/Carts';
-import io from 'socket.io-client';
-import axios from 'axios';
-import { addConversation, addMessage } from '../../hooks/Message';
-import { IP } from '../../config';
-import ListProductCard from '../Home/ListProducts/ListProductCard';
-import { getProductByCategory1 } from '../../hooks/Products';
-
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useProduct } from "../../hooks/Products"; // Nhập custom hook
+import { addToCart } from "../../hooks/Carts";
+import BackButton from "../../commons/BackButton";
+import { useReviews } from "../../hooks/Review"; // Import custom hook cho reviews
+import { FaCheckCircle } from "react-icons/fa";
+import { getCartItemsByUserId } from "../../hooks/Carts";
+import io from "socket.io-client";
+import axios from "axios";
+import { addConversation, addMessage } from "../../hooks/Message";
+import { IP } from "../../config";
+import ListProductCard from "../Home/ListProducts/ListProductCard";
+import { getProductByCategory1 } from "../../hooks/Products";
 
 const socket = io(`http://localhost:5555`);
 
 const ProductDisplay = () => {
-    const userInfoString = sessionStorage.getItem('userInfo');
-    const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
+  const userInfoString = sessionStorage.getItem("userInfo");
+  const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
 
-    const { id } = useParams();
-    const user_buyer_id = userInfo ? userInfo._id : '';
-    const { product, loading, error } = useProduct(id); // Sử dụng custom hook
-    const { reviews, loadingReviews, errorReviews } = useReviews(id); // Sử dụng hook cho reviews
-    const { products, loadings, errors } = getProductByCategory1(id);
-    const [quantity, setQuantity] = useState(1);
-    const navigate = useNavigate();
+  const { id } = useParams();
+  const user_buyer_id = userInfo ? userInfo._id : "";
+  const { product, loading, error } = useProduct(id); // Sử dụng custom hook
+  const { reviews, loadingReviews, errorReviews } = useReviews(id); // Sử dụng hook cho reviews
+  const { products, loadings, errors } = getProductByCategory1(id);
+  const [quantity, setQuantity] = useState(1);
+  const navigate = useNavigate();
 
-    const handleQuantityChange = (e) => {
-        const value = Math.max(1, Math.min(product?.quantity || 0, e.target.value)); // Giới hạn số lượng
-        setQuantity(value);
-    };
+  const handleQuantityChange = (e) => {
+    const value = Math.max(1, Math.min(product?.quantity || 0, e.target.value)); // Giới hạn số lượng
+    setQuantity(value);
+  };
 
-    const totalPrice = product ? quantity * product.price : 0;
-    
-    const handleAddToCart = async () => {
-      if (userInfo) {
-        const productInCart = await getCartItemsByUserId(userInfo._id);
+  const totalPrice = product ? quantity * product.price : 0;
 
-        // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
-        const isProductInCart = productInCart.some(
-          (item) => item.product_id === product._id
-        );
+  const handleAddToCart = async () => {
+    if (userInfo) {
+      const productInCart = await getCartItemsByUserId(userInfo._id);
 
-        if (isProductInCart) {
-          alert("Sản phẩm đã có trong giỏ hàng!");
-        } else {
-          addToCart({
-            user_buyer: userInfo._id,
-            user_seller: product.user_id,
-            product_id: product._id,
-            product_name: product.name,
-            product_quantity: quantity,
-            product_price: product.price,
-            product_imageUrl: product.image_url ? product.image_url : product.video_url,
-            //product_weight: product.weight,
-          });
-          alert("Sản phẩm đã được thêm vào giỏ hàng!");
-          socket.emit("addCart");
-        }
+      // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
+      const isProductInCart = productInCart.some(
+        (item) => item.product_id === product._id
+      );
+
+      if (isProductInCart) {
+        alert("Sản phẩm đã có trong giỏ hàng!");
       } else {
-        alert("Bạn chưa đăng nhập!");
+        addToCart({
+          user_buyer: userInfo._id,
+          user_seller: product.user_id,
+          product_id: product._id,
+          product_name: product.name,
+          product_quantity: quantity,
+          product_price: product.price,
+          product_imageUrl: product.image_url
+            ? product.image_url
+            : product.video_url,
+          product_weight: product.weight,
+        });
+        alert("Sản phẩm đã được thêm vào giỏ hàng!");
+        socket.emit("addCart");
       }
-    };
+    } else {
+      alert("Bạn chưa đăng nhập!");
+    }
+  };
 
   const handleTextToSeller = async () => {
     // Kiểm tra xem người dùng có phải là người bán không
@@ -389,31 +389,45 @@ const ProductDisplay = () => {
     return <p>Loading...</p>; // Hiển thị loading khi chưa có dữ liệu
   }
 
-    const media_url = product.image_url || product.video_url;
-    const isVideo = media_url?.toLowerCase().endsWith('.mp4') || media_url?.toLowerCase().endsWith('.mov') || media_url?.toLowerCase().endsWith('.webm');
+  const media_url = product.image_url || product.video_url;
+  const isVideo =
+    media_url?.toLowerCase().endsWith(".mp4") ||
+    media_url?.toLowerCase().endsWith(".mov") ||
+    media_url?.toLowerCase().endsWith(".webm");
 
-    return (
-        <div className="p-5 bg-gray-100 min-h-screen">
-            <div className="flex items-center mb-4">
-                <BackButton />
-            </div>
-            <div className="flex max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
-                {product && (
-                    <>
-                        {isVideo ? (
-                            <video controls className="w-full md:w-1/2 object-cover rounded-lg shadow-lg" style={{ maxHeight: '400px' }}>
-                                <source src={media_url} type="video/mp4" />
-                                Your browser does not support the video tag.
-                            </video>
-                        ) : (
-                            <img src={media_url} alt={product.name} className="w-full md:w-1/2 object-cover rounded-lg shadow-lg" style={{ maxHeight: '400px' }} />
-                        )}
-                        <div className="ml-6 w-full md:w-1/2">
-                            <h2 className="text-2xl font-semibold text-black">{product.name}</h2>
-                            {String(product.partner) === "true" ? (  // So sánh partner với chuỗi "true"
-                                <p className="text-sm text-green-600 mt-1 flex items-center">
-                                    <FaCheckCircle className="mr-1" /> {/* Biểu tượng check */}
-                                    Đảm bảo                         
+  return (
+    <div className="p-5 bg-gray-100 min-h-screen">
+      <div className="flex items-center mb-4">
+        <BackButton />
+      </div>
+      <div className="flex max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
+        {product && (
+          <>
+            {isVideo ? (
+              <video
+                controls
+                className="w-full md:w-1/2 object-cover rounded-lg shadow-lg"
+                style={{ maxHeight: "400px" }}
+              >
+                <source src={media_url} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <img
+                src={media_url}
+                alt={product.name}
+                className="w-full md:w-1/2 object-cover rounded-lg shadow-lg"
+                style={{ maxHeight: "400px" }}
+              />
+            )}
+            <div className="ml-6 w-full md:w-1/2">
+              <h2 className="text-2xl font-semibold text-black">
+                {product.name}
+              </h2>
+              {String(product.partner) === "true" ? ( // So sánh partner với chuỗi "true"
+                <p className="text-sm text-green-600 mt-1 flex items-center">
+                  <FaCheckCircle className="mr-1" /> {/* Biểu tượng check */}
+                  Đảm bảo
                 </p>
               ) : null}
               <p className="mt-2">
@@ -463,7 +477,7 @@ const ProductDisplay = () => {
                           product_quantity: quantity,
                           product_price: product.price,
                           product_imageUrl: product.image_url,
-                          //product_weight: product.weight,
+                          product_weight: product.weight,
                         },
                       },
                     })
@@ -496,6 +510,9 @@ const ProductDisplay = () => {
           <strong>Hãng sản xuất:</strong> {product.brand}
         </p>
         <p className="mt-2">
+          <strong>Khối lượng:</strong> {product.weight} (g)
+        </p>
+        <p className="mt-2">
           <strong>Xuất xứ:</strong> {product.origin}
         </p>
         <p className="mt-2">
@@ -511,52 +528,62 @@ const ProductDisplay = () => {
         >
           Xem trang người bán
         </button>
-      </div>          
-            {/* Hiển thị các review */}
-            <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mt-5 mb-5">
-                <h2 className="text-xl font-semibold">Đánh giá</h2>
-                {loadingReviews ? (
-                    <p>Loading reviews...</p>
-                ) : errorReviews ? (
-                    <p className="text-red-500">{errorReviews}</p>
-                ) : (
-                    reviews.length > 0 ? (
-                        <ul className="mt-4">
-                            {reviews.map(review => (
-                                <li key={review._id} className="border-b py-2">
-                                    <div>
-                                        <strong>Rating:</strong>
-                                        <div className="flex items-center">
-                                            {Array.from({ length: 5 }, (v, i) => (
-                                                <span key={i} className={`text-lg ${i < review.rating ? 'text-yellow-500' : 'text-gray-300'}`}>
-                                                    ★
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <p>{review.comment}</p>
-                                    </div>
-                                    <div className="text-gray-500 text-sm">
-                                        Ngày {new Date(review.createdAt).toLocaleDateString('vi-VN', {
-                                            day: '2-digit',
-                                            month: '2-digit',
-                                            year: 'numeric',
-                                        })}
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p>Chưa có đánh giá nào.</p>
-                    )
-                )}
-            </div>
-            <div>
-                <ListProductCard data={{ products, loading: loadings, error: errors }} w="100%" title="Sản phẩm liên quan"/>
-            </div>
-        </div>
-    );
+      </div>
+      {/* Hiển thị các review */}
+      <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mt-5 mb-5">
+        <h2 className="text-xl font-semibold">Đánh giá</h2>
+        {loadingReviews ? (
+          <p>Loading reviews...</p>
+        ) : errorReviews ? (
+          <p className="text-red-500">{errorReviews}</p>
+        ) : reviews.length > 0 ? (
+          <ul className="mt-4">
+            {reviews.map((review) => (
+              <li key={review._id} className="border-b py-2">
+                <div>
+                  <strong>Rating:</strong>
+                  <div className="flex items-center">
+                    {Array.from({ length: 5 }, (v, i) => (
+                      <span
+                        key={i}
+                        className={`text-lg ${
+                          i < review.rating
+                            ? "text-yellow-500"
+                            : "text-gray-300"
+                        }`}
+                      >
+                        ★
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p>{review.comment}</p>
+                </div>
+                <div className="text-gray-500 text-sm">
+                  Ngày{" "}
+                  {new Date(review.createdAt).toLocaleDateString("vi-VN", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>Chưa có đánh giá nào.</p>
+        )}
+      </div>
+      <div>
+        <ListProductCard
+          data={{ products, loading: loadings, error: errors }}
+          w="100%"
+          title="Sản phẩm liên quan"
+        />
+      </div>
+    </div>
+  );
 };
 
 export default ProductDisplay;

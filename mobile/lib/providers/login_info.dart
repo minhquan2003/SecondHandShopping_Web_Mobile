@@ -24,6 +24,8 @@ class LoginInfo with ChangeNotifier {
   String? get username => _user?.username;
   String? get address => _user?.address;
   String? get phone => _user?.phone;
+  String? get provinceId => _user?.provinceId;
+  String? get districtId => _user?.districtId;
 
   Future<bool> login(String email, String password) async {
     try {

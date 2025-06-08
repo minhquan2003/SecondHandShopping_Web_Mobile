@@ -58,7 +58,7 @@ const PieOrderStatus = () => {
 
   return (
     <div className="w-full">
-      <h2 className="text-xl mr-4 font-semibold">Order Status Distribution</h2>
+      <h2 className="text-xl mr-4 font-semibold">Tỉ lệ trạng thái đơn hàng</h2>
       <div style={{ width: "100%", height: "0 auto", margin: "0 auto" }}>
         <Pie
           data={data}

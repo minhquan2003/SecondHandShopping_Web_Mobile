@@ -43,13 +43,14 @@ class ProductCard extends StatelessWidget {
         ),
         child: Column(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
-              child: Image.network(
-                imageUrl,
-                width: double.infinity,
-                height: 170,
-                fit: BoxFit.contain,
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
+                child: Image.network(
+                  imageUrl,
+                  width: double.infinity,
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
             Padding(

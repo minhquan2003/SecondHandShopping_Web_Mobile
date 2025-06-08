@@ -38,7 +38,7 @@ const OrderList = () => {
       {error && <p className="text-red-500">{error}</p>}
 
       <div className="flex items-center">
-        <select
+        {/* <select
           className="text-sm border border-black p-2 mb-4"
           defaultValue="choose"
         >
@@ -48,7 +48,7 @@ const OrderList = () => {
           <option value="deleteRolePartners">
             Delete selected role partners
           </option>
-        </select>
+        </select> */}
         <div className="w-full flex border-2 border-gray-200 mb-4 p-1 ml-4">
           <div className="flex w-full mx-10 rounded bg-white">
             <input

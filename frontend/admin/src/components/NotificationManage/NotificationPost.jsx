@@ -62,7 +62,7 @@ const NotificationPost = ({ closeForm }) => {
           </div>
 
           {/* Role Dropdown */}
-          <div>
+          {/* <div>
             <label
               htmlFor="role"
               className="block text-sm font-medium text-gray-700"
@@ -80,7 +80,7 @@ const NotificationPost = ({ closeForm }) => {
               <option value="partner">Partner</option>
               <option value="all">All</option>
             </select>
-          </div>
+          </div> */}
 
           {/* Success and Error Messages */}
           {successMessage && (

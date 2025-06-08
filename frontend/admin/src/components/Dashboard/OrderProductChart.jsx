@@ -45,29 +45,29 @@ const StatisticsChart = () => {
   // Chuẩn bị dữ liệu cho chart
   const chartData = {
     labels: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
+      "tháng 1",
+      "tháng 2",
+      "tháng 3",
+      "tháng 4",
+      "tháng 5",
+      "tháng 6",
+      "tháng 7",
+      "tháng 8",
+      "tháng 9",
+      "tháng 10",
+      "tháng 11",
+      "tháng 12",
     ],
     datasets: [
       {
-        label: "Orders",
+        label: "Đơn hàng",
         data: data.map((item) => item.totalOrders), // Giả sử totalOrders có trong dữ liệu
         backgroundColor: "rgba(54, 162, 235, 0.2)",
         borderColor: "rgba(54, 162, 235, 1)",
         borderWidth: 1,
       },
       {
-        label: "Products",
+        label: "Sản phẩm",
         data: data.map((item) => item.totalProducts), // Giả sử totalProducts có trong dữ liệu
         backgroundColor: "rgba(255, 99, 132, 0.2)",
         borderColor: "rgba(255, 99, 132, 1)",
@@ -79,9 +79,9 @@ const StatisticsChart = () => {
   return (
     <div className="">
       <div className="flex items-center mb-4">
-        <h2 className="text-xl mr-4 font-semibold">
-          Order & Product Statistics
-        </h2>
+        <h3 className="text-xl mr-4 font-semibold">
+          Thống kê Đơn hàng & Sản phẩm
+        </h3>
         <select
           value={year}
           onChange={(e) => setYear(e.target.value)}
