@@ -7,6 +7,7 @@ import './providers/userProfile_provider.dart';
 import '../providers/regulation_provider.dart';
 import '../providers/feedback.provider.dart';
 import '../providers/search_provider.dart';
+import '../providers/location_provider.dart';
 
 void main() {
   runApp(MultiProvider(
@@ -17,6 +18,7 @@ void main() {
       ChangeNotifierProvider(create: (context) => RegulationProvider()),
       ChangeNotifierProvider(create: (context) => FeedbackProvider()),
       ChangeNotifierProvider(create: (context) => SearchProvider()),
+      ChangeNotifierProvider(create: (context) => LocationProvider()),
     ],
     child: const MyApp(),
   ));

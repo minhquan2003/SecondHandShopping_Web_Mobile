@@ -18,7 +18,7 @@ const PieRatingChart = () => {
   for (let star = 1; star <= 5; star++) {
     const percentage = parseFloat(ratingProduct?.data?.[star] || 0);
     if (percentage > 0) {
-      labels.push(`${star} ★ Rating`);
+      labels.push(`${star} ★ `);
       dataValues.push(percentage);
     }
   }
@@ -60,7 +60,7 @@ const PieRatingChart = () => {
 
   return (
     <div className="w-full">
-      <h2 className="text-xl mr-4 font-semibold">Rating Distribution</h2>
+      <h2 className="text-xl mr-4 font-semibold">Tỉ lệ đánh giá sản phẩm</h2>
       <div style={{ width: "100%", height: "0 auto", margin: "0 auto" }}>
         <Pie
           data={data}

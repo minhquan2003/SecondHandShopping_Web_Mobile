@@ -95,10 +95,10 @@ const UserList = () => {
           }}
         >
           <option value="choose" disabled>
-            Choose action...
+            Chọn hành động...
           </option>
-          <option value="banUsers">Ban selected users</option>
-          <option value="deleteUsers">Delete selected users</option>
+          <option value="banUsers">Khóa tài khoản đã chọn</option>
+          <option value="deleteUsers">Xóa tài khoản đã chọn</option>
         </select>
         <div className="w-full flex border-2 border-gray-200 mb-4 p-1 ml-4">
           <div className="flex w-full mx-10 rounded bg-white">
@@ -106,7 +106,7 @@ const UserList = () => {
               className=" w-full border-none bg-transparent px-4 py-1 text-gray-400 outline-none focus:outline-none "
               type="search"
               name="search"
-              placeholder="Search by username..."
+              placeholder="Tìm kiếm theo tên người dùng..."
               value={searchKey}
               onChange={(e) => setSearchKey(e.target.value)}
             />
@@ -132,7 +132,7 @@ const UserList = () => {
               </th>
               <th className="border px-4 py-2 text-center whitespace-nowrap">
                 <span className="text-sm inline-flex items-center gap-x-2">
-                  Name <FaSort onClick={() => handleSort("name")} />
+                  Tên người dùng <FaSort onClick={() => handleSort("name")} />
                 </span>
               </th>
               <th className="border px-4 py-2 text-center whitespace-nowrap">
@@ -142,15 +142,15 @@ const UserList = () => {
               </th>
               <th className="border px-4 py-2 text-center whitespace-nowrap">
                 <span className="text-sm inline-flex items-center gap-x-2">
-                  Phone <FaSort onClick={() => handleSort("phone")} />
+                  Số điện thoại <FaSort onClick={() => handleSort("phone")} />
                 </span>
               </th>
               <th className="border px-4 py-2 text-center whitespace-nowrap">
                 <span className="text-sm inline-flex items-center gap-x-2">
-                  Address <FaSort onClick={() => handleSort("address")} />
+                  Địa chỉ <FaSort onClick={() => handleSort("address")} />
                 </span>
               </th>
-              <th className="text-sm border px-4 py-2">Detail</th>
+              <th className="text-sm border px-4 py-2">Chi tiết</th>
             </tr>
           </thead>
           <tbody>
@@ -181,7 +181,7 @@ const UserList = () => {
             ) : (
               <tr>
                 <td colSpan="6" className="p-4 text-center">
-                  No users available.
+                  Không có tài khoản.
                   {console.log(users)}
                 </td>
               </tr>
@@ -197,17 +197,17 @@ const UserList = () => {
           disabled={page === 1}
           onClick={() => setPage(page - 1)}
         >
-          Previous
+          Trước
         </button>
         <span className="px-3 text-sm  py-1 mx-2">
-          Page {page} of {totalPages}
+          Trang {page} của {totalPages}
         </span>
         <button
           className="px-3 py-1 mx-1 bg-gray-200 rounded disabled:opacity-50 text-sm "
           disabled={page >= totalPages}
           onClick={() => setPage(page + 1)}
         >
-          Next
+          Tiếp theo
         </button>
       </div>
 
@@ -215,19 +215,21 @@ const UserList = () => {
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-4 rounded shadow-md w-96">
             <h2 className="text-lg font-bold mb-4">
-              Information {selectedUser.name}
+              Thông tin người dùng: {selectedUser.name}
             </h2>
             <div className="flex justify-center mb-4">
               <img
                 src={selectedUser.avatar_url}
-                alt="Avatar"
+                alt="Ảnh đại diện"
                 className="rounded-full h-24 w-24"
               />
             </div>
             <table className="table-auto w-full border-collapse border border-gray-300">
               <tbody>
                 <tr>
-                  <td className="text-sm border px-4 py-2 font-bold">Name</td>
+                  <td className="text-sm border px-4 py-2 font-bold">
+                    Tên người dùng
+                  </td>
                   <td className="text-sm border px-4 py-2">
                     {selectedUser.name}
                   </td>
@@ -239,14 +241,16 @@ const UserList = () => {
                   </td>
                 </tr>
                 <tr>
-                  <td className="text-sm border px-4 py-2 font-bold">Phone</td>
+                  <td className="text-sm border px-4 py-2 font-bold">
+                    Số điện thoại
+                  </td>
                   <td className="text-sm border px-4 py-2">
                     {selectedUser.phone}
                   </td>
                 </tr>
                 <tr>
                   <td className="text-sm border px-4 py-2 font-bold">
-                    Address
+                    Địa chỉ
                   </td>
                   <td className="text-sm border px-4 py-2">
                     {selectedUser.address}
@@ -259,7 +263,7 @@ const UserList = () => {
                 className="bg-gray-200 px-4 py-2 rounded text-sm"
                 onClick={closePopup}
               >
-                Close
+                Đóng
               </button>
             </div>
           </div>

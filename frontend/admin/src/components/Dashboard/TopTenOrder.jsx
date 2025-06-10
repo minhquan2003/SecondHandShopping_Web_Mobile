@@ -49,9 +49,9 @@ const TopTenBuyer = () => {
         <table className="min-w-full bg-white border border-gray-200 rounded-md">
           <thead>
             <tr className="bg-gray-100">
-              <th className="px-4 py-2 text-left">Buyer</th>
+              <th className="px-4 py-2 text-left">Người mua</th>
               {/* <th className="px-4 py-2 text-left">Image</th> */}
-              <th className="px-4 py-2 text-center">Orders</th>
+              <th className="px-4 py-2 text-center">Số lượng đơn hàng</th>
             </tr>
           </thead>
           <tbody>

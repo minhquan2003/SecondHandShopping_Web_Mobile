@@ -70,16 +70,15 @@ const FeedbackList = () => {
       </h2>
 
       <div className="flex items-center">
-        <select
+        {/* <select
           className="text-sm border border-black p-2 mb-4"
           defaultValue="choose"
         >
           <option value="choose" disabled>
             Choose action...
           </option>
-          <option value="approveProducts">Approve selected products</option>
-          <option value="deleteProducts">Delete selected products</option>
-        </select>
+          <option value="deleteProducts">Delete selected feedbacks</option>
+        </select> */}
         <div className="w-full flex border-2 border-gray-200 mb-4 p-1 ml-4">
           <div className="flex w-full mx-10 rounded bg-white">
             <input

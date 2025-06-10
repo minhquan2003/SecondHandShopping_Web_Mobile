@@ -45,6 +45,9 @@ class ProductCard extends StatelessWidget {
         ),
         child: Column(
           children: [
+            Expanded(
+              child: ClipRRect(
+
             // Hiển thị video hoặc hình ảnh
             if (videoUrl.endsWith('.mp4')) 
               // ClipRRect(

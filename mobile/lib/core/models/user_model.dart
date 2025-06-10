@@ -11,6 +11,8 @@ class User {
   final bool? ban;
   final String? qrPayment;
   final bool? status;
+  final String? provinceId;
+  final String? districtId;
 
   User({
     required this.id,
@@ -25,6 +27,8 @@ class User {
     this.ban,
     this.qrPayment,
     this.status,
+    this.provinceId,
+    this.districtId,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -41,6 +45,8 @@ class User {
       ban: json['ban'] == 1,
       qrPayment: json['qrPayment'] ?? '',
       status: json['status'] == 1,
+      provinceId: json['provinceId'] ?? '',
+      districtId: json['districtId'] ?? '',
     );
   }
 }

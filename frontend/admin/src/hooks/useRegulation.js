@@ -13,6 +13,7 @@ const useRegulation = (
   const [totalPages, setTotalPages] = useState(1);
   const [success, setSuccess] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [totalRegulations, setTotalRegulations] = useState(0);
 
   const refresh = () => setRefreshTrigger((prev) => prev + 1);
 
@@ -41,6 +42,7 @@ const useRegulation = (
         if (data.success && Array.isArray(data.regulations)) {
           setRegulations(data.regulations);
           setTotalPages(data.totalPages || 1);
+          setTotalRegulations(data.totalRegulations || 0);
         } else {
           throw new Error("Invalid response structure");
         }
@@ -148,6 +150,7 @@ const useRegulation = (
     customRegulation,
     postRegulation,
     success,
+    totalRegulations,
   };
 };
 

@@ -69,9 +69,9 @@ const CategoryList = () => {
           }}
         >
           <option value="choose" disabled>
-            Choose action...
+            Chọn hành động...
           </option>
-          <option value="deleteCategories">Delete selected categories</option>
+          <option value="deleteCategories">Xóa danh mục đã chọn</option>
         </select>
         <div className="w-full flex border-2 border-gray-200 mb-4 p-1 ml-4">
           <div className="flex w-full mx-10 rounded bg-white">
@@ -79,7 +79,7 @@ const CategoryList = () => {
               className="text-sm w-full border-none bg-transparent px-4 py-1 text-gray-400 outline-none focus:outline-none "
               type="search"
               name="search"
-              placeholder="Search by username..."
+              placeholder="Tìm kiếm theo tên danh mục..."
               value={searchKey}
               onChange={(e) => setSearchKey(e.target.value)}
             />
@@ -105,15 +105,16 @@ const CategoryList = () => {
                 />
               </th>
               <th className="text-sm px-4 py-2 text-center font-bold border">
-                Image
+                Ảnh danh mục
               </th>
               <th className="text-sm px-4 py-2 text-center font-bold border">
                 <span className="inline-flex items-center gap-x-2">
-                  Name <FaSort onClick={() => handleSort("category_name")} />
+                  Tên danh mục{" "}
+                  <FaSort onClick={() => handleSort("category_name")} />
                 </span>
               </th>
               <th className="text-sm px-2 py-2 text-center font-boldborder">
-                Custom
+                Tùy chỉnh
               </th>
             </tr>
           </thead>
@@ -151,7 +152,7 @@ const CategoryList = () => {
             ) : (
               <tr>
                 <td colSpan="3" className="p-4 text-center">
-                  No categories available.
+                  Không có danh mục.
                 </td>
               </tr>
             )}
@@ -173,17 +174,17 @@ const CategoryList = () => {
           disabled={page === 1}
           onClick={() => setPage(page - 1)}
         >
-          Previous
+          Trước
         </button>
         <span className="px-3 py-1 mx-2">
-          Page {page} of {totalPages}
+          Trang {page} của {totalPages}
         </span>
         <button
           className="px-3 py-1 mx-1 bg-gray-200 rounded disabled:opacity-50"
           disabled={page >= totalPages}
           onClick={() => setPage(page + 1)}
         >
-          Next
+          Tiếp theo
         </button>
       </div>
     </div>

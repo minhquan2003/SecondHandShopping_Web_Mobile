@@ -53,7 +53,7 @@ const LeftSidebar = () => {
                   : "text-gray-500 hover:bg-blue-300 hover:text-white"
               }`}
             >
-              <FaTachometerAlt className="mr-2" /> Trang Quản Trị
+              <FaTachometerAlt className="mr-2" /> Trang quản trị
             </Link>
           </li>
           <li>

@@ -98,8 +98,9 @@ def recommend():
             "brand": product.get("brand"),
             "condition": product.get("condition"),
             "origin": product.get("origin"),
-            "image": product.get("image_url"),
+            "image_url": product.get("image_url"),
             "score": float(score),
+            "video_url": product.get("video_url", []),
             "partner": product.get("partner")
         })
     # print(f"Top 10 scores: {[float(s) for s, _ in scored_products[:10]]}")

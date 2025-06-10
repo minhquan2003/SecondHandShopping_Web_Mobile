@@ -277,22 +277,20 @@
 
 // export default ProductDisplay;
 
-
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useProduct } from '../../hooks/Products'; // Nhập custom hook
-import { addToCart } from '../../hooks/Carts';
-import BackButton from '../../commons/BackButton';
-import { useReviews } from '../../hooks/Review'; // Import custom hook cho reviews
-import { FaCheckCircle } from 'react-icons/fa';
-import { getCartItemsByUserId } from '../../hooks/Carts';
-import io from 'socket.io-client';
-import axios from 'axios';
-import { addConversation, addMessage } from '../../hooks/Message';
-import { IP } from '../../config';
-import ListProductCard from '../Home/ListProducts/ListProductCard';
-import { getProductByCategory1 } from '../../hooks/Products';
-
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useProduct } from "../../hooks/Products"; // Nhập custom hook
+import { addToCart } from "../../hooks/Carts";
+import BackButton from "../../commons/BackButton";
+import { useReviews } from "../../hooks/Review"; // Import custom hook cho reviews
+import { FaCheckCircle } from "react-icons/fa";
+import { getCartItemsByUserId } from "../../hooks/Carts";
+import io from "socket.io-client";
+import axios from "axios";
+import { addConversation, addMessage } from "../../hooks/Message";
+import { IP } from "../../config";
+import ListProductCard from "../Home/ListProducts/ListProductCard";
+import { getProductByCategory1 } from "../../hooks/Products";
 
 const socket = io(`http://localhost:5555`);
 
@@ -330,24 +328,26 @@ const ProductDisplay = () => {
 
         if (isProductInCart) {
           alert("Sản phẩm đã có trong giỏ hàng!");
-        } else {
-          addToCart({
-            user_buyer: userInfo._id,
-            user_seller: product.user_id,
-            product_id: product._id,
-            product_name: product.name,
-            product_quantity: quantity,
-            product_price: product.price,
-            product_imageUrl: product.image_url ? product.image_url : product.video_url,
-            //product_weight: product.weight,
-          });
-          alert("Sản phẩm đã được thêm vào giỏ hàng!");
-          socket.emit("addCart");
-        }
       } else {
-        alert("Bạn chưa đăng nhập!");
+        addToCart({
+          user_buyer: userInfo._id,
+          user_seller: product.user_id,
+          product_id: product._id,
+          product_name: product.name,
+          product_quantity: quantity,
+          product_price: product.price,
+          product_imageUrl: product.image_url
+            ? product.image_url
+            : product.video_url,
+          product_weight: product.weight,
+        });
+        alert("Sản phẩm đã được thêm vào giỏ hàng!");
+        socket.emit("addCart");
       }
-    };
+    } else {
+      alert("Bạn chưa đăng nhập!");
+    }
+  };
 
   const handleTextToSeller = async () => {
     // Kiểm tra xem người dùng có phải là người bán không
@@ -393,8 +393,11 @@ const ProductDisplay = () => {
       return <p>Loading...</p>; // Hiển thị loading khi chưa có dữ liệu
     }
 
-    const media_url = product.image_url || product.video_url;
-    const isVideo = media_url?.toLowerCase().endsWith('.mp4') || media_url?.toLowerCase().endsWith('.mov') || media_url?.toLowerCase().endsWith('.webm');
+  const media_url = product.image_url || product.video_url;
+  const isVideo =
+    media_url?.toLowerCase().endsWith(".mp4") ||
+    media_url?.toLowerCase().endsWith(".mov") ||
+    media_url?.toLowerCase().endsWith(".webm");
 
     return (
         <div className="p-5 bg-gray-100 min-h-screen">
@@ -503,6 +506,9 @@ const ProductDisplay = () => {
                       <p className="mt-2 text-gray-700">{product.description}</p>
                       <p className="mt-2">
                         <strong>Hãng sản xuất:</strong> {product.brand}
+                      </p>
+                      <p className="mt-2">
+                        <strong>Khối lượng:</strong> {product.weight} (g)
                       </p>
                       <p className="mt-2">
                         <strong>Xuất xứ:</strong> {product.origin}

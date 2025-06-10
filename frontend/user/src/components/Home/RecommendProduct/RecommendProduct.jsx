@@ -101,18 +101,26 @@ const RecommendedProducts = () => {
           className="flex flex-wrap justify-start items-center"
           style={{ width: "1225px" }}
         >
-          {products.slice(0, visibleCount).map((product) => (
-            <ProductCard
-              key={product._id}
-              id={product._id}
-              name={product.name}
-              description={product.description}
-              price={product.price}
-              quantity={product.quantity}
-              image_url={product.image}
-              partner={product.partner}
-            />
-          ))}
+          {Array.isArray(products) &&
+            products.slice(0, visibleCount).map((product) => {
+              const mediaUrl =
+                product.video_url && product.video_url.length > 0
+                  ? product.video_url[0]
+                  : product.image_url;
+
+              return (
+                <ProductCard
+                  key={product._id}
+                  id={product._id}
+                  name={product.name}
+                  description={product.description}
+                  price={product.price}
+                  quantity={product.quantity}
+                  media_url={mediaUrl} // Chuyển vào thuộc tính media_url
+                  partner={product.partner}
+                />
+              );
+            })}
         </div>
 
         {/* Nút xem thêm nếu còn sản phẩm */}
