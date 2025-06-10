@@ -9,7 +9,7 @@ const userChema = mongoose.Schema(
     },
     username: {
       type: String,
-      require: true,
+      require: false,
     },
     password: {
       type: String,

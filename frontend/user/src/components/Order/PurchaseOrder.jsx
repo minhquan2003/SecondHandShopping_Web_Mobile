@@ -129,12 +129,20 @@ const PurchaseOrder = () => {
                                 <div className="text-gray-700">
                                     <span className="font-normal"> <strong>{index + 1 + (currentPage - 1) * limit}</strong> - </span>
                                 </div>
-                                {order.product.image_url ? 
+                                {/* {order.product.image_url ? 
                                 <img 
                                     src={order.product.image_url} 
                                     alt={order.product.name} 
                                     className="w-16 h-16 object-cover rounded mr-4" 
-                                />: null}
+                                />: null} */}
+                                {order.product.video_url?.toLowerCase().endsWith('.mp4') ? (
+                                    <video controls className="w-16 h-16 object-cover rounded mr-4">
+                                        <source src={order.product.video_url} type="video/mp4" />
+                                        Your browser does not support the video tag.
+                                    </video>
+                                ) : (
+                                    <img src={order.product.image_url} className="w-16 h-16 object-cover rounded mr-4"/>
+                                )}
                                 <div className="text-gray-700">
                                     <strong></strong> <span className="font-normal">{order.product.name}</span>
                                 </div>

@@ -93,7 +93,7 @@ const ListMessage = () => {
     };
 
     return (
-        <div style={{ width: '300px', borderRight: '1px solid #ccc', padding: '10px' }}>
+        <div style={{ width: '300px', borderRight: '1px solid #ccc'}}>
             {/* <h2>Danh Sách Cuộc Hội Thoại</h2> */}
             {conversations.map((conversation, index) => {
                 const participantId = conversation.participant1 === userId ? conversation.participant2 : conversation.participant1;
@@ -104,31 +104,41 @@ const ListMessage = () => {
 
                 return (
                     <div 
-                        key={conversation._id} 
-                        className="conversation" 
-                        onClick={() => handleSelectConversation(conversation)} // Gửi cuộc hội thoại khi chọn
-                        style={{ cursor: 'pointer', marginBottom: '10px', padding: '10px', border: '1px solid #eee', borderRadius: '5px',
-                        backgroundColor: isSelected ? '#e0f7fa' : 'white', // Màu nền nổi bật nếu được chọn
-                        boxShadow: isSelected ? '0 4px 8px rgba(0, 0, 0, 0.2)' : 'none' // Đổ bóng nếu được chọn
-                         }}
-                    >   
-                        {user != null ? (
-                            <div className="flex items-center">
-                                <img src={user.avatar_url == null ? nonAvata : user.avatar_url} alt="Avatar" className='rounded-full ml-5 mt-2 mb-2 ' style={{ border: '2px solid #eee', width: '50px', height: '50px' }} />
-                                <p className="ml-3"><strong>{user.name}</strong></p>
+                    key={conversation._id} 
+                    className="conversation relative" 
+                    onClick={() => handleSelectConversation(conversation)} // Gửi cuộc hội thoại khi chọn
+                    style={{ cursor: 'pointer', padding: '10px', border: '1px solid #eee', borderRadius: '5px',
+                    backgroundColor: isSelected ? '#e0f7fa' : 'white', // Màu nền nổi bật nếu được chọn
+                    boxShadow: isSelected ? '0 4px 8px rgba(0, 0, 0, 0.2)' : 'none' // Đổ bóng nếu được chọn
+                    }}
+                >   
+                    {user != null ? (
+                        <div className="flex items-center">
+                            <img src={user.avatar_url == null ? nonAvata : user.avatar_url} alt="Avatar" className='rounded-full mt-2 mb-2 ' style={{ border: '2px solid #eee', width: '50px', height: '50px' }} />
+                            <div className="relative">
+                                <p className="ml-2"><strong>{user.name}</strong></p>
+                                <span>
+                                    <p className="ml-2 truncate overflow-hidden whitespace-nowrap">{conversation.lastMessage.endsWith('.mp4') ? 
+                                        "Video" : 
+                                        (conversation.lastMessage.endsWith('.png') ? 
+                                            "Hình ảnh"
+                                            :(conversation.lastMessage.length > 12 ? 
+                                                `${conversation.lastMessage.substring(0, 12)}...` : 
+                                                conversation.lastMessage
+                                            )) }</p>
+                                    <p className="ml-2">{conversation.lastMessageTimestamp ? formatDate(conversation.lastMessageTimestamp) : 'Chưa có tin nhắn'}</p>
+                                </span>
+                                
                             </div>
-                        ) : null}
-                        {/* <p>{user ? user.name : participantId}</p> */}
-                        <p>Tin nhắn chưa đọc: {conversation.unRead}</p>
-                        <span>
-                            <p>{conversation.lastMessage.endsWith('.mp4') ? 
-                                "Video" : 
-                                (conversation.lastMessage.endsWith('.png') ? 
-                                    "Hình ảnh"
-                                    :conversation.lastMessage) }</p>
-                            <p>{conversation.lastMessageTimestamp ? formatDate(conversation.lastMessageTimestamp) : 'Chưa có tin nhắn'}</p>
+                        </div>
+                    ) : null}
+                    {conversation.unRead > 0 && (
+                        <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 text-xs">
+                            {conversation.unRead}
                         </span>
-                    </div>
+                    )}
+                </div>
+                
                 );
             })}
         </div>

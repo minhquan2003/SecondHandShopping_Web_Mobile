@@ -5,6 +5,10 @@ import { useParams } from 'react-router-dom';
 import io from 'socket.io-client';
 import { IP } from '../../config';
 import nonAvata from "../../assets/img/nonAvata.jpg";
+import {
+  FiPaperclip, // Nhập biểu tượng kẹp giấy
+  FiSend 
+} from "react-icons/fi";
 
 const socket = io(`http://localhost:5555`);
 
@@ -24,6 +28,17 @@ const Chat = () => {
             socket.off("newMessage", fetchMessages);
         };
     }, [conversationId, userId]);
+
+    const formatDate = (date) => {
+        return new Date(date).toLocaleDateString('vi-VN', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+    };
 
     const fetchMessages = async () => {
         try {
@@ -102,18 +117,18 @@ const Chat = () => {
     return (
     <div className='w-full bg-main'>
         {user != null ? (
-            <div className="flex items-center">
+            <div className="flex items-center bg-#e0f7fa">
                 <img src={user.avatar_url == null ? nonAvata : user.avatar_url} alt="Avatar" className='rounded-full ml-5 mt-2 mb-2 ' style={{ border: '2px solid #eee', width: '50px', height: '50px' }} />
                 <p className="ml-3 text-xl font-bold">{user.name}</p>
             </div>
         ) : null}
-        <div className='bg-red-100 h-[60%] overflow-y-auto' style={{ padding: '10px', flexGrow: 1 }}>
+        <div className='bg-white h-[78%] overflow-y-auto' style={{ padding: '0px', flexGrow: 1 }}>
             {conversation && userId ? (
                 <>
                     {messages.map((message) => (
-                        <div key={message._id} style={{ margin: '5px 0', padding: '10px', border: '1px solid #eee', borderRadius: '5px' }}>
+                        <div key={message._id} style={{ margin: '0px 0', padding: '0px', borderRadius: '5px' }}>
                             {userId === message.senderId ? (
-                                <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '10px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '5px' }}>
                                     <div style={{
                                         backgroundColor: '#dcf8c6',
                                         padding: '10px',
@@ -132,16 +147,16 @@ const Chat = () => {
                                                 <img src={message.content} alt="Uploaded" style={{ maxWidth: '100%' }} />
                                             )
                                         ) : (
-                                            <p style={{ margin: 0 }}><strong>Bạn:</strong> {message.content}</p>
+                                            <p style={{ margin: 0 }}> {message.content}</p>
                                         )}
-                                        <p style={{ margin: '5px 0 0' }}><small>{new Date(message.createdAt).toLocaleString()}</small></p>
+                                        <p style={{ margin: '0px 0 0' }}><small>{formatDate(message.createdAt)}</small></p>
                                     </div>
                                 </div>
                             ) : (
-                                <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '10px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'flex-start', margin: '5px' }}>
                                     <div style={{
-                                        backgroundColor: '#ffffff',
-                                        padding: '10px',
+                                        backgroundColor: '#dcf8c6',
+                                        padding: '8px',
                                         borderRadius: '10px',
                                         maxWidth: '75%',
                                         wordWrap: 'break-word',
@@ -159,9 +174,9 @@ const Chat = () => {
                                                         <img src={message.content} alt="Uploaded" style={{ maxWidth: '100%' }} />
                                                     )
                                                 ) : (
-                                                    <p style={{ margin: 0 }}><strong>{user.name}:</strong> {message.content}</p>
+                                                    <p style={{ margin: 0 }}>{message.content}</p>
                                                 )}
-                                                <p style={{ margin: '5px 0 0' }}><small>{new Date(message.createdAt).toLocaleString()}</small></p>
+                                                <p style={{ margin: '5px 0 0' }}><small>{formatDate(message.createdAt)}</small></p>
                                             </>
                                         ) : null}
                                     </div>
@@ -175,23 +190,26 @@ const Chat = () => {
             )}
         </div>
         {conversation && userId && ( // Chỉ hiển thị phần gửi tin nhắn nếu có cuộc hội thoại
-            <div className='h-[20%]'>
-                <div className='bg-yellow-100 flex w-full'>
-                    <input
-                        type="file"
-                        accept="image/*,video/*"
-                        onChange={handleMediaChange}
-                        className="m-2"
-                    />
+            <div className='h-[25%]' >
+                <div className='bg-white flex w-full items-center p-2'>
+                    <label className="cursor-pointer" title="Đính kèm">
+                        <FiPaperclip className="h-6 w-6 text-gray-600" /> {/* Biểu tượng kẹp giấy */}
+                        <input
+                            type="file"
+                            accept="image/*,video/*"
+                            onChange={handleMediaChange}
+                            className="hidden" // Ẩn input thực tế
+                        />
+                    </label>
                     {mediaPreview && (
-                        <div>
-                            {mediaPreview.endsWith('.mp4') ? (
-                                <video controls style={{ maxWidth: '100%' }}>
-                                    <source src={mediaPreview} type="video/mp4" />
+                        <div className="flex items-center ml-2">
+                            {media && media.type.startsWith('video/') ? ( // Kiểm tra kiểu tệp
+                                <video controls style={{ maxWidth: '100px', maxHeight: '50px', marginRight: '10px' }}>
+                                    <source src={mediaPreview} type={media.type} />
                                     Your browser does not support the video tag.
                                 </video>
                             ) : (
-                                <img src={mediaPreview} alt="Preview" style={{ maxWidth: '100%' }} />
+                                <img src={mediaPreview} alt="Preview" style={{ maxWidth: '100px', maxHeight: '50px', marginRight: '10px' }} />
                             )}
                             <button onClick={() => {
                                 setMedia(null);
@@ -199,23 +217,24 @@ const Chat = () => {
                             }} className="text-red-500">Hủy chọn</button>
                         </div>
                     )}
-                    <label className="m-2 w-[80%] mt-10 mb-10">
-                        <input
-                            value={text}
-                            onChange={(e) => setText(e.target.value)}
-                            className="mt-1 rounded-full block w-full border-2 border-gray-300 p-2"
-                            required
-                        />
-                    </label>
+                    <input
+                        value={text}
+                        onChange={(e) => setText(e.target.value)}
+                        className="mt-1 rounded-full block w-full border-2 border-gray-300 p-2 ml-2"
+                        required
+                    />
                     <button
                         onClick={handleSend}
-                        className='bg-blue-600 text-white rounded-full border border-black w-[6%] mt-10 mb-10'
-                    >Gửi</button>
+                        style={{ border: '2px solid #eee', width: '100px', height: '50px' }}
+                        className='bg-blue-600 text-white rounded-full border border-black mt-1 ml-2 flex items-center justify-center'
+                    >
+                        <FiSend className="h-5 w-5" /> {/* Biểu tượng gửi */}
+                    </button>
                 </div>
             </div>
         )}
     </div>
-);
+    );
 };
 
 export default Chat;

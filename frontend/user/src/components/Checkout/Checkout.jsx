@@ -1234,11 +1234,19 @@ const Checkout = () => {
                         className="flex items-center justify-between py-2"
                       >
                         <div className="flex items-center">
-                          <img
+                          {/* <img
                             src={item.product_imageUrl}
                             alt={item.product_name}
                             className="w-16 h-16 object-cover rounded mr-4"
-                          />
+                          /> */}
+                          {item.product_imageUrl?.toLowerCase().endsWith('.mp4') ? (
+                              <video controls className="w-16 h-16 object-cover rounded mr-4">
+                                  <source src={item.product_imageUrl} type="video/mp4" />
+                                  Your browser does not support the video tag.
+                              </video>
+                          ) : (
+                              <img src={item.product_imageUrl} className="w-16 h-16 object-cover rounded mr-4"/>
+                          )}
                           <div>
                             <h3 className="font-semibold">
                               {item.product_name}
