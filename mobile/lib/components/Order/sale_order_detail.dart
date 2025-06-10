@@ -213,12 +213,12 @@ class _SaleOrderDetailState extends State<SaleOrderDetail> {
                     Text('Đơn giá: ${formatPrice(product?['price'])} x${product?['quantity']}'),
                     Text('Thành tiền: ${formatPrice(ordeR['total_amount'])}'),
                     
-                    ElevatedButton(
-                      onPressed: () {
-                        print('đơn hàng: $ordeR ======= \n chi tiết: $orderDetail ======= \n sản phẩm: $product');
-                      },
-                      child: Text('Xem trước khi lưu'),
-                    ),
+                    // ElevatedButton(
+                    //   onPressed: () {
+                    //     print('đơn hàng: $ordeR ======= \n chi tiết: $orderDetail ======= \n sản phẩm: $product');
+                    //   },
+                    //   child: Text('Xem trước khi lưu'),
+                    // ),
                     SizedBox(height: 16),
                     (ordeR['status_order'] == 'Pending' || ordeR['status_order'] == 'Confirmed')
                     ? Column(

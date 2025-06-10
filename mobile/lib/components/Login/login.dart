@@ -73,6 +73,15 @@ class _LoginState extends State<Login> {
                     child: const Text('Đăng ký'),
                   ),
                   ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const SignUp()),
+                      );
+                    },
+                    child: const Text('Quên mật khẩu'),
+                  ),
+                  ElevatedButton(
                     onPressed: () async {
                       final bool checkLogin =
                           await Provider.of<LoginInfo>(context, listen: false)

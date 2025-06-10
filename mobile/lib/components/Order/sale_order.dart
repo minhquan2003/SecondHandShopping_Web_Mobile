@@ -138,16 +138,52 @@ class _SaleOrderState extends State<SaleOrder> with SingleTickerProviderStateMix
                                   MaterialPageRoute(builder: (context) => SaleOrderDetail(order: order)));
                                 },
                                 child: ListTile(
-                                  title: Text(order['name'] ?? 'Người mua không xác định'),
-                                  subtitle: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(order['_id']),
-                                      Text(order['product']?['name'] ?? 'Tên sản phẩm không xác định'),
-                                      Text('Tổng tiền: ${formatPrice(order['total_amount'])} đ\nTrạng thái: ${order['status_order']}'),
-                                    ],
-                                  ),
-                                ),
+  contentPadding: EdgeInsets.all(8.0), // Thêm khoảng cách
+  title: Row(
+    children: [
+      ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: order['product'] != null && order['product']['image_url'] != null
+            ? Image.network(
+                order['product']['image_url'],
+                width: 70,
+                height: 70,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: 70,
+                    height: 70,
+                    color: Colors.grey, // Màu nền khi có lỗi tải hình
+                  );
+                },
+              )
+            : Container(
+                width: 70,
+                height: 70,
+                color: Colors.grey, // Màu nền khi không có URL
+              ),
+      ),
+      SizedBox(width: 10), // Khoảng cách giữa hình và thông tin
+      Expanded( // Để thông tin chiếm không gian còn lại
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(order['name'] ?? 'Người mua không xác định'),
+            Text(order['_id']),
+            Text(order['product']?['name'] ?? 'Tên sản phẩm không xác định'),
+            Text('Tổng tiền: ${formatPrice(order['total_amount'])} đ\nTrạng thái: ${order['status_order']}'),
+          ],
+        ),
+      ),
+    ],
+  ),
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SaleOrderDetail(order: order)),
+    );
+  },
+)
                               );
                             },
                           ),

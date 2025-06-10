@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../Product/product_detail.dart'; // Import màn hình mới
 import '../../utils/convert.dart';
+import 'package:video_player/video_player.dart';
 
 class ProductCard extends StatelessWidget {
   final Map<String, dynamic> product;
@@ -17,6 +18,7 @@ class ProductCard extends StatelessWidget {
     final String price =
         "${formatPrice(product['price'])} đ"; // Chuyển giá thành chuỗi với đơn vị
     final String imageUrl = product['image_url'];
+    final String videoUrl = product['video_url'];
 
     return GestureDetector(
       onTap: () {
@@ -43,15 +45,24 @@ class ProductCard extends StatelessWidget {
         ),
         child: Column(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
-              child: Image.network(
-                imageUrl,
-                width: double.infinity,
-                height: 170,
-                fit: BoxFit.contain,
+            // Hiển thị video hoặc hình ảnh
+            if (videoUrl.endsWith('.mp4')) 
+              // ClipRRect(
+              //   borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
+              //   child: VideoPlayerWidget(videoUrl: videoUrl), // Thay thế bằng widget video của bạn
+              // )
+              Text("Đây là video")
+            else
+              ClipRRect(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
+                child: Image.network(
+                  imageUrl,
+                  width: double.infinity,
+                  height: 170,
+                  fit: BoxFit.contain,
+                ),
               ),
-            ),
+
             Padding(
               padding: const EdgeInsets.all(4.0),
               child: Column(
@@ -67,17 +78,17 @@ class ProductCard extends StatelessWidget {
                         color: Colors.black,
                       ),
                       maxLines: 1, // Giới hạn số dòng là 1
-                      overflow: TextOverflow
-                          .ellipsis, // Sử dụng ba chấm khi vượt quá chiều dài
+                      overflow: TextOverflow.ellipsis, // Sử dụng ba chấm khi vượt quá chiều dài
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     price,
                     style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.red),
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
                   ),
                   const SizedBox(height: 4),
                 ],
