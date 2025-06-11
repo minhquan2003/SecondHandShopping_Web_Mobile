@@ -19,7 +19,7 @@ const Header = () => {
   const userInfoString = sessionStorage.getItem('userInfo');
   const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
   const avatarUrl = (userInfo && userInfo.avatar_url) ? userInfo.avatar_url : nonAvata;
-  const name = userInfo ? userInfo.name : "Guest!";
+  const name = userInfo ? userInfo.name : "Khách!";
   const id = userInfo ? userInfo._id : null;
   const [nameProduct, setNamProduct] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -83,19 +83,19 @@ const Header = () => {
   return (
     <>
       {/* Header Top */}
-      <div className="bg-black text-white flex justify-center items-center p-2 space-x-4">
-        <div className="text-sm">
-          Summer Sale For All Swim Suits And Free Express Delivery - OFF 50%!
+      <div className="bg-black text-white flex justify-center items-center p-2 space-x-6 border-b-2 border-gray-700 shadow-lg">
+        <div className="text-l font-semibold text-center">
+          "Tiết kiệm hơn, tiêu dùng thông minh hơn – hãy cùng khám phá ngay hôm nay!"
         </div>
-        <div className="tex-sm">
-          <a href="'#" className="hover:underline">
-            Shop Now
+        {/* <div className="text-sm">
+          <a href="#shop" className="hover:underline text-yellow-400 font-bold transition duration-300 ease-in-out transform hover:scale-105">
+            Mua Sắm Ngay
           </a>
-        </div>
+        </div> */}
       </div>
 
       {/* Header Main */}
-      <header className="bg-yellow-400 text-black justify-center flex items-center p-4 space-x-5">
+      <header className="bg-yellow-400 text-black justify-center flex items-center p-3 space-x-2">
         <div className="flex items-center">
         <div onClick={() => handleLogoClick()} className="cursor-pointer">
           <img
@@ -203,13 +203,13 @@ const Header = () => {
                         onClick={() => navigate(`/editSale/${userInfo._id}`)}>
                         Trang bán hàng
                       </button>
-                      {userInfo.role === 'user' && (
+                      {/* {userInfo.role === 'user' && (
                         <button 
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                           onClick={() => handleLinkClick(`/profile/${userInfo._id}`)}>
                           Đăng ký đối tác
                         </button>
-                      )}
+                      )} */}
                       <button 
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                         onClick={handleLogout}>
@@ -220,11 +220,11 @@ const Header = () => {
                         onClick={() => handleLinkClick(`/changepassword`)}>
                         Đổi mật khẩu
                       </button>
-                      <button 
+                      {/* <button 
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                         onClick={() => handleLinkClick(`/account`)}>
                         Thông tin tài khoản
-                      </button>
+                      </button> */}
                       <button 
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                         onClick={() => handleLinkClick(`/account/register`)}>
