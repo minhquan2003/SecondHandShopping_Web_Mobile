@@ -476,7 +476,7 @@ const ProductDisplay = () => {
                                         product_quantity: quantity,
                                         product_price: product.price,
                                         product_imageUrl: product.image_url,
-                                        //product_weight: product.weight,
+                                        product_weight: product.weight,
                                       },
                                     },
                                   })}

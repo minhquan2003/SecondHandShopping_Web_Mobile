@@ -47,25 +47,22 @@ class ProductCard extends StatelessWidget {
           children: [
             Expanded(
               child: ClipRRect(
-
-            // Hiển thị video hoặc hình ảnh
-            if (videoUrl.endsWith('.mp4')) 
-              // ClipRRect(
-              //   borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
-              //   child: VideoPlayerWidget(videoUrl: videoUrl), // Thay thế bằng widget video của bạn
-              // )
-              Text("Đây là video")
-            else
-              ClipRRect(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
-                child: Image.network(
-                  imageUrl,
-                  width: double.infinity,
-                  height: 170,
-                  fit: BoxFit.contain,
-                ),
+                child: videoUrl.endsWith('.mp4')
+                    ? Center(child: Text("Đây là video")) // Thay thế bằng widget video của bạn
+                    : Image.network(
+                        imageUrl,
+                        width: double.infinity,
+                        height: 170,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.grey, // Màu nền khi có lỗi tải hình
+                          );
+                        },
+                      ),
               ),
-
+            ),
             Padding(
               padding: const EdgeInsets.all(4.0),
               child: Column(
