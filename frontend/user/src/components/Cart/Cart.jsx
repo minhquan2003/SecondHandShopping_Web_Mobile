@@ -44,7 +44,7 @@ const Cart = () => {
 
     // Kiểm tra xem userInfo có tồn tại không
     if (!userInfo) {
-        return <div className="p-5">Bạn chưa đăng nhập.</div>;
+        return <div className="flex justify-center items-center p-5"><p><strong>Bạn chưa đăng nhập.</strong></p></div>;
     }
 
     return (

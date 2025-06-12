@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { addProduct, getAllCountries } from "../../hooks/Products";
-import { getCategories, fetchSubcategories } from "../../hooks/Categories";
+import { getCategories, fetchSubcategories, fetchOrigin } from "../../hooks/Categories";
 import { useParams, useNavigate } from "react-router-dom";
 import { getProductById, updateOneProduct } from "../../hooks/Products";
 
@@ -24,6 +24,8 @@ const ProductUpload = () => {
   const [countries, setCountries] = useState([]); // State cho quốc gia
   const [isOtherOrigin, setIsOtherOrigin] = useState(false);
   const [otherOrigin, setOtherOrigin] = useState("");
+  const [img, setimg] = useState("");
+  const [video, setvideo] = useState("");
 
   const [subcategories, setSubcategories] = useState([]); // State cho danh mục con
   const [selectedSubcategory, setSelectedSubcategory] = useState("");
@@ -45,9 +47,18 @@ const ProductUpload = () => {
           setQuantity(product.quantity);
           setBrand(product.brand);
           setCondition(product.condition);
+          fetchOrigin();
           setOrigin(product.origin);
           setWeight(product.weight);
           setSelectedCategory(product.category_id);
+          handleCategoryChange(product.category_id)
+          setSelectedSubcategory(product.subcategory_name)
+          const Media = product.image_url || product.video_url
+          const isVideo =
+            Media?.toLowerCase().endsWith(".mp4") ||
+            Media?.toLowerCase().endsWith(".mov") ||
+            Media?.toLowerCase().endsWith(".webm");
+          isVideo ? setvideo(product.video_url) : (setimg(product.image_url))
           setMediaUrl(product.image_url || product.video_url); // Lấy URL từ cả hai
         }
       } else {
@@ -108,6 +119,8 @@ const ProductUpload = () => {
     formData.append("cloud_name", "dd6pnq2is");
 
     try {
+      let url = ''
+      if (media) {
       const uploadUrl = media.type.startsWith("image/")
         ? "https://api.cloudinary.com/v1_1/dd6pnq2is/image/upload"
         : "https://api.cloudinary.com/v1_1/dd6pnq2is/video/upload";
@@ -119,7 +132,13 @@ const ProductUpload = () => {
 
       const uploadedMediaUrl = await response.json();
       setMediaUrl(uploadedMediaUrl.secure_url);
+      url = uploadedMediaUrl.secure_url
+    }
+      
       let partner = userInfo.role === "partner";
+
+      const urlVideo = url?.toLowerCase().endsWith(".mp4") ? url : '';
+      const urlImg = url?.toLowerCase().endsWith(".jpg") || url?.toLowerCase().endsWith(".png") ? url : '';
 
       const productData = {
         name,
@@ -129,12 +148,8 @@ const ProductUpload = () => {
         user_id: userInfo._id,
         category_id: selectedCategory,
         subcategory_name: selectedSubcategory,
-        image_url: media.type.startsWith("image/")
-          ? uploadedMediaUrl.secure_url
-          : "",
-        video_url: media.type.startsWith("video/")
-          ? uploadedMediaUrl.secure_url
-          : "",
+        image_url: productId ? (media ? urlImg : img) : urlImg,
+        video_url: productId ? (media ? urlVideo : img) : urlVideo,
         brand,
         condition,
         weight,

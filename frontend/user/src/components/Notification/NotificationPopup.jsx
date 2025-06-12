@@ -2,6 +2,7 @@ import React from 'react';
 import { updateNotification } from '../../hooks/Notifications';
 import io from 'socket.io-client';
 import { IP } from '../../config';
+import { FiX } from 'react-icons/fi';
 
 const socket = io(`http://localhost:5555`);
 
@@ -20,7 +21,13 @@ const NotificationPopup = ({ notifications, onClose }) => {
 
     return (
         <div className="absolute right-0 mt-2 w-80 bg-white rounded shadow-lg p-4 z-50">
-            <h3 className="font-bold mb-2">Thông Báo</h3>
+            <div className="flex justify-between">
+                <h3 className="font-bold mb-2">Thông Báo</h3>
+                <button onClick={onClose} className="font-semibold text-lg rounded-full border-2 border-red-500 h-6 w-6 text-red-500 font-bold hover hover:bg-gray-300" title='Đóng thông báo'>
+                    <FiX className="inline-block mb-3.5" />
+                    {/* Đóng */}
+                </button>
+            </div>
             {notifications.length > 0 ? (
                 <ul className="max-h-60 overflow-y-auto">
                     {notifications.map((notification) => (
@@ -37,9 +44,6 @@ const NotificationPopup = ({ notifications, onClose }) => {
             ) : (
                 <p>Không có thông báo nào.</p>
             )}
-            <button onClick={onClose} className="mt-2 text-blue-500">
-                Đóng
-            </button>
         </div>
     );
 };

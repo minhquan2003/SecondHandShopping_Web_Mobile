@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import nonAvata from '../../../../assets/img/nonAvata.jpg';
 import {
   FiSearch,
@@ -9,11 +9,11 @@ import {
 import { useNavigate } from 'react-router-dom';
 import NotificationIcon from "../../../Notification/NotificationIcon.jsx";
 import { getCartItemsByUserId } from "../../../../hooks/Carts.js";
-import logo from '../../../../assets/img/logo.png'
-import io from 'socket.io-client'
+import logo from '../../../../assets/img/logo.png';
+import io from 'socket.io-client';
 import MessageIcon from "../../../Message/MessageIcon.jsx";
 
-const socket = io("http://localhost:5555")
+const socket = io("http://localhost:5555");
 
 const Header = () => {
   const userInfoString = sessionStorage.getItem('userInfo');
@@ -24,7 +24,8 @@ const Header = () => {
   const [nameProduct, setNamProduct] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
-
+  const dropdownRef = useRef(null);
+  
   const [cartItemCount, setCartItemCount] = useState(0);
   const [unreadCount, setUnreadCount] = useState(0); // State để lưu số lượng thông báo chưa đọc
 
@@ -34,19 +35,33 @@ const Header = () => {
       socket.emit("sendMessage");
       socket.on('addToCart', () => {
         fetchCartItems(userInfo._id);
-    });
+      });
     }
-  },);
+
+    const handleClickOutside = (event) => {
+      // Kiểm tra xem nhấp chuột có nằm ngoài dropdown không
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    // Thêm sự kiện lắng nghe khi component được mount
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // Xóa sự kiện lắng nghe khi component được unmount
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      socket.off('addToCart'); // Cleanup event listener
+    };
+  }, [userInfo]); // Thêm userInfo vào dependencies
 
   const fetchCartItems = async (idUser) => {
-    
-      try {
-        const response = await getCartItemsByUserId(idUser);
-        setCartItemCount(response.length);
-      } catch (error) {
-        console.error("Error fetching cart items:", error);
-      }
-    
+    try {
+      const response = await getCartItemsByUserId(idUser);
+      setCartItemCount(response.length);
+    } catch (error) {
+      console.error("Error fetching cart items:", error);
+    }
   };
 
   const toggleDropdown = () => {
@@ -85,7 +100,7 @@ const Header = () => {
       {/* Header Top */}
       <div className="bg-black text-white flex justify-center items-center p-2 space-x-6 border-b-2 border-gray-700 shadow-lg">
         <div className="text-l font-semibold text-center">
-          "Tiết kiệm hơn, tiêu dùng thông minh hơn – hãy cùng khám phá ngay hôm nay!"
+          "Tiết kiệm hơn, tiêu dùng thông minh hơn – Hãy cùng khám phá ngay hôm nay!"
         </div>
         {/* <div className="text-sm">
           <a href="#shop" className="hover:underline text-yellow-400 font-bold transition duration-300 ease-in-out transform hover:scale-105">
@@ -97,13 +112,13 @@ const Header = () => {
       {/* Header Main */}
       <header className="bg-yellow-400 text-black justify-center flex items-center p-3 space-x-2">
         <div className="flex items-center">
-        <div onClick={() => handleLogoClick()} className="cursor-pointer">
-          <img
-            src={logo}
-            alt="Logo"
-            className="w-20 h-20 rounded-full" // Kích thước 16 và bo tròn
-          />
-        </div>
+          <div onClick={() => handleLogoClick()} className="cursor-pointer hover:filter hover:opacity-75">
+            <img
+              src={logo}
+              alt="Logo"
+              className="w-20 h-20 rounded-full" // Kích thước 16 và bo tròn
+            />
+          </div>
           {/* <nav className="ml-6">
             <ul className="flex space-x-4">
               <li>
@@ -124,7 +139,7 @@ const Header = () => {
             onChange={(e) => setNamProduct(e.target.value)}
             className="bg-gray-100 p-2 w-full text-gray-700 focus:outline-none"
           />
-          <button className="bg-yellow-400 p-2 text-black mr-1 rounded-full" onClick={handleSearchSubmit}>
+          <button className="bg-yellow-400 p-2 text-black mr-1 rounded-full hover:filter hover:opacity-75" onClick={handleSearchSubmit}>
             <FiSearch className="h-5 w-5" />
           </button>
         </div>
@@ -133,10 +148,15 @@ const Header = () => {
           <span className="cursor-pointer" title="Thông báo">
             <NotificationIcon userId={id} />
           </span>
-          <span className="cursor-pointer" title="Trò chuyện">
-            <MessageIcon/>
+          <span className="cursor-pointer hover:filter hover:opacity-75" title="Trò chuyện"
+          onClick={() => {
+              if (!userInfo) {
+                alert("Bạn chưa đăng nhập!");
+              }
+            }}>
+            <MessageIcon />
           </span>
-          <span className="relative cursor-pointer" onClick={() => navigate('/cart')} title="Giỏ hàng">
+          <span className="relative cursor-pointer hover:filter hover:opacity-75" onClick={() => navigate('/cart')} title="Giỏ hàng">
             <FiShoppingCart className="h-5 w-5" />
             {userInfo && cartItemCount > 0 && (
               <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full px-1">
@@ -146,22 +166,22 @@ const Header = () => {
           </span>
           <span
             onClick={() => {
-                if (userInfo) {
-                    navigate(`/order/${userInfo._id}`);
-                } else {
-                    alert("Bạn chưa đăng nhập!");
-                }
+              if (userInfo) {
+                navigate(`/order/${userInfo._id}`);
+              } else {
+                alert("Bạn chưa đăng nhập!");
+              }
             }}
-            className="cursor-pointer"
+            className="cursor-pointer hover:filter hover:opacity-75"
             title="Đơn hàng"
-        >
+          >
             <FiShoppingBag className="h-5 w-5" />
-        </span>
-          <span onClick={() => navigate('/feedback')} className="cursor-pointer" title="Đóng góp ý kiến">
-            <FiMail  className="h-5 w-5" /> {/* Message icon */}
           </span>
-          <span className="relative inline-block cursor-pointer" onClick={toggleDropdown}>
-            <div className="flex items-center space-x-1 rounded-md hover:bg-gray-100 transition duration-200" title="Trang cá nhân">
+          <span onClick={() => navigate('/feedback')} className="cursor-pointer" title="Đóng góp ý kiến">
+            <FiMail className="h-5 w-5 hover:filter hover:opacity-75" /> {/* Message icon */}
+          </span>
+          <span className="relative inline-block cursor-pointer" onClick={toggleDropdown} ref={dropdownRef}>
+            <div className="flex items-center space-x-1 rounded-md hover:filter hover:opacity-75" title="Trang cá nhân">
               <img 
                 src={avatarUrl} 
                 alt={name} 
@@ -225,11 +245,11 @@ const Header = () => {
                         onClick={() => handleLinkClick(`/account`)}>
                         Thông tin tài khoản
                       </button> */}
-                      <button 
+                      {/* <button 
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                         onClick={() => handleLinkClick(`/account/register`)}>
                         Đăng ký tài khoản
-                      </button>
+                      </button> */}
                     </>
                   ) : (
                     <>
@@ -243,7 +263,6 @@ const Header = () => {
                       onClick={() => navigate('/signup')}>
                       Đăng ký tài khoản
                     </button>
-                    
                     </>
                   )}
                   <button 

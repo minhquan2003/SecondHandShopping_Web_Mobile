@@ -51,13 +51,20 @@ const getCategoryDetailByCategoryId = (categoryId) => {
 };
 
 const fetchSubcategories = async (categoryId) => {
-        if (categoryId) {
-            const response = await axios.get(`http://${IP}:5555/categoryDetails/parent/${categoryId}`);
-            const subcategoryData = response.data;
-            return subcategoryData; // Lưu danh mục con vào state
-        } else {
-            return []; // Nếu không có danh mục cha, reset danh mục con
-        }
-    };
+    if (categoryId) {
+        const response = await axios.get(`http://${IP}:5555/categoryDetails/parent/${categoryId}`);
+        const subcategoryData = response.data;
+        return subcategoryData; // Lưu danh mục con vào state
+    } else {
+        return []; // Nếu không có danh mục cha, reset danh mục con
+    }
+};
 
-export {getCategories, getCategoryDetailByCategoryId, fetchSubcategories};
+const fetchOrigin = async () => {
+    const response = await axios.get(`http://${IP}:5555/countries`);
+    const countries = response.data;
+    return countries; 
+};
+
+
+export {getCategories, getCategoryDetailByCategoryId, fetchSubcategories, fetchOrigin};

@@ -1,12 +1,12 @@
 import mongoose from 'mongoose';
-import OrderDetails from '../models/OrderDetails.js'; // Đảm bảo đường dẫn đúng
+import OrderDetails from '../User/models/OrderDetails.js'; // Đảm bảo đường dẫn đúng
 
 const mongodbconn = process.env.MONGODB_URI || 'mongodb://localhost:27017/MuaBanDoCu';
 
 const addOrderDetails = async () => {
     try {
         // Kết nối đến MongoDB
-        await mongoose.connect(mongodbconn, { useNewUrlParser: true, useUnifiedTopology: true });
+        await mongoose.connect('mongodb+srv://minhquan31102003:f3n9fJaQYv7YYdIa@muabandocu.8c5m9.mongodb.net/?retryWrites=true&w=majority&appName=MuaBanDoCu');
 
         // Dữ liệu chi tiết đơn hàng
         const orderDetailsData = [
@@ -34,6 +34,8 @@ const addOrderDetails = async () => {
         ];
 
         const createdOrderDetails = await OrderDetails.create(orderDetailsData);
+
+        // const createdOrderDetails = await OrderDetails.deleteMany({ product_id: '672b308c84ffd1107d916885' });
 
         console.log('Order details added successfully:');
         // console.log(createdOrderDetails);

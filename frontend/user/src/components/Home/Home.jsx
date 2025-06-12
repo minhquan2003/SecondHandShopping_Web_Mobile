@@ -14,7 +14,8 @@ const Home = () => {
   const images = [
     "https://res.cloudinary.com/dd6pnq2is/image/upload/v1747408890/online-shopping-vs-traditional-shopping-1024x512_uojp3x.jpg",
     "https://res.cloudinary.com/dd6pnq2is/image/upload/v1747395012/Featured-Image-Online-Shopping-Statistics_foeb9p.png",
-    "https://res.cloudinary.com/dd6pnq2is/image/upload/v1747409561/online-shopping-vs-in-store-shopping-1024x614_pwdjar.jpg",
+    // "https://res.cloudinary.com/dd6pnq2is/image/upload/v1747409561/online-shopping-vs-in-store-shopping-1024x614_pwdjar.jpg",
+    "https://tenten.vn/tin-tuc/wp-content/uploads/2021/11/xay-dung-he-thong-ban-hang-online-1-nguoi.png"
   ];
 
   useEffect(() => {
