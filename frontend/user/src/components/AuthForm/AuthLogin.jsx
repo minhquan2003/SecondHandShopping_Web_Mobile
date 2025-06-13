@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useAuth } from "../../hooks/auth";
 import imageLink from "../../assets/login/login.jpg";
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 const AuthLogin = () => {
   const { login, error } = useAuth();

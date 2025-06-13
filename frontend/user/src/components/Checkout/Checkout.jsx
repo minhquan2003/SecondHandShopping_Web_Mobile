@@ -820,6 +820,7 @@ import { useLocationAddress, useUsersByIds } from "../../hooks/Users";
 import io from "socket.io-client";
 import axios from "axios";
 import { useMemo } from "react";
+import { FiShoppingCart, FiTruck, FiFileText, FiUser, FiCreditCard, FiDollarSign  } from 'react-icons/fi';
 
 const socket = io(`http://localhost:5555`);
 
@@ -1102,7 +1103,11 @@ const Checkout = () => {
       </div>
       <div className="flex space-x-10">
         <div className="flex-1 border rounded shadow-md p-5">
-          <h2 className="text-xl font-bold mb-4">Thông Tin Người Nhận</h2>
+          {/* <h2 className="text-xl font-bold mb-4">Thông Tin Người Nhận</h2> */}
+          <h2 className="text-xl font-bold mb-4 flex items-center">
+              <FiUser className="h-6 w-6 mr-2" />
+              Thông Tin Người Nhận
+          </h2>
           <input
             type="text"
             placeholder="Họ và Tên (bắt buộc)"
@@ -1178,7 +1183,11 @@ const Checkout = () => {
             className="border rounded p-2 w-full mb-2"
             rows="4"
           />
-          <h3 className="text-lg font-semibold mt-4">Hình Thức Vận Chuyển</h3>
+          {/* <h3 className="text-lg font-semibold mt-4">Hình Thức Vận Chuyển</h3> */}
+          <h3 className="text-lg font-semibold mt-4 flex items-center">
+              <FiTruck className="h-5 w-5 mr-2" />
+              Hình Thức Vận Chuyển
+          </h3>
           <select
             value={selectedShipping}
             onChange={(e) => handleShippingSelection(e.target.value)}
@@ -1191,7 +1200,11 @@ const Checkout = () => {
               </option>
             ))}
           </select>
-          <h3 className="text-lg font-semibold mt-4">Phương Thức Thanh Toán</h3>
+          {/* <h3 className="text-lg font-semibold mt-4">Phương Thức Thanh Toán</h3> */}
+          <h3 className="text-lg font-semibold mt-4 flex items-center">
+              <FiCreditCard className="h-5 w-5 mr-2" />
+              Phương Thức Thanh Toán
+          </h3>
           <div className="mt-2">
             <label className="ml-4">
               <input
@@ -1214,7 +1227,11 @@ const Checkout = () => {
           </div>
         </div>
         <div className="flex-1 border rounded shadow-md p-5">
-          <h2 className="text-xl font-bold mb-4">Chi Tiết Đơn Hàng</h2>
+          {/* <h2 className="text-xl font-bold mb-4">Chi Tiết Đơn Hàng</h2> */}
+          <h2 className="text-xl font-bold mb-4 flex items-center">
+              <FiFileText className="h-6 w-6 mr-2" />
+              Chi Tiết Đơn Hàng
+          </h2>
           {sellerIds.length > 0 ? (
             sellerIds.map((sellerId, index) => {
               const sellerInfo = sellerInfos[index];
@@ -1224,8 +1241,12 @@ const Checkout = () => {
 
               return (
                 <div key={sellerId} className="mb-10">
-                  <h3 className="text-lg font-semibold">
+                  {/* <h3 className="text-lg font-semibold">
                     Người bán: {sellerInfo?.name || "Đang tải..."}
+                  </h3> */}
+                  <h3 className="text-lg font-semibold flex items-center">
+                      <FiUser className="h-5 w-5 mr-2" />
+                      Người bán: {sellerInfo?.name || "Đang tải..."}
                   </h3>
                   <ul className="divide-y divide-gray-300">
                     {sellerItems.map((item) => (
@@ -1280,7 +1301,10 @@ const Checkout = () => {
           )}
           <hr className="my-4" />
           <div className="flex justify-between font-bold">
-            <span>Tổng Giá (bao gồm phí vận chuyển):</span>
+            {/* <span>Tổng Giá (bao gồm phí vận chuyển):</span> */}
+            <span className="flex items-center">
+                Tổng Giá (bao gồm phí vận chuyển):
+            </span>
             <span>
               {(
                 Object.values(groupedItems).reduce(
@@ -1295,12 +1319,15 @@ const Checkout = () => {
               VNĐ
             </span>
           </div>
-          <button
+          <div className="flex justify-end items-end">
+            <button
             onClick={handleCheckout}
-            className="mt-5 bg-blue-500 text-white rounded p-2 hover:bg-orange-600"
-          >
-            Thanh Toán
-          </button>
+            className="mt-5 bg-red-500 text-white border-4 border-red-500 rounded p-2 hover:border-white flex items-center"
+            >
+              <FiShoppingCart className="h-5 w-5 mr-2" />
+              <span className="font-bold">Thanh Toán</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>

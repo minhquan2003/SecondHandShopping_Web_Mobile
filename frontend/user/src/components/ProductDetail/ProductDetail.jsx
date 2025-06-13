@@ -291,6 +291,7 @@ import { addConversation, addMessage } from "../../hooks/Message";
 import { IP } from "../../config";
 import ListProductCard from "../Home/ListProducts/ListProductCard";
 import { getProductByCategory1 } from "../../hooks/Products";
+import { FiShoppingCart, FiCheckCircle, FiMessageCircle, FiStar, FiClipboard, FiUser} from 'react-icons/fi';
 
 const socket = io(`http://localhost:5555`);
 
@@ -408,12 +409,12 @@ const ProductDisplay = () => {
                 {product && (
                     <>
                         {isVideo ? (
-                            <video controls className="w-full md:w-1/2 object-cover rounded-lg shadow-lg" style={{ maxHeight: '400px' }}>
+                            <video controls className="w-full md:w-1/2 object-cover shadow-lg" style={{ maxHeight: '400px' }}>
                                 <source src={media_url} type="video/mp4" />
                                 Your browser does not support the video tag.
                             </video>
                         ) : (
-                            <img src={media_url} alt={product.name} className="w-full md:w-1/2 object-cover rounded-lg shadow-lg" style={{ maxHeight: '400px' }} />
+                            <img src={media_url} alt={product.name} className="w-full md:w-1/2 object-cover shadow-lg" style={{ maxHeight: '400px' }} />
                         )}
                         <div className="ml-6 w-full md:w-1/2">
                             <div className="flex">
@@ -427,11 +428,11 @@ const ProductDisplay = () => {
                                 </p>
                               ) : null}
                               <p className="mt-2">
-                                <strong>Số lượng còn lại:</strong> {product.quantity}
+                                Số lượng còn lại: {product.quantity}
                               </p>
                               {product.condition && (
                                 <p className="mt-2">
-                                  <strong>Tình trạng:</strong> {product.condition}
+                                  Tình trạng: {product.condition}
                                 </p>
                               )}
                               <p className="mt-4 text-lg font-bold text-black">
@@ -439,7 +440,7 @@ const ProductDisplay = () => {
                               </p>
                               <div className="mt-4 flex items-center">
                                 <label className="mr-2">
-                                  <strong>Chọn số lượng:</strong>
+                                  Chọn số lượng:
                                 </label>
                                 <input
                                   type="number"
@@ -447,17 +448,18 @@ const ProductDisplay = () => {
                                   max={product.quantity}
                                   value={quantity}
                                   onChange={handleQuantityChange}
-                                  className="border border-gray-300 rounded p-2 w-20"
+                                  className="border border-gray-300 p-2 w-20"
                                 />
                               </div>
-                              <p className="mt-4 text-lg font-bold text-red-500">
-                                Tổng tiền: {totalPrice.toLocaleString()} VNĐ
-                              </p>
-                              <div className="flex flex-col md:flex-row md:space-x-4 mb-4 mt-6">
+                              <div className="mt-4 text-lg flex font-bold">
+                                Tổng tiền: <span className="ml-2 text-red-500"> {totalPrice.toLocaleString()} VNĐ</span>
+                              </div>
+                              <div className="flex flex-col md:flex-row md:space-x-4 mb-4 mt-6 items-center">
                                 <button
                                   onClick={handleAddToCart}
-                                  className="bg-gray-100 text-green-600 font-bold rounded p-2 hover:bg-gray-300 transition duration-300"
+                                  className="bg-white flex border-2 border-black items-center text-black font-bold rounded p-2 hover:bg-gray-300 transition duration-300"
                                 >
+                                  <FiShoppingCart className="h-5 w-5 mr-2" />
                                   Thêm vào giỏ hàng
                                 </button>
                                 <button
@@ -481,15 +483,17 @@ const ProductDisplay = () => {
                                     },
                                   })}
                                 }
-                                className="bg-gray-100 text-red-600 rounded font-bold p-2 hover:bg-gray-300 transition duration-300"
+                                className="bg-white flex items-center border-2 border-red-500 text-red-600 rounded font-bold p-2 hover:bg-gray-300 transition duration-300"
                               >
+                                <FiCheckCircle className="h-5 w-5 mr-2" />
                                 Đặt hàng
                               </button>
                               </div>
                               <button
                                 onClick={handleTextToSeller}
-                                className="bg-gray-100 text-green-600 font-bold rounded p-2 hover:bg-gray-300 transition duration-300"
+                                className="bg-white flex border-2 border-black items-center text-black font-bold rounded p-2 hover:bg-gray-300 transition duration-300"
                               >
+                                <FiMessageCircle className="h-5 w-5 mr-2" />
                                 Nhắn với người bán
                               </button>
                             </div>
@@ -499,7 +503,10 @@ const ProductDisplay = () => {
                     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mt-7">
                       {/* name, description, price, quantity, category_id, image_url, user_id, createdAt, updatedAt, brand, 
                           condition, origin, sellerInfo */}
-                      <strong>Thông tin chi tiết sản phẩm</strong>
+                        <div className="flex items-center">
+                          <FiClipboard className="h-6 w-6 text-yellow-400 mr-2" />
+                          <span className="text-xl font-semibold">Thông tin chi tiết sản phẩm</span>
+                      </div>
                       <p className="mt-2">
                         <strong>{product.name}</strong>
                       </p>
@@ -516,20 +523,24 @@ const ProductDisplay = () => {
                       <p className="mt-2">
                         <strong>Tình trạng sử dụng:</strong> {product.condition}
                       </p>
-                      <p className="mt-2">
+                      <p className="mt-2 mb-3">
                         <strong>Ngày cập nhật:</strong>{" "}
                         {new Date(product.updatedAt).toLocaleDateString()}
                       </p>
                       <button
-                        className="bg-gray-100 mt-6 text-blue-600 rounded p-2 hover:bg-gray-300 transition duration-300 w-full md:w-auto mt-4 md:mt-0"
+                        className="bg-white flex items-center underline text-blue-600 rounded border-2 p-2 hover:bg-gray-300 transition duration-300 w-full md:w-auto mt-4 md:mt-0"
                         onClick={() => navigate(`/seller/${product.user_id}`)}
                       >
+                        <FiUser className="h-5 w-5 mr-2" />
                         Xem trang người bán
                       </button>
                     </div>          
                     {/* Hiển thị các review */}
                     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mt-5 mb-5">
-                        <h2 className="text-xl font-semibold">Đánh giá</h2>
+                        <div className="flex items-center border-b py-2">
+                            <FiStar className="h-6 w-6 text-yellow-400 mr-2" />
+                            <span className="text-xl font-semibold">Đánh giá</span>
+                        </div>
                         {loadingReviews ? (
                             <p>Loading reviews...</p>
                         ) : errorReviews ? (
@@ -539,8 +550,8 @@ const ProductDisplay = () => {
                                 <ul className="mt-4">
                                     {reviews.map(review => (
                                         <li key={review._id} className="border-b py-2">
-                                            <div>
-                                                <strong>Rating:</strong>
+                                            <div className="flex items-center">
+                                                <strong className="mr-2">Đánh giá:</strong>
                                                 <div className="flex items-center">
                                                     {Array.from({ length: 5 }, (v, i) => (
                                                         <span key={i} className={`text-lg ${i < review.rating ? 'text-yellow-500' : 'text-gray-300'}`}>
