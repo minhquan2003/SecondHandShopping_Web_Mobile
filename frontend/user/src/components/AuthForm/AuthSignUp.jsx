@@ -8,8 +8,8 @@ const AuthSignUp = () => {
     const navigate = useNavigate();
     const { signup, sendOtp, verifyOtp, error } = useAuth();
     const [name, setName] = useState("");
-    const [username, setUsername] = useState("");
-    const [address, setAddress] = useState("");
+    // const [username, setUsername] = useState("");
+    // const [address, setAddress] = useState("");
     const [phone, setPhone] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -51,10 +51,10 @@ const AuthSignUp = () => {
         } else {
             const isValidOtp = await verifyOtp(email, otp);
             if (isValidOtp) {
-                await signup({ name, username, address, phone, email, password });
+                await signup({ name,  phone, email, password });//username, address,
                 setName('');
-                setUsername('');
-                setAddress('');
+                // setUsername('');
+                // setAddress('');
                 setPhone('');
                 setEmail('');
                 setPassword('');
@@ -95,7 +95,7 @@ const AuthSignUp = () => {
                         />
                     </label>
 
-                    <label className="block mb-4">
+                    {/* <label className="block mb-4">
                         <span className="sr-only">Username</span>
                         <input
                             type="text"
@@ -105,9 +105,9 @@ const AuthSignUp = () => {
                             className="w-full py-3 border-b border-gray-300 focus:outline-none focus:border-red-500"
                             required
                         />
-                    </label>
+                    </label> */}
 
-                    <label className="block mb-4">
+                    {/* <label className="block mb-4">
                         <span className="sr-only">Địa chỉ</span>
                         <input
                             type="text"
@@ -117,7 +117,7 @@ const AuthSignUp = () => {
                             className="w-full py-3 border-b border-gray-300 focus:outline-none focus:border-red-500"
                             required
                         />
-                    </label>
+                    </label> */}
 
                     <label className="block mb-4">
                         <span className="sr-only">Số điện thoại</span>
@@ -169,6 +169,7 @@ const AuthSignUp = () => {
                     </label>
 
                     {otpSent && (
+                        <>
                         <label className="block mb-4">
                             <span className="sr-only">Mã OTP</span>
                             <input
@@ -180,6 +181,14 @@ const AuthSignUp = () => {
                                 required
                             />
                         </label>
+                        {otpSent ? 
+                        <button
+                        className="w-full bg-white text-red-500 p-2 rounded mt-4 font-semibold hover hover:underline"
+                        onClick={()=>{sendOtp(email)}}
+                    >
+                        Gửi lại mã OTP
+                    </button> : null}
+                        </>
                     )}
 
                     <button

@@ -13,6 +13,7 @@ const ReGetPassword = () => {
     const { sendOtp, verifyOtp } = useAuth(); // Sử dụng hook để gửi và xác thực OTP
     const navigate = useNavigate();
     const [userId, setUserId] = useState(null); // Lưu ID người dùng
+    const [ival, setival] = useState(false);
 
     // Hàm kiểm tra người dùng
     const checkUser = async () => {
@@ -51,11 +52,13 @@ const ReGetPassword = () => {
         setError('');
 
         const isValid = await verifyOtp(email, otp);
+        
         if (isValid) {
+            setival(true)
             const updatedUserInfo = { password: otp }; // Xem xét mã hóa mật khẩu ở đây
             await updateProfile(userId, updatedUserInfo);
             setOtp('');
-            alert(`Xác thực thành công! Mật khẩu mới của bạn là: ${otp}`);
+            alert(`Xác thực thành công!`);
             // Chuyển hướng tới trang đăng nhập hoặc một trang khác
             navigate('/login'); // Hoặc trang bạn muốn chuyển hướng
         } else {
@@ -94,9 +97,11 @@ const ReGetPassword = () => {
                             required
                             className="border w-full p-2 mb-4"
                         />
+                        {ival ? <p className='text-red-500 p-2'> Mật khẩu mới của bạn là: {otp}</p> : null}
                         <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">
                             Xác thực OTP
                         </button>
+                        
                     </form>
                 )}
                 <button onClick={() => navigate('/login')} className="w-full mt-6 bg-gray-100 text-green-600 hover:underline p-2 rounded">
