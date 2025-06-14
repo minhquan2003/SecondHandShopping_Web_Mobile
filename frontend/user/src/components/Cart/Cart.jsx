@@ -5,6 +5,7 @@ import { FaTrash } from 'react-icons/fa';
 import BackButton from '../../commons/BackButton';
 import io from 'socket.io-client';
 import { IP } from '../../config';
+import { FiShoppingCart } from 'react-icons/fi';
 
 const socket = io(`http://localhost:5555`);
 
@@ -54,11 +55,15 @@ const Cart = () => {
                 {/* <h1 className="text-2xl font-bold ml-4">Thanh Toán</h1> */}
             </div>
         <div className="p-5 border rounded shadow-md">
-            <h2 className="text-xl font-bold mb-4">Giỏ Hàng</h2>
+            {/* <h2 className="text-xl font-bold mb-4">Giỏ Hàng</h2> */}
+            <h2 className="text-xl font-bold mb-4 flex items-center">
+                <FiShoppingCart className="mr-2" /> {/* Icon giỏ hàng */}
+                Giỏ Hàng
+            </h2>
             {cartItems && cartItems.length > 0 ? (
                 <ul className="divide-y divide-gray-300">
                     {cartItems.map(item => (
-                        <li key={item._id} className="flex items-center justify-between py-2">
+                        <li key={item._id} className="flex items-center justify-between py-2 " onClick={()=>navigate(`/product/${item.product_id}`)}>
                             <div className="flex items-center">
                                 {/* <input 
                                     type="checkbox" 
@@ -99,9 +104,15 @@ const Cart = () => {
                 <span>Tổng Giá:</span>
                 <span>{totalAmount.toLocaleString()} VNĐ</span>
             </div>
-            <button className="mt-5 bg-blue-500 text-white rounded p-2 hover:bg-green-500" onClick={() => navigate('/checkout', { state: { cartItems: cartItems } })}>
-                Tiến Hành Thanh Toán
-            </button>
+            <div className='flex justify-end'>
+                {/* <button className="mt-5 bg-blue-500 text-white rounded p-2 hover:bg-green-500" onClick={() => navigate('/checkout', { state: { cartItems: cartItems } })}>
+                    Tiến Hành Thanh Toán
+                </button> */}
+                <button className="mt-5 bg-red-500 text-white font-bold rounded p-2 hover:bg-red-600 flex items-center" onClick={() => navigate('/checkout', { state: { cartItems: cartItems } })}>
+                    <FiShoppingCart className="mr-2" /> {/* Icon giỏ hàng */}
+                    Tiến Hành Thanh Toán
+                </button>
+            </div>
         </div>
         </div>
     );

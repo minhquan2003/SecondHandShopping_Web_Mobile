@@ -417,16 +417,17 @@ const ProductDisplay = () => {
                             <img src={media_url} alt={product.name} className="w-full md:w-1/2 object-cover shadow-lg" style={{ maxHeight: '400px' }} />
                         )}
                         <div className="ml-6 w-full md:w-1/2">
+                        <div className="text-black font-bold bg-yellow-400 flex justify-center ">{ userInfo && (product.user_id === userInfo._id) ? <span>Đây là sản phẩm của bạn</span> : null}</div>
                             <div className="flex">
                               <h2 className="text-2xl font-semibold text-black">{product.name}</h2>
-                              <p>{ userInfo && (product.user_id === userInfo._id) ? "Đây là sản phẩm của bạn" : null}</p>
+                              
                             </div>
-                            {String(product.partner) === "true" ? (  // So sánh partner với chuỗi "true"
+                            {/* {String(product.partner) === "true" ? (  // So sánh partner với chuỗi "true"
                                 <p className="text-sm text-green-600 mt-1 flex items-center">
-                                    <FaCheckCircle className="mr-1" /> {/* Biểu tượng check */}
+                                    <FaCheckCircle className="mr-1" /> 
                                     Đảm bảo                         
                                 </p>
-                              ) : null}
+                              ) : null} */}
                               <p className="mt-2">
                                 Số lượng còn lại: {product.quantity}
                               </p>
@@ -457,7 +458,7 @@ const ProductDisplay = () => {
                               <div className="flex flex-col md:flex-row md:space-x-4 mb-4 mt-6 items-center">
                                 <button
                                   onClick={handleAddToCart}
-                                  className="bg-white flex border-2 border-black items-center text-black font-bold rounded p-2 hover:bg-gray-300 transition duration-300"
+                                  className="bg-green-500 flex items-center text-white font-bold rounded p-2 hover:bg-green-400 transition duration-300"
                                 >
                                   <FiShoppingCart className="h-5 w-5 mr-2" />
                                   Thêm vào giỏ hàng
@@ -483,7 +484,7 @@ const ProductDisplay = () => {
                                     },
                                   })}
                                 }
-                                className="bg-white flex items-center border-2 border-red-500 text-red-600 rounded font-bold p-2 hover:bg-gray-300 transition duration-300"
+                                className="bg-red-500 flex items-center text-white rounded font-bold p-2 hover:bg-red-400 transition duration-300"
                               >
                                 <FiCheckCircle className="h-5 w-5 mr-2" />
                                 Đặt hàng
@@ -491,7 +492,7 @@ const ProductDisplay = () => {
                               </div>
                               <button
                                 onClick={handleTextToSeller}
-                                className="bg-white flex border-2 border-black items-center text-black font-bold rounded p-2 hover:bg-gray-300 transition duration-300"
+                                className="bg-green-500 flex items-center text-white font-bold rounded p-2 hover:bg-green-400 transition duration-300"
                               >
                                 <FiMessageCircle className="h-5 w-5 mr-2" />
                                 Nhắn với người bán

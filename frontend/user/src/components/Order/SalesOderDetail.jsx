@@ -7,6 +7,7 @@ import { updateStatusOrder } from '../../hooks/Orders';
 import { createNotification } from '../../hooks/Notifications';
 import io from 'socket.io-client';
 import { IP } from '../../config';
+import { FiInfo, FiPackage, FiXCircle, FiCheckCircle, FiArrowRight } from 'react-icons/fi';
 
 const socket = io(`http://localhost:5555`); // Đảm bảo cổng đúng
 
@@ -150,10 +151,14 @@ const SalesOrderDetail = () => {
                 <BackButton />
             </div>
             <div className="w-full flex flex-col items-center mb-10">
-                <h1 className="text-2xl font-bold">Thông tin đơn hàng</h1>
+                {/* <h1 className="text-2xl font-bold">Thông tin đơn hàng</h1> */}
+                <h1 className="text-2xl font-bold mb-4 flex items-center bg-yellow-400 rounded-full">
+                    <FiPackage className="ml-3"/>
+                    <span className='m-3'>Thông tin đơn hàng</span>
+                </h1>
                 <div className="flex bg-white rounded-lg shadow-md w-4/5">
-                    <div className="bg-white h-full w-4/6 flex rounded-lg shadow-md p-6">
-                        <div className="bg-white w-2/5 rounded-lg p-6 flex flex-col items-center">
+                    <div className="bg-white h-full w-4/6 flex rounded-lg p-6">
+                        <div className="bg-white w-2/5 rounded-lg p-6 flex flex-col items-center justify-center">
                             {/* <img src={product.image_url} alt={product.name} className="w-full h-auto rounded-md mb-4" /> */}
                             {product.video_url?.toLowerCase().endsWith('.mp4') ? (
                                 <video controls className="w-full h-auto rounded-md mb-4">
@@ -163,43 +168,92 @@ const SalesOrderDetail = () => {
                             ) : (
                                 <img src={product.image_url} className="w-full h-auto rounded-md mb-4"/>
                             )}
-                            <p><strong>Số lượng:</strong> {orderDetails.quantity}</p>
+                            <p><strong></strong>Số lượng:{" " + orderDetails.quantity}</p>
                         </div>
                         <div className="ml-4">
-                            <h2 className="text-xl font-semibold">Đơn bán</h2>
-                            <p className="text-xl text-blue-600"><strong>{product.name}</strong></p>
-                            <p><strong>Mã đơn hàng:</strong> {order._id}</p>
-                            <p><strong>Người mua:</strong> {order.name}</p>
-                            <p><strong>Số điện thoại:</strong> {order.phone}</p>
-                            <p><strong>Địa chỉ giao hàng:</strong> {order.address}</p>
-                            <p><strong>Tổng số tiền:</strong> {order.total_amount.toLocaleString()} VNĐ</p>
-                            <p><strong>Trạng thái đơn hàng:</strong> <span className="text-red-500 font-bold">{order.status_order}</span></p>
-                            <p><strong>Ghi chú:</strong> {order.note || "Không có"}</p>
-                            <p><strong>Ngày tạo đơn:</strong> {formatDate(order.createdAt)}</p>
+                            {/* <h2 className="text-xl font-semibold">Đơn bán</h2> */}
+                            <h2 className="text-xl font-semibold font-bold flex items-center justify-center border-b-4 border-b-yellow-400">
+                                <FiPackage className="mr-2 font-bold" />
+                                Đơn bán
+                            </h2>
+                            <p className="text-xl text-black font-bold"><strong></strong> {product.name}</p>
+                            <p>Mã đơn hàng: {order._id}</p>
+                            <p>Người mua: {order.name}</p>
+                            <p>Số điện thoại: {order.phone}</p>
+                            <p>Địa chỉ giao hàng: {order.address}</p>
+                            <p>Tổng số tiền: {order.total_amount.toLocaleString()} VNĐ</p>
+                            <p>Trạng thái đơn hàng: <span className="text-black">{order.status_order}</span></p>
+                            <p>Ghi chú: {order.note || "Không có"}</p>
+                            <p>Ngày tạo đơn: {formatDate(order.createdAt)}</p>
                             {payment[0] ? (
                                 <>
-                                    <p><strong>Trạng thái thanh toán:</strong> {payment[0].status_payment}</p>
-                                    <p><strong>Ngày thanh toán:</strong> {formatDate(payment[0].createdAt)}</p>
+                                    <p>Trạng thái thanh toán: {payment[0].status_payment}</p>
+                                    <p>Ngày thanh toán: {formatDate(payment[0].createdAt)}</p>
                                 </>
                             ) : (
-                                <p><strong>Trạng thái thanh toán:</strong> Thanh toán khi nhận hàng</p>
+                                <p>Trạng thái thanh toán: Thanh toán khi nhận hàng</p>
                             )}
                         </div>
                     </div>
                     <div className="w-2/6 flex flex-col justify-center">
-                        <div className="bg-white w-full h-full rounded-lg p-6">
+                        <div className="bg-white w-full h-full p-6 border-l-2 border-l-yellow-400">
                             {(order.status_order === 'Pending' || order.status_order === 'Shipping' ||
                             order.status_order === 'Packaged' || order.status_order === 'Confirmed') ? (
-                                <div className="bg-white rounded-lg mt-4">
-                                    <h2 className="text-xl font-semibold">Cập nhật đơn hàng</h2>
-                                    <div>
+                                <div className="bg-white rounded-lg">
+                                    {/* <h2 className="text-xl font-semibold">Cập nhật đơn hàng</h2> */}
+                                    <h2 className="text-xl font-semibold flex items-center justify-center bg-yellow-400">
+                                        <FiCheckCircle   className="mr-2" />
+                                        Cập nhật đơn hàng
+                                    </h2>
+                                    <div className='flex flex-col justify-center items-center'>
+                                        {(order.status_order === 'Pending') ?
+                                        <div className='flex-col justify-center'>
+                                            <div>Đơn hàng sẽ chuyển trạng thái:</div>
+                                            <div className="flex items-center justify-center">
+                                                <span className='font-bold'>Chờ xác nhận</span>
+                                                <FiArrowRight className="mx-2" />
+                                                <span className='font-bold text-red-500'>Đã xác nhận</span>
+                                            </div>
+                                        </div> :
+                                        (order.status_order === 'Confirmed') ?
+                                        <div className='flex-col justify-center'>
+                                            <div>Đơn hàng sẽ chuyển trạng thái:</div>
+                                            <div className="flex items-center justify-center">
+                                                <span className='font-bold'>Đã xác nhận</span>
+                                                <FiArrowRight className="mx-2" />
+                                                <span className='font-bold text-red-500'>Đóng gói</span>
+                                            </div>
+                                        </div> :
+                                        (order.status_order === 'Packaged') ?
+                                        <div className='flex-col justify-center'>
+                                            <div>Đơn hàng sẽ chuyển trạng thái:</div>
+                                            <div className="flex items-center justify-center">
+                                                <span className='font-bold'>Đóng gói</span>
+                                                <FiArrowRight className="mx-2" />
+                                                <span className='font-bold text-red-500'>Giao hàng</span>
+                                            </div>
+                                        </div> :
+                                        (order.status_order === 'Shipping') ?
+                                        <div className='flex-col justify-center'>
+                                            <div>Đơn hàng sẽ chuyển trạng thái:</div>
+                                            <div className="flex items-center justify-center">
+                                                <span className='font-bold'>Giao hàng</span>
+                                                <FiArrowRight className="mx-2" />
+                                                <span className='font-bold text-red-500'>Giao hàng thành công</span>
+                                            </div>
+                                        </div> : null}
                                         <button 
                                             onClick={handleChangeStatus} 
-                                            className="bg-gray-100 text-green-600 font-bold py-2 px-4 rounded-lg shadow hover:bg-gray-300 transition duration-200"
+                                            className="bg-green-500 mt-3 mb-3 flex items-center justify-center text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-300 transition duration-200"
                                         >
+                                            <FiCheckCircle className="mr-2" />
                                             Xác nhận đơn hàng
                                         </button>
                                     </div>
+                                    <h2 className="text-xl font-semibold flex items-center justify-center bg-yellow-400">
+                                        <FiXCircle className="mr-2" />
+                                        Huỷ đơn hàng
+                                    </h2>
                                     <div className="mb-2 w-full mt-5">
                                         <textarea 
                                             type="text" 
@@ -211,11 +265,12 @@ const SalesOrderDetail = () => {
                                             required
                                         />
                                     </div>                      
-                                    <div>
+                                    <div className='flex justify-end'>
                                         <button 
                                             onClick={handleCancel} 
-                                            className="bg-gray-100 text-red-600 font-bold py-2 px-4 rounded-lg shadow hover:bg-gray-300 transition duration-200"
+                                            className="bg-red-500 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-red-300 transition duration-200 flex items-center"
                                         >
+                                            <FiXCircle className="mr-2" />
                                             Huỷ đơn hàng
                                         </button>
                                     </div>

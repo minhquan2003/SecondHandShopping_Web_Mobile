@@ -8,6 +8,7 @@ const AuthLogin = () => {
   const { login, error } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -41,23 +42,25 @@ const AuthLogin = () => {
           </label>
           <label className="block mb-4">
             <span className="sr-only">Mật Khẩu</span>
-            <input
-              type="password"
-              placeholder="Mật Khẩu"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full py-3 border-b border-gray-300 focus:outline-none focus:border-red-500"
-              required
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Mật Khẩu"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full py-3 border-b border-gray-300 focus:outline-none focus:border-red-500"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-0 top-1/2 transform -translate-y-1/2 p-2"
+              >
+                {showPassword ? <FiEyeOff className="h-5 w-5" /> : <FiEye className="h-5 w-5" />}
+              </button>
+            </div>
           </label>
           <div className="flex justify-between items-center mb-4">
-            {/* <div className="flex items-center">
-              <input type="checkbox" id="rememberMe" className="mr-2" />
-              <label htmlFor="rememberMe" className="text-sm text-gray-700">
-                Nhớ mật khẩu
-              </label>
-            </div> */}
-
             <div className="flex justify-start">
               <a href="/regetpassword" className="text-red-500 hover:underline text-sm">
                 Quên mật khẩu?
