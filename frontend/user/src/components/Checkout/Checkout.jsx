@@ -503,14 +503,7 @@ import { useLocationAddress, useUsersByIds } from "../../hooks/Users";
 import io from "socket.io-client";
 import axios from "axios";
 import { useMemo } from "react";
-import {
-  FiShoppingCart,
-  FiTruck,
-  FiFileText,
-  FiUser,
-  FiCreditCard,
-  FiDollarSign,
-} from "react-icons/fi";
+import { FiShoppingCart, FiTruck, FiFileText, FiUser, FiCreditCard, FiDollarSign  } from 'react-icons/fi';
 
 const socket = io(`http://localhost:5555`);
 
@@ -936,7 +929,12 @@ const Checkout = () => {
                   </h3> */}
                   <h3 className="text-lg font-semibold flex items-center">
                     <FiUser className="h-5 w-5 mr-2" />
+
                     Người bán: {sellerInfo?.name || "Đang tải..."}
+                  </h3> */}
+                  <h3 className="text-lg font-semibold flex items-center">
+                      <FiUser className="h-5 w-5 mr-2" />
+                      Người bán: {sellerInfo?.name || "Đang tải..."}
                   </h3>
                   <ul className="divide-y divide-gray-300">
                     {sellerItems.map((item) => (
@@ -951,19 +949,11 @@ const Checkout = () => {
                             alt={item.product_name}
                             className="w-16 h-16 object-cover rounded mr-4"
                           /> */}
-                          {item.product_imageUrl
-                            ?.toLowerCase()
-                            .endsWith(".mp4") ? (
-                            <video
-                              controls
-                              className="w-16 h-16 object-cover rounded mr-4"
-                            >
-                              <source
-                                src={item.product_imageUrl}
-                                type="video/mp4"
-                              />
-                              Your browser does not support the video tag.
-                            </video>
+                          {item.product_imageUrl?.toLowerCase().endsWith('.mp4') ? (
+                              <video className="w-16 h-16 object-cover rounded mr-4">
+                                  <source src={item.product_imageUrl} type="video/mp4" />
+                                  Your browser does not support the video tag.
+                              </video>
                           ) : (
                             <img
                               src={item.product_imageUrl}

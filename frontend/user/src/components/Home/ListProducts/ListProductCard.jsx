@@ -23,7 +23,7 @@ const ListProductCard = ({ data, w, title }) => {
         <div className="text-red-500 font-bold">Error: {error}</div>
       ) : (
         <div className="flex flex-wrap mt-2 mb-2 bg-white justify-center items-center">
-          <div className="flex flex-wrap justify-center items-center">
+          <div className="flex flex-wrap justify-start items-start">
             {Array.isArray(products) &&
               products.map((product) => {
                 const mediaUrl = product.video_url || product.image_url;

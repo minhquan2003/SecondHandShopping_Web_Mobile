@@ -5,6 +5,7 @@ import { createNotification } from '../../hooks/Notifications';
 import { createPayment } from '../../hooks/Payment'; 
 import io from 'socket.io-client';
 import { IP } from '../../config';
+import { FiCheckCircle } from 'react-icons/fi';
 
 const socket = io(`http://localhost:5555`);
 
@@ -68,15 +69,19 @@ const PaymentInfo = () => {
                                     <p className="text-lg">{item.product_name + ". Số lượng: " }x{item.product_quantity} </p>
 
                                     <h2 className="text-xl font-semibold mb-2 mt-4">Số Tiền Cần Thanh Toán:</h2>
-                                    <p className="text-lg text-green-600 font-bold">{(item.product_quantity * item.product_price).toLocaleString()} VNĐ</p>
+                                    <div className="text-lg text-red-600 font-bold flex items-center">
+                                       
+                                        {(item.product_quantity * item.product_price).toLocaleString()} VNĐ
+                                    </div>
 
                                     {hasQrCode ? (
                                         <>
                                             {!paymentStatus[index] ? ( 
                                                 <button 
                                                     onClick={() => handlePayConfirm(orderIds[index]?.id, orderIds[index]?.name_buyer, orderIds[index]?.phone, item.user_buyer, item.user_seller, (item.product_quantity * item.product_price), index)} 
-                                                    className={`mt-6 text-red-600 font-bold py-2 px-4 rounded-lg shadow transition duration-200 bg-gray-100 hover:bg-gray-300`}
+                                                    className={`mt-6 text-red-600 flex items-center font-bold py-2 px-4 rounded-lg shadow transition duration-200 bg-gray-100 hover:bg-gray-300`}
                                                 >
+                                                     <FiCheckCircle className="h-5 w-5 mr-2" />
                                                     Xác nhận đã thanh toán
                                                 </button>
                                             ) : (
@@ -107,7 +112,7 @@ const PaymentInfo = () => {
             <div className="flex space-x-4">
                 <button 
                     onClick={() => navigate('/')} 
-                    className="bg-gray-100 text-xl text-red-600 font-bold py-2 px-4 rounded-lg shadow hover:bg-gray-300 transition duration-200"
+                    className="bg-gray-100 text-xl text-green-600 font-bold py-2 px-4 rounded-lg shadow hover:bg-gray-300 transition duration-200"
                 >
                     Về trang chủ
                 </button>

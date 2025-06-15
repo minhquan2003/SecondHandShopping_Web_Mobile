@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { IP } from '../../config';
+import { FiX } from 'react-icons/fi';
 
 const PurchaseOrder = () => {
     const [buyOrders, setBuyOrders] = useState([]);
@@ -13,6 +14,17 @@ const PurchaseOrder = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const limit = 10; // Set limit per page
+
+    const statusMap = {
+        All: 'Tất cả',
+        Pending: 'Đang chờ',
+        Confirmed: 'Đã xác nhận',
+        Packaged: 'Đã đóng gói',
+        Shipping: 'Đang giao',
+        Success: 'Thành công',
+        'Request Cancel': 'Yêu cầu hủy',
+        Cancelled: 'Đã hủy',
+    };
 
     useEffect(() => {
         fetchPurchaseOrders();
@@ -110,8 +122,9 @@ const PurchaseOrder = () => {
                 </select>
                 <button 
                     onClick={handleResetFilters}
-                    className="bg-red-500 text-white font-bold py-2 px-4 rounded"
+                    className="bg-red-500 text-white font-bold py-2 px-4 rounded ml-2 flex items-center hover:bg-red-400"
                 >
+                    <FiX className="mr-2" />
                     Hủy Lọc
                 </button>
             </div>
@@ -125,9 +138,12 @@ const PurchaseOrder = () => {
                 <ul className="bg-white h-[70vh] overflow-y-auto">
                     {filteredAndSortedBuyOrders.map((order, index) => (
                         <Link to={`/purchaseOrder/${order._id}`} key={order._id}>
-                            <li className="flex border-b p-4 hover:bg-gray-100 transition duration-200">
-                                <div className="text-gray-700">
+                            <li className="flex border-b p-4 hover:bg-gray-100 transition duration-200 border-l-4 border-r-4 hover:border-l-yellow-400 hover:border-r-yellow-400">
+                                {/* <div className="text-gray-700">
                                     <span className="font-normal"> <strong>{index + 1 + (currentPage - 1) * limit}</strong> - </span>
+                                </div> */}
+                                <div className="text-gray-700 flex justify-center items-center w-5">
+                                    <span className="font-normal"> <strong>{index + 1 + (currentPage - 1) * limit}</strong></span>
                                 </div>
                                 {/* {order.product.image_url ? 
                                 <img 
@@ -135,25 +151,38 @@ const PurchaseOrder = () => {
                                     alt={order.product.name} 
                                     className="w-16 h-16 object-cover rounded mr-4" 
                                 />: null} */}
-                                {order.product.video_url?.toLowerCase().endsWith('.mp4') ? (
+                                {/* {order.product.video_url?.toLowerCase().endsWith('.mp4') ? (
                                     <video controls className="w-16 h-16 object-cover rounded mr-4">
                                         <source src={order.product.video_url} type="video/mp4" />
                                         Your browser does not support the video tag.
                                     </video>
                                 ) : (
                                     <img src={order.product.image_url} className="w-16 h-16 object-cover rounded mr-4"/>
-                                )}
-                                <div className="text-gray-700">
-                                    <strong></strong> <span className="font-normal">{order.product.name}</span>
+                                )} */}
+                                <div className="text-gray-700 flex justify-center items-center">
+                                    {order.product.video_url?.toLowerCase().endsWith('.mp4') ? (
+                                        <video controls className="w-24 h-24 object-cover rounded ml-3 mr-3">
+                                            <source src={order.product.video_url} type="video/mp4" />
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    ) : (
+                                        <img src={order.product.image_url} className="w-24 h-24 object-cover rounded ml-3 mr-3"/>
+                                    )}
                                 </div>
-                                <div className="text-gray-700">
-                                    <strong>Tổng giá:</strong> <span className="font-normal">{order.total_amount.toLocaleString()} VNĐ - </span>
-                                </div>
-                                <div className="text-gray-700">
-                                    <strong>Ngày mua hàng:</strong> <span className="font-normal">{new Date(order.createdAt).toLocaleDateString()} - </span>
-                                </div>
-                                <div className="text-gray-700">
-                                    <strong>Trạng thái đơn hàng:</strong> <span className="font-normal">{order.status_order}</span>
+                                <div className="text-gray-700 flex-col justify-center items-center">
+                                    <div className="text-gray-700">
+                                        <span className="font-normal"><strong>{order.product.name}</strong></span>
+                                    </div>
+                                    <div className="text-gray-700">
+                                        Tổng giá: <span className="font-normal">{order.total_amount.toLocaleString()} VNĐ - </span>
+                                    </div>
+                                    <div className="text-gray-700">
+                                        Ngày mua hàng: <span className="font-normal">{new Date(order.createdAt).toLocaleDateString()} - </span>
+                                    </div>
+                                    <div className="text-gray-700">
+                                        Trạng thái đơn hàng: 
+                                        <span className="font-normal text-red-500">{" " + statusMap[order.status_order]}</span>
+                                    </div>
                                 </div>
                             </li>
                         </Link>

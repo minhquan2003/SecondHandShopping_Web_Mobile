@@ -2,6 +2,7 @@ import { getProductByName, getAllCountries } from '../../hooks/Products';
 import { useSearchParams } from 'react-router-dom';
 import ListProductCard from '../Home/ListProducts/ListProductCard';
 import React, { useState, useEffect } from 'react';
+import { FiSearch, FiX } from 'react-icons/fi';
 
 const ProductByName = () => {
     const [searchParams] = useSearchParams();
@@ -17,6 +18,7 @@ const ProductByName = () => {
     const [filteredProducts, setFilteredProducts] = useState(data);
     const [minUnit, setMinUnit] = useState('thousand');
     const [maxUnit, setMaxUnit] = useState('million');
+    const [sortOrder, setSortOrder] = useState('asc');
 
     useEffect(() => {
         const loadCountries = async () => {
@@ -48,7 +50,13 @@ const ProductByName = () => {
 
             return isInPriceRange && isInBrand && isInOrigin && isInCondition;
         });
-        setFilteredProducts(newFilteredProducts);
+
+        // Sắp xếp theo thứ tự đã chọn
+        const sortedProducts = newFilteredProducts.sort((a, b) => {
+            return sortOrder === 'asc' ? a.price - b.price : b.price - a.price;
+        });
+
+        setFilteredProducts(sortedProducts);
     };
 
     const handleResetFilters = () => {
@@ -67,7 +75,7 @@ const ProductByName = () => {
             <div className="mb-6 bg-white shadow rounded-lg p-4 flex flex-col">
                 <div className="text-lg font-semibold text-gray-800">
                     Bạn đang tìm kiếm cho từ khoá: 
-                    <span className="text-xl font-bold text-red-600 ml-1">{name}</span>
+                    <span className="text-xl font-bold text-yellow-400 ml-1">{name}</span>
                 </div>
                 <div className="flex flex-wrap gap-2">
                     <div className="flex-1">
@@ -78,8 +86,18 @@ const ProductByName = () => {
                             placeholder="Nhập thương hiệu"
                             value={brand}
                             onChange={(e) => setBrand(e.target.value)}
-                            className="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            className="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
                         />
+                        {/* <label className="block mb-1 text-sm font-medium" htmlFor="sortSelect">Sắp xếp theo giá:</label> */}
+                        <select
+                            id="sortSelect"
+                            value={sortOrder}
+                            onChange={(e) => setSortOrder(e.target.value)}
+                            className="border border-gray-300 p-2 w-full mt-1 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                        >
+                            <option value="asc">Giá từ thấp đến cao</option>
+                            <option value="desc">Giá từ cao đến thấp</option>
+                        </select>
                     </div>
                     <div className="flex-1">
                         <label className="block mb-1 text-sm font-medium" htmlFor="minPriceInput">Giá tối thiểu:</label>
@@ -90,12 +108,12 @@ const ProductByName = () => {
                             max="999"
                             value={minPrice}
                             onChange={(e) => setMinPrice(Number(e.target.value))}
-                            className="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            className="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
                         />
                         <select
                             value={minUnit}
                             onChange={(e) => setMinUnit(e.target.value)}
-                            className="border border-gray-300 p-2 w-full mt-1 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            className="border border-gray-300 p-2 w-full mt-1 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
                         >
                             <option value="thousand">Nghìn đồng</option>
                             <option value="million">Triệu đồng</option>
@@ -106,7 +124,7 @@ const ProductByName = () => {
                             max="999"
                             value={minPrice}
                             onChange={(e) => setMinPrice(Number(e.target.value))}
-                            className="w-full mt-2"
+                            className="w-full mt-2" //w-full mt-2 appearance-none h-2 bg-gray-200 rounded-lg outline-none slider-thumb
                         />
                     </div>
                     <div className="flex-1">
@@ -118,12 +136,12 @@ const ProductByName = () => {
                             max="999"
                             value={maxPrice}
                             onChange={(e) => setMaxPrice(Number(e.target.value))}
-                            className="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            className="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
                         />
                         <select
                             value={maxUnit}
                             onChange={(e) => setMaxUnit(e.target.value)}
-                            className="border border-gray-300 p-2 w-full mt-1 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            className="border border-gray-300 p-2 w-full mt-1 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
                         >
                             <option value="thousand">Nghìn đồng</option>
                             <option value="million">Triệu đồng</option>
@@ -145,12 +163,12 @@ const ProductByName = () => {
                             placeholder="Nhập xuất xứ"
                             value={origin}
                             onChange={(e) => setOrigin(e.target.value)}
-                            className="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            className="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
                         />
                         <select
                             value={origin}
                             onChange={(e) => setOrigin(e.target.value)}
-                            className="border border-gray-300 p-2 w-full mt-1 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            className="border border-gray-300 p-2 w-full mt-1 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
                         >
                             <option value="">Chọn xuất xứ</option>
                             {countries.length > 0 ? (
@@ -170,7 +188,7 @@ const ProductByName = () => {
                             id="conditionSelect"
                             value={condition}
                             onChange={(e) => setCondition(e.target.value)}
-                            className="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            className="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
                         >
                             <option value="">Tất cả</option>
                             <option value="Mới">Mới</option>
@@ -178,17 +196,19 @@ const ProductByName = () => {
                             <option value="Tái chế">Tái chế</option>
                         </select>
                     </div>
-                    <div className="flex items-end">
+                    <div className="items-start ml-3 mt-2">
                         <button
                             onClick={handleFilter}
-                            className="mt-4 border border-gray-300 bg-gray-100 text-black py-2 px-4 rounded-md hover:bg-gray-400 transition duration-200"
+                            className="mt-4 flex-1 border border-gray-300 bg-gray-100 text-black py-2 px-4 hover:underline rounded-md border-2 border-yellow-400 transition duration-200 flex items-center"
                         >
+                            <FiSearch className="h-5 w-5 text-yellow-400 mr-2" />
                             Tìm Kiếm
                         </button>
                         <button
                             onClick={handleResetFilters}
-                            className="mt-4 border border-gray-300 bg-gray-100 py-2 px-4 rounded-md hover:bg-gray-300 transition duration-200 ml-2"
+                            className="mt-4 flex-1 border border-gray-300 bg-gray-100 py-2 px-4 rounded-md hover:underline border-2 border-yellow-400 transition duration-200 ml-2 flex items-center"
                         >
+                            <FiX className="h-5 w-5 text-yellow-400 mr-2" />
                             Bỏ Tìm
                         </button>
                     </div>

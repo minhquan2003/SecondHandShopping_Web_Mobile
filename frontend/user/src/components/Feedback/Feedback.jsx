@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { createFeedback } from "../../hooks/Feedback";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { createFeedback } from '../../hooks/Feedback';
+import { FiSend } from 'react-icons/fi';
 
 const Feedback = () => {
   const userInfoString = sessionStorage.getItem("userInfo");
@@ -95,16 +96,16 @@ const Feedback = () => {
             required
           />
         </label>
-
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white font-bold py-2 rounded hover:bg-blue-600"
-        >
-          Gửi
-        </button>
-      </form>
-    </div>
-  );
+                <button 
+                    type="submit" 
+                    className="w-full bg-blue-500 text-white font-bold py-2 rounded hover:bg-blue-600 flex items-center justify-center"
+                >
+                    <FiSend className="h-5 w-5 mr-2" />
+                    Gửi
+                </button>
+            </form>
+        </div>
+    );
 };
 
 export default Feedback;

@@ -8,6 +8,7 @@ import { updateStatusOrder } from '../../hooks/Orders';
 import { createNotification } from '../../hooks/Notifications';
 import io from 'socket.io-client';
 import { IP } from '../../config';
+import { FiInfo, FiPackage, FiSend, FiShoppingCart, FiStar, FiUser, FiXCircle } from 'react-icons/fi';
 
 const socket = io(`http://localhost:5555`);
 
@@ -141,10 +142,14 @@ const PurchaseOrderDetail = () => {
                 {/* <h1 className="text-2xl font-bold ml-4">Thanh Toán</h1> */}
             </div>
             <div className="w-full flex flex-col items-center mb-10">
-                <h1 className="text-2xl font-bold mb-4">Thông tin đơn hàng</h1>
+                {/* <h1 className="text-2xl font-bold mb-4">Thông tin đơn hàng</h1> */}
+                <h1 className="text-2xl font-bold mb-4 flex items-center bg-yellow-400 rounded-full">
+                    <FiPackage className="ml-3"/>
+                    <span className='m-3'>Thông tin đơn hàng</span>
+                </h1>
                 <div className="flex bg-white rounded-lg shadow-md w-4/5">
                     <div className="bg-white h-full w-4/6 flex rounded-lg shadow-md p-6">
-                        <div className="bg-white w-2/5 rounded-lg p-6 flex flex-col items-center">
+                        <div className="bg-white w-2/5 rounded-lg p-6 flex flex-col items-center justify-center">
                             {/* <img src={product.image_url} alt={product.name} className="w-full h-auto rounded-md mb-4" /> */}
                             {product.video_url?.toLowerCase().endsWith('.mp4') ? (
                                 <video controls className="w-full h-auto rounded-md mb-4">
@@ -156,38 +161,59 @@ const PurchaseOrderDetail = () => {
                             )}
                             <p><strong></strong>Số lượng:{" " + orderDetails.quantity}</p>
                         </div>
-                        <div className="ml-4">
-                            <h2 className="text-xl font-semibold">Đơn mua</h2>
-                            <p className="text-xl text-green-600"><strong></strong> {product.name}</p>
-                            <p><strong>Mã đơn hàng:</strong> {order._id}</p>
-                            <p><strong>Địa chỉ giao hàng:</strong> {order.address}</p>
-                            <p><strong>Tổng số tiền:</strong> {order.total_amount.toLocaleString()} VNĐ</p>
-                            <p><strong>Trạng thái đơn hàng:</strong> {order.status_order}</p>
-                            <p><strong>Ghi chú:</strong> {order.note ? order.note : "Không có"}</p>
-                            <p><strong>Ngày tạo đơn:</strong> {formatDate(order.createdAt)}</p>
+                        <div className=" m-4 border-b-2 border-b-yellow-400 ">
+                            {/* <h2 className="text-xl font-semibold">Đơn mua</h2> */}
+                            <h2 className="text-xl font-semibold font-bold flex items-center justify-center border-b-4 border-b-yellow-400">
+                                <FiShoppingCart className="mr-2 font-bold" />
+                                Đơn mua
+                            </h2>
+                            <p className="text-xl text-black font-bold"><strong></strong> {product.name}</p>
+                            <p>Mã đơn hàng:{order._id}</p>
+                            <p>Địa chỉ giao hàng: {order.address}</p>
+                            <p>Tổng số tiền: {order.total_amount.toLocaleString()} VNĐ</p>
+                            <p>Trạng thái đơn hàng: {order.status_order}</p>
+                            <p>Ghi chú: {order.note ? order.note : "Không có"}</p>
+                            <p>Ngày tạo đơn: {formatDate(order.createdAt)}</p>
                             {payment[0] ? 
                             <>
-                            <p><strong>Trạng thái thanh toán:</strong> {payment[0].status_payment}</p>
-                            <p><strong>Ngày thanh toán:</strong> {formatDate(payment[0].createdAt)}</p>
+                            <p>Trạng thái thanh toán: {payment[0].status_payment}</p>
+                            <p>Ngày thanh toán: {formatDate(payment[0].createdAt)}</p>
                             </> :
-                            <p><strong>Trạng thái thanh toán:</strong> Thanh toán khi nhận hàng</p>
+                            <p>Trạng thái thanh toán: Thanh toán khi nhận hàng</p>
                             }
-                            <h3 className="text-xl font-semibold mt-4">Thông tin người bán</h3>
-                            <p><strong>Tên người bán:</strong> {seller.name}</p>
-                            <p><strong>Số điện thoại:</strong> {seller.phone}</p>
-                            <p><strong>Địa chỉ:</strong> {seller.address}</p>
-                            <button 
-                                className="bg-gray-100 mt-2 border border-blue-500 text-blue-600 underline rounded p-2 hover:bg-gray-300 transition duration-300"
-                                onClick={() => navigate(`/seller/${product.user_id}`)}
-                            >
-                                Xem trang người bán
-                            </button>
+                            <div className="mt-3 ">
+                                {/* <h3 className="text-xl font-semibold mt-4">Thông tin người bán</h3> //border-r-2 border-r-yellow-400 border-l-2 border-l-yellow-400 */}
+                                <h3 className="text-xl font-semibold mt-4 flex items-center justify-center bg-yellow-400">
+                                    <FiUser className="mr-2" />
+                                    Thông tin người bán
+                                </h3>
+                                <p>Tên người bán: {seller.name}</p>
+                                <p>Số điện thoại: {seller.phone}</p>
+                                <p>Địa chỉ: {seller.address}</p>
+                                {/* <button 
+                                    className="bg-gray-100 mt-2 border border-blue-500 text-blue-600 underline rounded p-2 hover:bg-gray-300 transition duration-300"
+                                    onClick={() => navigate(`/seller/${product.user_id}`)}
+                                >
+                                    Xem trang người bán
+                                </button> */}
+                                <button
+                                    className="bg-white flex items-center hover:underline text-blue-600 rounded transition duration-300 w-full md:w-auto mt-4 md:mt-0 m-3"
+                                    onClick={() => navigate(`/seller/${product.user_id}`)}
+                                    >
+                                    <FiUser className="h-5 w-5 mr-2" />
+                                    Xem trang người bán
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div className="w-2/6 flex flex-col justify-center">
-                        <div className="bg-white w-full h-full rounded-lg p-6">
+                        <div className="bg-white w-full h-full p-6  border-l-2 border-l-yellow-400 mt-4">
                         {order && (order.status_order == 'Pending' || order.status_order == 'Confirmed') ?
                             (<div>
+                                <h2 className="text-xl font-semibold flex items-center justify-center bg-yellow-400">
+                                    <FiXCircle className="mr-2" />
+                                    Huỷ đơn hàng
+                                </h2>
                                 <div className="mb-2 w-full mt-5">
                                         <textarea 
                                             type="text" 
@@ -199,26 +225,31 @@ const PurchaseOrderDetail = () => {
                                             required
                                         />
                                     </div>                      
-                                    <div>
+                                    <div className='flex justify-end'>
                                         <button 
                                             onClick={handleCancel} 
-                                            className="bg-gray-100 text-red-600 font-bold py-2 px-4 rounded-lg shadow hover:bg-gray-300 transition duration-200"
+                                            className="bg-red-500 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-red-300 transition duration-200 flex items-center"
                                         >
+                                            <FiXCircle className="mr-2" />
                                             Huỷ đơn hàng
                                         </button>
                                     </div>
                             </div>)
                         : order.status_order == 'Success' ?
-                            (<div>
-                                <h2 className="text-xl font-semibold">Đánh giá sản phẩm</h2>
+                            (<div className="mt-4">
+                                {/* <h2 className="text-xl font-semibold">Đánh giá sản phẩm</h2> */}
+                                <h2 className="text-xl font-semibold flex items-center justify-center bg-yellow-400">
+                                    <FiStar className="mr-2" />
+                                    Đánh giá sản phẩm
+                                </h2>
                             <form onSubmit={handleSubmit} className="py-4">
                                 <div className="mb-2">
                                     {/* <label className="block mb-1">Đánh giá:</label> */}
-                                    <div className="flex">
+                                    <div className="flex justify-between">
                                         {[1, 2, 3, 4, 5].map((star) => (
                                             <span
                                                 key={star}
-                                                className={`cursor-pointer text-2xl ${star <= rating ? 'text-yellow-500' : 'text-gray-300'}`}
+                                                className={`cursor-pointer text-5xl ${star <= rating ? 'text-yellow-400' : 'text-gray-300'}`}
                                                 onClick={() => setRating(star)}
                                             >
                                                 ★
@@ -236,9 +267,20 @@ const PurchaseOrderDetail = () => {
                                         rows="4"
                                     />
                                 </div>
-                                <button type="submit" className="bg-blue-500 text-white rounded px-4 py-2">
+                                {/* <button type="submit" className="bg-blue-500 text-white rounded px-4 py-2">
                                     Gửi đánh giá
-                                </button>
+                                </button> */}
+                                
+                                {/* <button type="submit" className="bg-blue-500 text-white hover:bg-blue-400 rounded px-4 py-2 flex items-center">
+                                    <FiSend className="mr-2" />
+                                    Gửi đánh giá
+                                </button> */}
+                                <div className='flex justify-end'>
+                                    <button type="submit" className="bg-blue-500 text-white hover:bg-blue-400 rounded px-4 py-2 flex items-center">
+                                        <FiSend className="mr-2" />
+                                        Gửi đánh giá
+                                    </button>
+                                </div>
                             </form>
                             </div>) : null
                         }

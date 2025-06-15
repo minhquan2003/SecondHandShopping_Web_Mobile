@@ -13,8 +13,8 @@ const getProducts = () => {
         const response = await axios.get(`http://${IP}:5555/products`);
         setProducts(response.data);
       } catch (err) {
-        console.error("Error fetching products:", err);
-        setError("Failed to load products. Please try again later.");
+        console.error("Có lỗi trong quá trình tải sản phẩm:", err);
+        setError("Có lỗi trong quá trình tải sản phẩm. Hãy thử lại sau.");
       } finally {
         setLoading(false);
       }
@@ -37,8 +37,8 @@ const getVideoProducts = () => {
         const response = await axios.get(`http://${IP}:5555/products/video`);
         setVProducts(response.data);
       } catch (err) {
-        console.error("Error fetching products:", err);
-        setVError("Failed to load products. Please try again later.");
+        console.error("Có lỗi trong quá trình tải sản phẩm:", err);
+        setVError("Có lỗi trong quá trình tải sản phẩm. Hãy thử lại sau.");
       } finally {
         setVLoading(false);
       }
@@ -143,7 +143,7 @@ const useProduct = (id) => {
         setProduct(response.data);
       } catch (err) {
         console.error("Error fetching product:", err);
-        setError("FKhông có sản phẩm nào.");
+        setError("Không có sản phẩm nào.");
       } finally {
         setLoading(false); // Kết thúc loading
       }
@@ -154,7 +154,7 @@ const useProduct = (id) => {
 
   return { product, loading, error };
 };
-
+//Error: Failed to load products. Please try again later.
 const updateProduct = async ({ id, quanlity }) => {
   try {
     const response = await axios.put(`http://${IP}:5555/products/quanlity`, {

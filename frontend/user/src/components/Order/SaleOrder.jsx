@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import BackButton from '../../commons/BackButton';
 import { IP } from '../../config';
+import { FiSearch, FiX } from 'react-icons/fi';
 
 const SaleOrder = () => {
     const [sellOrders, setSellOrders] = useState([]);
@@ -20,6 +21,17 @@ const SaleOrder = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const limit = 10; // Set limit per page
+
+    const statusMap = {
+        All: 'Tất cả',
+        Pending: 'Đang chờ',
+        Confirmed: 'Đã xác nhận',
+        Packaged: 'Đóng gói',
+        Shipping: 'Đang giao',
+        Success: 'Thành công',
+        'Request Cancel': 'Yêu cầu hủy',
+        Cancelled: 'Đã hủy',
+    };
 
     useEffect(() => {
         fetchSaleOrders();
@@ -77,7 +89,13 @@ const SaleOrder = () => {
     });
 
     const sortOrders = (orders) => {
-        return orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        if(sortOrder == 'newest'){
+            return orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        }else if(sortOrder == 'oldest'){
+            return orders.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        }else{
+            return orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        }
     };
 
     const filterByDateRange = (orders) => {
@@ -117,53 +135,66 @@ const SaleOrder = () => {
 
     return (
         <div>
-            <div className="text-xl font-bold">Tìm kiếm đơn hàng</div>
-            <div className="flex items-center mb-4 space-x-2">
-                <div className="text-xl font-semibold">Từ ngày:</div>
-                <input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    className="border border-gray-300 p-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-                <div className="text-xl font-semibold">đến ngày:</div>
-                <input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    className="border border-gray-300 p-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-                <input
-                    type="text"
-                    placeholder="Tìm theo tên người mua"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="border border-gray-300 p-2 rounded mr-2"
-                />
-                <input
-                    type="text"
-                    placeholder="Tìm theo số điện thoại"
-                    value={searchPhone}
-                    onChange={(e) => setSearchPhone(e.target.value)}
-                    className="border border-gray-300 p-2 rounded mr-2"
-                />
-                <select 
-                    value={sortOrder}
-                    onChange={(e) => setSortOrder(e.target.value)}
-                    className="border border-gray-300 p-2 rounded"
-                >
-                    <option value="none">Không sắp xếp</option>
-                    <option value="newest">Mới nhất</option>
-                    <option value="oldest">Cũ nhất</option>
-                </select>
-                <button 
-                    onClick={handleResetFilters}
-                    className="bg-red-500 text-white font-bold py-2 px-4 rounded ml-2"
-                >
-                    Hủy Lọc
-                </button>
+            {/* <div className="text-xl font-bold">Tìm kiếm đơn hàng</div> */}
+            <div className="mb-2 mt-2 bg-white ">
+                <div className="text-xl font-bold flex items-center mb-2 ml-4 mt-4">
+                    <FiSearch className="mr-2 text-yellow-400 mt-4" />
+                    <span className="mt-4">Tìm kiếm đơn hàng</span>
+                </div>
+                <div className="flex items-center mb-4 space-x-2 ml-4">
+                    <div className="text-xl mb-3 font-semibold">Từ ngày:</div>
+                    <input
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        className="border border-gray-300 p-2 rounded-md mb-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    />
+                    <div className="text-xl mb-3 font-semibold">đến ngày:</div>
+                    <input
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        className="border border-gray-300 p-2 rounded-md mb-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    />
+                    <input
+                        type="text"
+                        placeholder="Tìm theo tên người mua"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="border border-gray-300 p-2 mb-3 rounded mr-2"
+                    />
+                    <input
+                        type="text"
+                        placeholder="Tìm theo số điện thoại"
+                        value={searchPhone}
+                        onChange={(e) => setSearchPhone(e.target.value)}
+                        className="border border-gray-300 mb-3 p-2 rounded mr-2"
+                    />
+                    <select 
+                        value={sortOrder}
+                        onChange={(e) => setSortOrder(e.target.value)}
+                        className="border border-gray-300 mb-3 p-2 rounded"
+                    >
+                        <option value="none">Không sắp xếp</option>
+                        <option value="newest">Mới nhất</option>
+                        <option value="oldest">Cũ nhất</option>
+                    </select>
+                    {/* <button 
+                        onClick={handleResetFilters}
+                        className="bg-red-500 text-white font-bold py-2 px-4 rounded ml-2"
+                    >
+                        Hủy Lọc
+                    </button> */}
+                    <button 
+                        onClick={handleResetFilters}
+                        className="bg-red-500 mb-3 text-white font-bold py-2 px-4 rounded ml-2 flex items-center hover:bg-red-400"
+                    >
+                        <FiX className="mr-2" />
+                        Hủy Lọc
+                    </button>
+                </div>
             </div>
-            <div className="flex mb-4 w-full">
+            {/* <div className="flex mb-4 w-full">
                 {['All', 'Pending', 'Confirmed', 'Packaged', 'Shipping', 'Success', 'Request Cancel', 'Cancelled'].map(status => (
                     <button
                         key={status}
@@ -171,6 +202,17 @@ const SaleOrder = () => {
                         onClick={() => setActiveSellTab(status)}
                     >
                         {status}
+                    </button>
+                ))}
+            </div> */}
+            <div className="flex mb-4 w-full">
+                {Object.keys(statusMap).map(status => (
+                    <button
+                        key={status}
+                        className={`flex-1 px-4 py-2 text-black hover:underline ${activeSellTab === status ? 'text-black font-bold underline bg-yellow-400' : 'bg-white text-black'}`}
+                        onClick={() => setActiveSellTab(status)}
+                    >
+                        {statusMap[status]}
                     </button>
                 ))}
             </div>
@@ -184,41 +226,50 @@ const SaleOrder = () => {
                 <ul className="bg-white h-[70vh] overflow-y-auto">
                     {filteredAndSortedSellOrders.map((order, index) => (
                         <Link to={`/salesOder/${order._id}`} key={order._id}>
-                            <li className="flex border-b p-4 hover:bg-gray-100 transition duration-200">
-                                <div className="text-gray-700">
+                            <li className="flex border-b p-4 hover:bg-gray-100 transition duration-200 border-l-4 border-r-4 hover:border-l-yellow-400 hover:border-r-yellow-400">
+                                {/* <div className="text-gray-700">
                                     <span className="font-normal"> <strong>{index + 1 + (currentPage - 1) * limit}</strong> - </span>
+                                </div> */}
+                                <div className="text-gray-700 flex justify-center items-center w-5">
+                                    <span className="font-normal"> <strong>{index + 1 + (currentPage - 1) * limit}</strong></span>
                                 </div>
                                 {/* <img 
                                     src={order.product.image_url} 
                                     alt={order.product.name} 
                                     className="w-16 h-16 object-cover rounded mr-4" 
                                 /> */}
-                                {order.product.video_url?.toLowerCase().endsWith('.mp4') ? (
-                                    <video controls className="w-16 h-16 object-cover rounded mr-4">
-                                        <source src={order.product.video_url} type="video/mp4" />
-                                        Your browser does not support the video tag.
-                                    </video>
-                                ) : (
-                                    <img src={order.product.image_url} className="w-16 h-16 object-cover rounded mr-4"/>
-                                )}
-                                <div className="text-gray-700">
-                                    <span className="font-normal"><strong>{order.product.name}</strong></span>
+                                <div className="text-gray-700 flex justify-center items-center">
+                                    {order.product.video_url?.toLowerCase().endsWith('.mp4') ? (
+                                        <video controls className="w-24 h-24 object-cover rounded ml-3 mr-3">
+                                            <source src={order.product.video_url} type="video/mp4" />
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    ) : (
+                                        <img src={order.product.image_url} className="w-24 h-24 object-cover rounded ml-3 mr-3"/>
+                                    )}
                                 </div>
-                                <div className="text-gray-700">
-                                    <strong>Họ tên:</strong> <span className="font-normal">{order.name} - </span>
+                                <div className="text-gray-700 flex-col justify-center items-center">
+                                    <div className="text-gray-700">
+                                        <span className="font-normal"><strong>{order.product.name}</strong></span>
+                                    </div>
+                                    <div className="text-gray-700">
+                                        Họ tên: <span className="font-normal">{order.name}</span>
+                                    </div>
+                                    <div className="text-gray-700">
+                                        Tổng giá: <span className="font-normal">{order.total_amount.toLocaleString()} VNĐ</span>
+                                    </div>
+                                    <div className="text-gray-700">
+                                        Ngày tạo đơn hàng: <span className="font-normal">{formatDate(order.createdAt)}</span>
+                                    </div>
+                                    <div className="text-gray-700">
+                                       Số điện thoại người mua: <span className="font-normal">{order.phone}</span>
+                                    </div>
+                                    <div className="text-gray-700">
+                                        Trạng thái đơn hàng: 
+                                        <span className="font-normal text-red-500">{" " + statusMap[order.status_order]}</span>
+                                    </div>
                                 </div>
-                                <div className="text-gray-700">
-                                    <strong>Tổng giá:</strong> <span className="font-normal">{order.total_amount.toLocaleString()} VNĐ - </span>
-                                </div>
-                                <div className="text-gray-700">
-                                    <strong>Ngày tạo đơn hàng:</strong> <span className="font-normal">{formatDate(order.createdAt)} - </span>
-                                </div>
-                                <div className="text-gray-700">
-                                    <strong>Số điện thoại người mua:</strong> <span className="font-normal">{order.phone} - </span>
-                                </div>
-                                <div className="text-gray-700">
-                                    <strong>Trạng thái đơn hàng:</strong> <span className="font-normal text-red-500">{order.status_order}</span>
-                                </div>
+                                
                             </li>
                         </Link>
                     ))}

@@ -31,8 +31,8 @@ export const useAuth = () => {
       window.location.href = "/";
     } catch (err) {
       console.error("Login error:", err);
-      alert("Invalid credentials. Please try again.");
-      setError("Invalid credentials. Please try again.");
+      alert("Thông tin đăng nhập không hợp lệ!");
+      // setError("Invalid credentials. Please try again.");
     }
   };
 
@@ -40,10 +40,11 @@ export const useAuth = () => {
     try {
       // alert(email)
       const response = await axios.post("/mail/send-otp", { email });
+      alert(response.data.message);
       console.log("OTP sent:", response.data.message);
       return true;
     } catch (err) {
-      alert("Error sending OTP:", err);
+      alert("Lỗi OTP. Xin hãy thử lại. ", err);
       setError("Lỗi OTP. Xin hãy thử lại.");
       return false;
     }

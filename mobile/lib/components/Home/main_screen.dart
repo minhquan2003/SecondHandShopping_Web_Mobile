@@ -15,6 +15,7 @@ import '../Notification/notification.dart';
 import '../UI/searchbar_widget.dart';
 import '../Search/search_screen.dart';
 import '../Login/login.dart';
+import '../Order/purchase_order.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -32,7 +33,7 @@ class _MainScreenState extends State<MainScreen> {
       product: {},
     ),
     Home(),
-    Home(), // Màn hình Screen2
+    PurchaseOrder(), // Màn hình Screen2
     MenuProfile(),
   ];
 
@@ -173,12 +174,12 @@ class _MainScreenState extends State<MainScreen> {
                     MaterialPageRoute(builder: (context) => Regulation()),
                   );
                   break;
-                case 'Bốn':
-                  // Thực hiện hành động cho 'Bốn'
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Bạn đã chọn: Bốn')),
-                  );
-                  break;
+                // case 'Bốn':
+                //   // Thực hiện hành động cho 'Bốn'
+                //   ScaffoldMessenger.of(context).showSnackBar(
+                //     SnackBar(content: Text('Bạn đã chọn: Bốn')),
+                //   );
+                //   break;
               }
             },
             itemBuilder: (BuildContext context) {
@@ -209,7 +210,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_basket),
-            label: 'Đơn hàng',
+            label: 'Đơn mua',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

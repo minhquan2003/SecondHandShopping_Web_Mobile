@@ -118,11 +118,14 @@ const Chat = () => {
     <div className='w-full bg-main'>
         {user != null ? (
             <div className="flex items-center bg-#e0f7fa">
-                <img src={user.avatar_url == null ? nonAvata : user.avatar_url} alt="Avatar" className='rounded-full ml-5 mt-2 mb-2 ' style={{ border: '2px solid #eee', width: '50px', height: '50px' }} />
-                <p className="ml-3 text-xl font-bold">{user.name}</p>
+                <img src={user.avatar_url == null ? nonAvata : user.avatar_url} alt="Avatar" className=' ml-5 mt-2 mb-2 ' style={{ width: '50px', height: '50px' }} />
+                {/* <p className="ml-3 text-xl font-bold">{user.name}</p> */}
+                <h1 className="text-xl font-bold flex items-center bg-yellow-400 rounded-br-full rounded-tr-full">
+                    <span className='m-3'>{user.name}</span>
+                </h1>
             </div>
         ) : null}
-        <div className='bg-white h-[78%] overflow-y-auto' style={{ padding: '0px', flexGrow: 1 }}>
+        <div className='bg-white h-[70%] overflow-y-auto' style={{ padding: '0px', flexGrow: 1 }}>
             {conversation && userId ? (
                 <>
                     {messages.map((message) => (
@@ -191,7 +194,7 @@ const Chat = () => {
         </div>
         {conversation && userId && ( // Chỉ hiển thị phần gửi tin nhắn nếu có cuộc hội thoại
             <div className='h-[25%]' >
-                <div className='bg-white flex w-full items-center p-2'>
+                <div className='bg-white flex w-full items-center p-2 border-t-4 border-t-yellow-400'>
                     <label className="cursor-pointer" title="Đính kèm">
                         <FiPaperclip className="h-6 w-6 text-gray-600" /> {/* Biểu tượng kẹp giấy */}
                         <input
@@ -214,7 +217,9 @@ const Chat = () => {
                             <button onClick={() => {
                                 setMedia(null);
                                 setMediaPreview(null);
-                            }} className="text-red-500">Hủy chọn</button>
+                            }} className="text-white font-bold bg-red-500 rounded-full hover:bg-red-300">
+                                    <span className="m-2 rounded-full">Xoá</span>
+                                </button>
                         </div>
                     )}
                     <input
@@ -226,9 +231,10 @@ const Chat = () => {
                     <button
                         onClick={handleSend}
                         style={{ border: '2px solid #eee', width: '100px', height: '50px' }}
-                        className='bg-blue-600 text-white rounded-full border border-black mt-1 ml-2 flex items-center justify-center'
+                        className='bg-yellow-400 text-white font-bold hover:bg-yellow-500 rounded-full border border-black mt-1 ml-2 flex items-center justify-center'
                     >
-                        <FiSend className="h-5 w-5" /> {/* Biểu tượng gửi */}
+                        <FiSend className="h-5 w-5 font-bold" /> {/* Biểu tượng gửi */}
+                        Gửi
                     </button>
                 </div>
             </div>

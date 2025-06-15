@@ -93,7 +93,7 @@ const ListMessage = () => {
     };
 
     return (
-        <div style={{ width: '300px', borderRight: '1px solid #ccc'}}>
+        <div style={{ width: '350px', borderRight: '1px solid #ccc'}}>
             {/* <h2>Danh Sách Cuộc Hội Thoại</h2> */}
             {conversations.map((conversation, index) => {
                 const participantId = conversation.participant1 === userId ? conversation.participant2 : conversation.participant1;
@@ -107,9 +107,14 @@ const ListMessage = () => {
                     key={conversation._id} 
                     className="conversation relative" 
                     onClick={() => handleSelectConversation(conversation)} // Gửi cuộc hội thoại khi chọn
-                    style={{ cursor: 'pointer', padding: '10px', border: '1px solid #eee', borderRadius: '5px',
-                    backgroundColor: isSelected ? '#e0f7fa' : 'white', // Màu nền nổi bật nếu được chọn
-                    boxShadow: isSelected ? '0 4px 8px rgba(0, 0, 0, 0.2)' : 'none' // Đổ bóng nếu được chọn
+                    style={{ 
+                        cursor: 'pointer', 
+                        padding: '10px', 
+                        borderRight: isSelected ? '4px solid rgb(255, 188, 72)' : '1px solid #eee', // Đổi màu và độ dày border khi được chọn
+                        borderLeft: isSelected ? '4px solid rgb(255, 188, 72)' : '1px solid #eee',
+                        borderRadius: '30px',
+                        backgroundColor: isSelected ? '#e0f7fa' : 'white', // Màu nền nổi bật nếu được chọn
+                        boxShadow: isSelected ? '0 4px 8px rgba(0, 0, 0, 0.2)' : 'none', // Đổ bóng nếu được chọn
                     }}
                 >   
                     {user != null ? (
@@ -122,8 +127,8 @@ const ListMessage = () => {
                                         "Video" : 
                                         (conversation.lastMessage.endsWith('.png') ? 
                                             "Hình ảnh"
-                                            :(conversation.lastMessage.length > 12 ? 
-                                                `${conversation.lastMessage.substring(0, 12)}...` : 
+                                            :(conversation.lastMessage.length > 20 ? 
+                                                `${conversation.lastMessage.substring(0, 20)}...` : 
                                                 conversation.lastMessage
                                             )) }</p>
                                     <p className="ml-2">{conversation.lastMessageTimestamp ? formatDate(conversation.lastMessageTimestamp) : 'Chưa có tin nhắn'}</p>

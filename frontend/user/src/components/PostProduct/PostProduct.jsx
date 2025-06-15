@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { addProduct, getAllCountries } from "../../hooks/Products";
-import { getCategories, fetchSubcategories } from "../../hooks/Categories";
+import { getCategories, fetchSubcategories, fetchOrigin } from "../../hooks/Categories";
 import { useParams, useNavigate } from "react-router-dom";
 import { getProductById, updateOneProduct } from "../../hooks/Products";
+import { FiImage, FiVideo, FiUpload, FiBox, FiSave, FiLogOut } from 'react-icons/fi';
 
 const ProductUpload = () => {
   const userInfoString = sessionStorage.getItem("userInfo");
@@ -24,6 +25,8 @@ const ProductUpload = () => {
   const [countries, setCountries] = useState([]); // State cho quốc gia
   const [isOtherOrigin, setIsOtherOrigin] = useState(false);
   const [otherOrigin, setOtherOrigin] = useState("");
+  const [img, setimg] = useState("");
+  const [video, setvideo] = useState("");
 
   const [subcategories, setSubcategories] = useState([]); // State cho danh mục con
   const [selectedSubcategory, setSelectedSubcategory] = useState("");
@@ -45,9 +48,18 @@ const ProductUpload = () => {
           setQuantity(product.quantity);
           setBrand(product.brand);
           setCondition(product.condition);
+          fetchOrigin();
           setOrigin(product.origin);
           setWeight(product.weight);
           setSelectedCategory(product.category_id);
+          handleCategoryChange(product.category_id)
+          setSelectedSubcategory(product.subcategory_name)
+          const Media = product.image_url || product.video_url
+          const isVideo =
+            Media?.toLowerCase().endsWith(".mp4") ||
+            Media?.toLowerCase().endsWith(".mov") ||
+            Media?.toLowerCase().endsWith(".webm");
+          isVideo ? setvideo(product.video_url) : (setimg(product.image_url))
           setMediaUrl(product.image_url || product.video_url); // Lấy URL từ cả hai
         }
       } else {
@@ -108,6 +120,8 @@ const ProductUpload = () => {
     formData.append("cloud_name", "dd6pnq2is");
 
     try {
+      let url = ''
+      if (media) {
       const uploadUrl = media.type.startsWith("image/")
         ? "https://api.cloudinary.com/v1_1/dd6pnq2is/image/upload"
         : "https://api.cloudinary.com/v1_1/dd6pnq2is/video/upload";
@@ -119,7 +133,13 @@ const ProductUpload = () => {
 
       const uploadedMediaUrl = await response.json();
       setMediaUrl(uploadedMediaUrl.secure_url);
+      url = uploadedMediaUrl.secure_url
+    }
+      
       let partner = userInfo.role === "partner";
+
+      const urlVideo = url?.toLowerCase().endsWith(".mp4") ? url : '';
+      const urlImg = url?.toLowerCase().endsWith(".jpg") || url?.toLowerCase().endsWith(".png") ? url : '';
 
       const productData = {
         name,
@@ -129,12 +149,8 @@ const ProductUpload = () => {
         user_id: userInfo._id,
         category_id: selectedCategory,
         subcategory_name: selectedSubcategory,
-        image_url: media.type.startsWith("image/")
-          ? uploadedMediaUrl.secure_url
-          : "",
-        video_url: media.type.startsWith("video/")
-          ? uploadedMediaUrl.secure_url
-          : "",
+        image_url: productId ? (media ? urlImg : img) : urlImg,
+        video_url: productId ? (media ? urlVideo : img) : urlVideo,
         brand,
         condition,
         weight,
@@ -160,18 +176,32 @@ const ProductUpload = () => {
 
   return (
     <div className="max-w-4xl mx-auto mt-6 mb-6 p-6 bg-white shadow-lg rounded-lg">
-      <h2 className="text-2xl font-bold mb-6 text-center">Đăng Sản Phẩm Mới</h2>
+      {/* <h2 className="text-2xl font-bold mb-6 text-center">Đăng Sản Phẩm Mới</h2> */}
+      <h2 className="text-2xl font-bold mb-6 text-center text-yellow-400">
+          <FiUpload className="inline-block mr-2 mb-2 font-bold text-yellow-400" />
+          Đăng Sản Phẩm Mới
+      </h2>
       <div className="flex flex-col md:flex-row md:space-x-8">
         <div className="md:w-1/2 p-4 border border-gray-300 rounded-lg">
-          <h3 className="text-xl font-semibold mb-4">
+          {/* <h3 className="text-xl font-semibold mb-4">
             Chọn Hình Ảnh hoặc Video
+          </h3> */}
+          <h3 className="text-xl font-semibold mb-4 text-yellow-400">
+              <FiImage className="inline-block mr-2 mb-1 text-yellow-400" />
+              Hình Ảnh hoặc Video
           </h3>
-          <input
-            type="file"
-            accept="image/*,video/*"
-            onChange={handleMediaChange}
-            className="mb-4 border border-gray-300 rounded p-2 w-full"
-          />
+          <div className="mb-4">
+              <label className="flex items-center justify-center hover:underline hover:underline-yellow-400 cursor-pointer border border-gray-300 rounded p-2 w-full">
+                  <FiUpload className="mr-2 text-yellow-400" />
+                  <span>Chọn Hình Ảnh hoặc Video</span>
+                  <input
+                      type="file"
+                      accept="image/*,video/*"
+                      onChange={handleMediaChange}
+                      className="hidden"
+                  />
+              </label>
+          </div>
           {media && (
             <div>
               <p className="text-sm text-gray-700">Đã chọn: {media.name}</p>
@@ -207,7 +237,11 @@ const ProductUpload = () => {
           )}
         </div>
         <div className="md:w-1/2 p-4 border border-gray-300 rounded-lg">
-          <h3 className="text-xl font-semibold mb-4">Thông Tin Sản Phẩm</h3>
+          {/* <h3 className="text-xl font-semibold mb-4">Thông Tin Sản Phẩm</h3> */}
+          <h3 className="text-xl font-semibold mb-4 text-yellow-400">
+              <FiBox className="inline-block mr-2 text-yellow-400 mb-1" />
+              Thông Tin Sản Phẩm
+          </h3>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <input
@@ -344,23 +378,43 @@ const ProductUpload = () => {
               </select>
             </div>
             {productId ? (
+              // <div className="flex">
+              //   <button className="border border-green-600 bg-gray-100 text-xl font-bold text-green-600 p-2 rounded hover:bg-gray-300 transition duration-200 w-full">
+              //     Lưu
+              //   </button>
+              //   <button
+              //     onClick={() => navigate(`/editSale/${userInfo._id}`)}
+              //     className="bg-blue-500 ml-6 text-white p-2 rounded hover:bg-blue-600 transition duration-200 w-full"
+              //   >
+              //     Thoát
+              //   </button>
+              // </div>
               <div className="flex">
-                <button className="border border-green-600 bg-gray-100 text-xl font-bold text-green-600 p-2 rounded hover:bg-gray-300 transition duration-200 w-full">
-                  Lưu
-                </button>
-                <button
-                  onClick={() => navigate(`/editSale/${userInfo._id}`)}
-                  className="bg-blue-500 ml-6 text-white p-2 rounded hover:bg-blue-600 transition duration-200 w-full"
-                >
-                  Thoát
-                </button>
+                  <button className="bg-yellow-400 text-xl font-bold text-white p-2 rounded hover:bg-yellow-300 transition duration-200 w-full">
+                      <FiSave className="inline-block mr-2 mb-1" />
+                      Lưu
+                  </button>
+                  <button
+                      onClick={() => navigate(`/editSale/${userInfo._id}`)}
+                      className="bg-red-500 ml-6 text-white p-2 rounded hover:bg-red-400 transition duration-200 w-full"
+                  >
+                      <FiLogOut className="inline-block mr-2 mb-1" />
+                      Thoát
+                  </button>
               </div>
             ) : (
+              // <button
+              //   type="submit"
+              //   className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-200 w-full"
+              // >
+              //   Đăng Sản Phẩm
+              // </button>
               <button
-                type="submit"
-                className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-200 w-full"
+                  type="submit"
+                  className="bg-yellow-400 text-white p-2 rounded hover:bg-yellow-300 transition duration-200 w-full"
               >
-                Đăng Sản Phẩm
+                  <FiUpload className="inline-block mr-2 text-white mb-1" />
+                  <span className="font-bold">Đăng Sản Phẩm</span>
               </button>
             )}
           </form>
