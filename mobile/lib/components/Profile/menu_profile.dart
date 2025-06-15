@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/components/Home/main_screen.dart';
 import 'package:provider/provider.dart';
 import '../UI/menu_item.dart';
 import '../../providers/login_info.dart';
@@ -7,6 +8,8 @@ import '../../providers/userProfile_provider.dart';
 import '../order/sale_order.dart';
 import '../Order/purchase_order.dart';
 import '../Feedback/form_feedback.dart';
+import '../../providers/login_info.dart';
+import '../Login/login.dart';
 
 class MenuProfile extends StatefulWidget {
   @override
@@ -194,11 +197,26 @@ class _MenuProfileState extends State<MenuProfile> {
               },
             ),
             MenuProfileItem(
-              text: 'Đăng xuất',
+              text: userInfo.name == null ? 'Đăng nhập' : 'Đăng xuất',
               backgroundColor: Colors.white,
-              icon: Icons.logout,
+              icon: userInfo.name == null ? Icons.login : Icons.logout,
               textColor: Colors.red,
               iconBackgroundColor: Colors.red,
+              onTap: () {
+                if (userInfo.name == null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Login()),
+                  );
+                } else {
+                  Provider.of<LoginInfo>(context, listen: false).logout();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => MainScreen()),
+                    (Route<dynamic> route) => false, // Loại bỏ tất cả các route cũ
+                  );
+                }
+              },
             ),
           ],
         ),

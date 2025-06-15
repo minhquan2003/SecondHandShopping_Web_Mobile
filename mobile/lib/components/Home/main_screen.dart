@@ -14,6 +14,7 @@ import '../Regulation/regulation.dart';
 import '../Notification/notification.dart';
 import '../UI/searchbar_widget.dart';
 import '../Search/search_screen.dart';
+import '../Login/login.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -207,8 +208,8 @@ class _MainScreenState extends State<MainScreen> {
             label: 'Trang chủ',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: Icon(Icons.shopping_basket),
+            label: 'Đơn hàng',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

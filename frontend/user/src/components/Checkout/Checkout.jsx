@@ -946,6 +946,7 @@ const Checkout = () => {
                       >
                         <div className="flex items-center">
                           {/* <img
+                          {/* <img
                             src={item.product_imageUrl}
                             alt={item.product_name}
                             className="w-16 h-16 object-cover rounded mr-4"
