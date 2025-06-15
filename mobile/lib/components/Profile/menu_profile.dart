@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/components/Home/main_screen.dart';
+import 'package:mobile/components/SellerPage/edit_seller_page.dart';
+import 'package:mobile/components/SellerPage/seller_page.dart';
 import 'package:provider/provider.dart';
 import '../UI/menu_item.dart';
 import '../../providers/login_info.dart';
@@ -144,6 +146,14 @@ class _MenuProfileState extends State<MenuProfile> {
               icon: Icons.post_add,
               textColor: Colors.black,
               iconBackgroundColor: Colors.red,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditSellerPage(),
+                  ),
+                );
+              },
             ),
             MenuProfileItem(
               text: 'Đánh giá của tôi',

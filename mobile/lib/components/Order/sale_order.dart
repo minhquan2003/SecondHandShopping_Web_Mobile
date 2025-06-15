@@ -110,7 +110,9 @@ class _SaleOrderState extends State<SaleOrder> with SingleTickerProviderStateMix
           tabs: statuses.map((status) => Tab(text: status)).toList(),
         ),
       ),
-      body: TabBarView(
+      body: loginInfo.name == null
+          ? Center(child: Text('Hãy đăng nhập để có trải nghiệm tốt nhất'))
+          :  TabBarView(
         controller: _tabController,
         children: statuses.map((status) {
           final filteredOrders = getFilteredOrders(status);
