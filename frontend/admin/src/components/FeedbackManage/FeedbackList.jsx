@@ -15,6 +15,7 @@ const FeedbackList = () => {
     subject: "",
     message: "",
   });
+  const [refetchTrigger, setRefetchTrigger] = useState(0);
 
   const {
     feedbacks = [],
@@ -22,20 +23,21 @@ const FeedbackList = () => {
     error,
     totalPages,
     ReplyFeedback,
-  } = useFeedback(page, fieldSort, orderSort, searchKey);
+  } = useFeedback(page, fieldSort, orderSort, searchKey, refetchTrigger);
 
   const handleReplySend = async () => {
     const { feedbackId, subject, message } = replyData;
     if (!subject || !message) {
-      alert("Please fill in both subject and message.");
+      alert("Điền cả tiêu đề mà nội dung");
       return;
     }
 
     const result = await ReplyFeedback(feedbackId, subject, message);
     if (result) {
-      alert("Reply sent successfully!");
+      alert("Gửi thành công");
       setReplyingId(null);
       setReplyData({ feedbackId: "", subject: "", message: "" });
+      setRefetchTrigger((prev) => prev + 1);
     }
   };
 
@@ -65,10 +67,6 @@ const FeedbackList = () => {
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
 
-      <h2 className="text-2xl font-bold text-blue-600 mb-4 text-center">
-        Feedback List
-      </h2>
-
       <div className="flex items-center">
         {/* <select
           className="text-sm border border-black p-2 mb-4"
@@ -85,7 +83,7 @@ const FeedbackList = () => {
               className="text-sm w-full border-none bg-transparent px-4 py-1 text-gray-400 outline-none focus:outline-none "
               type="search"
               name="search"
-              placeholder="Search by username..."
+              placeholder="Tìm kiếm theo tên người gửi..."
               value={searchKey}
               onChange={(e) => setSearchKey(e.target.value)}
             />
@@ -112,7 +110,7 @@ const FeedbackList = () => {
               </th>
               <th className="border px-4 py-2 text-center whitespace-nowrap">
                 <span className="text-sm inline-flex items-center gap-x-2">
-                  Username <FaSort onClick={() => handleSort("username")} />
+                  Người gửi <FaSort onClick={() => handleSort("username")} />
                 </span>
               </th>
               <th className="border px-4 py-2 text-center whitespace-nowrap">
@@ -122,11 +120,11 @@ const FeedbackList = () => {
               </th>
               <th className="border px-4 py-2 text-center whitespace-nowrap">
                 <span className="text-sm inline-flex items-center gap-x-2">
-                  Message <FaSort onClick={() => handleSort("message")} />
+                  Nội dung <FaSort onClick={() => handleSort("message")} />
                 </span>
               </th>
               <th className="border px-4 py-2 text-center whitespace-nowrap">
-                Reply
+                Phản hồi
               </th>
             </tr>
           </thead>
@@ -151,26 +149,34 @@ const FeedbackList = () => {
                     {feedback.message}
                   </td>
                   <td className="text-sm px-4 py-2 text-center">
-                    <button
-                      className="bg-green-500 text-white px-2 py-1 text-sm rounded"
-                      onClick={() => {
-                        setReplyingId(feedback._id);
-                        setReplyData({
-                          feedbackId: feedback._id,
-                          subject: "",
-                          message: "",
-                        });
-                      }}
-                    >
-                      Reply
-                    </button>
+                    {!feedback.replied && (
+                      <button
+                        className="bg-red-500 text-white px-2 py-1 text-sm rounded"
+                        onClick={() => {
+                          setReplyingId(feedback._id);
+                          setReplyData({
+                            feedbackId: feedback._id,
+                            subject: "",
+                            message: "",
+                          });
+                        }}
+                      >
+                        Trả lời
+                      </button>
+                    )}
+
+                    {feedback.replied && (
+                      <div className="mt-2">
+                        <span className="text-green-600">Đã trả lời</span>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
                 <td colSpan="3" className="p-4 text-center">
-                  No feedbacks available.
+                  Không có đóng góp nào.
                 </td>
               </tr>
             )}
@@ -182,11 +188,11 @@ const FeedbackList = () => {
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto">
             <h3 className="text-lg font-semibold mb-4 text-blue-600">
-              Reply Feedback
+              Trả lời
             </h3>
             <input
               type="text"
-              placeholder="Subject"
+              placeholder="Tiêu đề"
               className="border w-full px-3 py-2 mb-3 text-sm rounded"
               value={replyData.subject}
               onChange={(e) =>
@@ -197,7 +203,7 @@ const FeedbackList = () => {
               }
             />
             <textarea
-              placeholder="Message"
+              placeholder="Nội dung"
               className="border w-full px-3 py-2 mb-3 text-sm rounded"
               rows={4}
               value={replyData.message}
@@ -213,13 +219,13 @@ const FeedbackList = () => {
                 className="bg-blue-500 text-white px-4 py-2 text-sm rounded hover:bg-blue-700"
                 onClick={handleReplySend}
               >
-                Send
+                Gửi
               </button>
               <button
                 className="text-red-500 px-4 py-2 text-sm rounded border border-red-500 hover:bg-red-200"
                 onClick={() => setReplyingId(null)}
               >
-                Cancel
+                Hủy
               </button>
             </div>
           </div>
@@ -233,17 +239,17 @@ const FeedbackList = () => {
           disabled={page === 1}
           onClick={() => setPage(page - 1)}
         >
-          Previous
+          Trước
         </button>
         <span className="text-sm px-3 py-1 mx-2">
-          Page {page} of {totalPages}
+          Trang {page} của {totalPages}
         </span>
         <button
           className="text-sm px-3 py-1 mx-1 bg-gray-200 rounded disabled:opacity-50"
           disabled={page >= totalPages}
           onClick={() => setPage(page + 1)}
         >
-          Next
+          Sau
         </button>
       </div>
     </div>

@@ -18,10 +18,10 @@ const NotificationList = () => {
 
   const handleDeleteNotification = () => {
     if (selectedCheckBox.length === 0) {
-      alert("Please select at least one account.");
+      alert("Chọn ít nhất 1 thông báo");
       return;
     }
-    if (window.confirm("Are you sure you want to deny selected accounts")) {
+    if (window.confirm("Bạn có muốn xóa thông báo")) {
       removeNotification(selectedCheckBox);
       setSelectedCheckBox([]);
     }
@@ -74,9 +74,7 @@ const NotificationList = () => {
           <option value="choose" disabled>
             Choose action...
           </option>
-          <option value="deleteRolePartners">
-            Delete selected notifications
-          </option>
+          <option value="deleteRolePartners">Xóa các thông báo</option>
         </select>
       </div>
 
@@ -94,8 +92,8 @@ const NotificationList = () => {
                   onChange={handleSelectAll}
                 />
               </th>
-              <th className="text-sm border px-2 py-2">Notification</th>
-              <th className="text-sm border px-4 py-2">Detail</th>
+              <th className="text-sm border px-2 py-2">Nội dung thông báo</th>
+              <th className="text-sm border px-4 py-2">Chi tiết</th>
             </tr>
           </thead>
           <tbody>
@@ -126,7 +124,7 @@ const NotificationList = () => {
             ) : (
               <tr>
                 <td colSpan="3" className="p-4 text-center">
-                  No notifications available.
+                  Không có thông báo.
                   {console.log(notifications)}
                 </td>
               </tr>
@@ -142,17 +140,17 @@ const NotificationList = () => {
           disabled={page === 1}
           onClick={() => setPage(page - 1)}
         >
-          Previous
+          Trước
         </button>
         <span className="text-sm px-3 py-1 mx-2">
-          Page {page} of {totalPages}
+          Trang {page} của {totalPages}
         </span>
         <button
           className="text-sm px-3 py-1 mx-1 bg-gray-200 rounded disabled:opacity-50"
           disabled={page >= totalPages}
           onClick={() => setPage(page + 1)}
         >
-          Next
+          Sau
         </button>
       </div>
 
@@ -164,7 +162,7 @@ const NotificationList = () => {
               <tbody>
                 <tr>
                   <td className="text-sm border px-4 py-2 font-bold">
-                    User Received
+                    Người nhận
                   </td>
                   <td className="text-sm border px-4 py-2">
                     {selectedNotification.user_id_receive}
@@ -172,16 +170,10 @@ const NotificationList = () => {
                 </tr>
                 <tr>
                   <td className="text-sm border px-4 py-2 font-bold">
-                    Content
+                    Nội dung
                   </td>
                   <td className="text-sm border px-4 py-2">
                     {selectedNotification.message}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="text-sm border px-4 py-2 font-bold">Read?</td>
-                  <td className="text-sm border px-4 py-2">
-                    {selectedNotification.readed}
                   </td>
                 </tr>
               </tbody>
@@ -191,7 +183,7 @@ const NotificationList = () => {
                 onClick={closePopup}
                 className="bg-gray-200 px-4 py-2 rounded"
               >
-                Close
+                Đóng
               </button>
             </div>
           </div>

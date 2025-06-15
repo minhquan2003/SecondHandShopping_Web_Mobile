@@ -27,7 +27,7 @@ const PurchaseOverview = () => {
             <div className="text-lg font-medium text-white">
               {overviewData.totalOrders}
             </div>
-            <div className="text-sm text-white">Total Orders</div>
+            <div className="text-sm text-white">Tổng đơn hàng</div>
           </div>
         </div>
 
@@ -40,7 +40,7 @@ const PurchaseOverview = () => {
             <div className="text-lg font-medium text-white">
               {overviewData.totalMoney}
             </div>
-            <div className="text-sm text-white">Total Amount</div>
+            <div className="text-sm text-white">Tổng thanh toán</div>
           </div>
         </div>
 
@@ -53,7 +53,7 @@ const PurchaseOverview = () => {
             <div className="text-lg font-medium text-white">
               {overviewData.totalCancelled}
             </div>
-            <div className="text-sm text-white">Cancelled Orders</div>
+            <div className="text-sm text-white">Đơn hàng bị hủy</div>
           </div>
         </div>
 
@@ -66,7 +66,7 @@ const PurchaseOverview = () => {
             <div className="text-lg font-medium text-white">
               {overviewData.totalSuccessful}
             </div>
-            <div className="text-sm text-white">Successfull Orders</div>
+            <div className="text-sm text-white">Đơn hàng thành công</div>
           </div>
         </div>
       </div>

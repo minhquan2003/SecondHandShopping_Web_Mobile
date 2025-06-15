@@ -3,6 +3,7 @@ import useUser from "../../hooks/useUser";
 import { TbListDetails } from "react-icons/tb";
 import { FaSort } from "react-icons/fa";
 import { FaSearch } from "react-icons/fa";
+import NotificationModal from "../ui/NotificationModal";
 
 const BanUserList = () => {
   const [page, setPage] = useState(1);
@@ -12,6 +13,9 @@ const BanUserList = () => {
   const [fieldSort, setFieldSort] = useState("");
   const [orderSort, setOrderSort] = useState("asc");
   const [searchKey, setSearchKey] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const [onConfirmAction, setOnConfirmAction] = useState(null);
 
   const {
     users = [],
@@ -27,26 +31,37 @@ const BanUserList = () => {
     setFieldSort(field);
   };
 
+  const showModal = (message, onConfirm) => {
+    setModalMessage(message);
+    setOnConfirmAction(() => () => {
+      onConfirm();
+      setModalOpen(false);
+    });
+    setModalOpen(true);
+  };
+
   const handleUnBanUsers = () => {
     if (selectedCheckBox.length === 0) {
-      alert("Please choose at least one user");
+      showModal("Vui lòng chọn ít nhất một người dùng!", () => {});
       return;
     }
-    if (window.confirm("Are you sure you want to ban selected user")) {
+
+    showModal("Bạn có chắc muốn bỏ khóa người dùng đã chọn?", () => {
       unbanUser(selectedCheckBox);
       setSelectedCheckBox([]);
-    }
+    });
   };
 
   const handleDeleteSelected = () => {
     if (selectedCheckBox.length === 0) {
-      alert("Please choose at least one user");
+      showModal("Vui lòng chọn ít nhất một người dùng!", () => {});
       return;
     }
-    if (window.confirm("Are you sure you want to delete selected users")) {
+
+    showModal("Bạn có chắc muốn xóa người dùng đã chọn?", () => {
       deleteUsers(selectedCheckBox);
       setSelectedCheckBox([]);
-    }
+    });
   };
 
   const handleViewDetails = (user) => {
@@ -270,6 +285,12 @@ const BanUserList = () => {
           </div>
         </div>
       )}
+      <NotificationModal
+        isOpen={modalOpen}
+        message={modalMessage}
+        onConfirm={onConfirmAction}
+        onCancel={() => setModalOpen(false)}
+      />
     </div>
   );
 };

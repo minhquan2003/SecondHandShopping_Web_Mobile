@@ -24,11 +24,11 @@ const NotificationPost = ({ closeForm }) => {
 
     try {
       const response = await postNotification(payload);
-      setSuccessMessage("Notification posted successfully!");
+      setSuccessMessage("Thông báo gửi thành công!");
       console.log("Posted Notification:", response);
       window.location.reload();
     } catch (err) {
-      console.error("Failed to post notification:", err.message);
+      console.error("Thông báo gửi thất bại:", err.message);
     }
   };
 
@@ -36,7 +36,7 @@ const NotificationPost = ({ closeForm }) => {
     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
       <div className="bg-white p-6 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
-          Create new Notification
+          Tạo thông báo mới
         </h2>
         <form
           onSubmit={handleSubmit}
@@ -48,7 +48,7 @@ const NotificationPost = ({ closeForm }) => {
               htmlFor="message"
               className="block text-sm font-medium text-gray-700"
             >
-              Message:
+              Nội dung:
             </label>
             <input
               id="message"
@@ -57,7 +57,7 @@ const NotificationPost = ({ closeForm }) => {
               onChange={(e) => setMessage(e.target.value)}
               required
               className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter your notification message"
+              placeholder="Nội dung"
             />
           </div>
 
@@ -99,14 +99,14 @@ const NotificationPost = ({ closeForm }) => {
                 loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
               } focus:outline-none w-full`}
             >
-              {loading ? "Posting..." : "Post Notification"}
+              {loading ? "Posting..." : "Gửi"}
             </button>
             <button
               type="button"
               className="mt-4 text-gray-500"
               onClick={closeForm}
             >
-              Cancel
+              Hủy
             </button>
           </div>
         </form>

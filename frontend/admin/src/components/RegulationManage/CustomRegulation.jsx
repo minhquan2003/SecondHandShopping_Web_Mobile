@@ -19,10 +19,10 @@ const EditRegulationModal = ({ regulation, onClose, onSave }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
       <div className="bg-white p-6 rounded shadow-md w-[400px]">
-        <h2 className="text-xl font-bold mb-4">Edit Regulation</h2>
+        <h2 className="text-xl font-bold mb-4">Sửa quy định</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-sm font-medium">Title</label>
+            <label className="block text-sm font-medium">Tiêu đề</label>
             <input
               className="w-full border border-gray-300 rounded px-3 py-2"
               value={title}
@@ -31,7 +31,7 @@ const EditRegulationModal = ({ regulation, onClose, onSave }) => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium">Description</label>
+            <label className="block text-sm font-medium">mô tả</label>
             <textarea
               className="w-full border border-gray-300 rounded px-3 py-2"
               value={description}
@@ -45,13 +45,13 @@ const EditRegulationModal = ({ regulation, onClose, onSave }) => {
               onClick={onClose}
               className="px-4 py-2 bg-gray-400 text-white rounded"
             >
-              Cancel
+              Hủy
             </button>
             <button
               type="submit"
               className="px-4 py-2 bg-green-500 text-white rounded"
             >
-              Save
+              Lưu
             </button>
           </div>
         </form>

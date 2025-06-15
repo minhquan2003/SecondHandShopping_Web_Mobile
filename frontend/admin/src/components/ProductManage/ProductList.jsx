@@ -29,10 +29,10 @@ const ProductList = () => {
 
   const handleHide = () => {
     if (selectedCheckBox.length === 0) {
-      alert("Please select at least one product.");
+      alert("Chọn ít nhất 1 sản phẩm");
       return;
     }
-    if (window.confirm("Are you sure you want to hide selected products?")) {
+    if (window.confirm("Bạn có muốn ẨN?")) {
       hideProducts(selectedCheckBox);
       setSelectedCheckBox([]); // Xóa danh sách đã chọn sau khi xóa
     }
@@ -66,10 +66,10 @@ const ProductList = () => {
 
   const handleDeleteSelected = () => {
     if (selectedCheckBox.length === 0) {
-      alert("Please select at least one product.");
+      alert("Chọn ít nhất 1 sản phẩm");
       return;
     }
-    if (window.confirm("Are you sure you want to delete selected products?")) {
+    if (window.confirm("Bạn có muốn XÓA")) {
       deleteSelectedProducts(selectedCheckBox);
       setSelectedCheckBox([]);
     }
@@ -96,10 +96,10 @@ const ProductList = () => {
           }}
         >
           <option value="choose" disabled>
-            Choose action...
+            Chọn hành động
           </option>
-          <option value="hideProducts">Hide selected products</option>
-          <option value="deleteProducts">Delete selected product</option>
+          <option value="hideProducts">Ẩn các sản phẩm</option>
+          <option value="deleteProducts">Xóa các sản phẩm</option>
         </select>
         <div className="text-sm w-full flex border-2 border-gray-200 mb-4 p-1 ml-4">
           <div className="flex w-full mx-10 rounded bg-white">
@@ -107,7 +107,7 @@ const ProductList = () => {
               className=" w-full border-none bg-transparent px-4 py-1 text-gray-400 outline-none focus:outline-none "
               type="search"
               name="search"
-              placeholder="Search by username..."
+              placeholder="Tìm kiếm theo tên người đăng..."
               value={searchKey}
               onChange={(e) => setSearchKey(e.target.value)}
             />
@@ -133,36 +133,36 @@ const ProductList = () => {
                 />
               </th>
               <th className="text-sm border px-4 py-2 text-center whitespace-nowrap">
-                Image
+                Ảnh
               </th>
               <th className="text-sm border px-4 py-2 text-center whitespace-nowrap">
                 <span className="inline-flex items-center gap-x-2">
-                  Name <FaSort onClick={() => handleSort("name")} />
+                  Người bán <FaSort onClick={() => handleSort("name")} />
                 </span>
               </th>
               <th className="text-sm border px-4 py-2 text-center whitespace-nowrap">
                 <span className="inline-flex items-center gap-x-2">
-                  Category{" "}
+                  Danh mục{" "}
                   <FaSort onClick={() => handleSort("category_name")} />
                 </span>
               </th>
               <th className="text-sm border px-4 py-2 text-center whitespace-nowrap">
                 <span className="inline-flex items-center gap-x-2">
-                  Price <FaSort onClick={() => handleSort("price")} />
+                  Giá <FaSort onClick={() => handleSort("price")} />
                 </span>
               </th>
               <th className="text-sm border px-4 py-2 text-center whitespace-nowrap">
                 <span className="inline-flex items-center gap-x-2">
-                  Quantity <FaSort onClick={() => handleSort("quantity")} />
+                  Số lượng <FaSort onClick={() => handleSort("quantity")} />
                 </span>
               </th>
               <th className="text-sm border px-4 py-2 text-center whitespace-nowrap">
                 <span className="inline-flex items-center gap-x-2">
-                  Posted By <FaSort onClick={() => handleSort("username")} />
+                  Ngày đăng <FaSort onClick={() => handleSort("createAt")} />
                 </span>
               </th>
               <th className="text-sm border px-4 py-2 text-center whitespace-nowrap">
-                Detail
+                Chi tiết
               </th>
             </tr>
           </thead>
@@ -195,7 +195,7 @@ const ProductList = () => {
                     {product.quantity}
                   </td>
                   <td className="text-sm border px-4 py-2">
-                    {product.username}
+                    {new Date(product.createdAt).toLocaleString("vi-VN")}
                   </td>
                   <td className="border px-2 py-2 text-center">
                     <button
@@ -210,7 +210,7 @@ const ProductList = () => {
             ) : (
               <tr>
                 <td colSpan="3" className="p-4 text-center">
-                  No products available.
+                  Không có sản phẩm nào cả.
                 </td>
               </tr>
             )}
@@ -225,17 +225,17 @@ const ProductList = () => {
           disabled={page === 1}
           onClick={() => setPage(page - 1)}
         >
-          Previous
+          Trước
         </button>
         <span className="text-sm px-3 py-1 mx-2">
-          Page {page} of {totalPages}
+          Trang {page} của {totalPages}
         </span>
         <button
           className="text-sm px-3 py-1 mx-1 bg-gray-200 rounded disabled:opacity-50"
           disabled={page >= totalPages}
           onClick={() => setPage(page + 1)}
         >
-          Next
+          Sau
         </button>
       </div>
 
@@ -248,25 +248,28 @@ const ProductList = () => {
             >
               <IoClose size={24} />
             </button>
-            <h3 className="text-xl font-bold mb-4">Product Details</h3>
+            <h3 className="text-xl font-bold mb-4">Chi tiết sản phẩm</h3>
             <p>
-              <strong>Name:</strong> {selectedProduct.name}
+              <strong>Tên sản phẩm:</strong> {selectedProduct.name}
             </p>
             <p>
-              <strong>Category:</strong> {selectedProduct.category_name}
+              <strong>Người đăng:</strong> {selectedProduct.username}
             </p>
             <p>
-              <strong>Price:</strong> {selectedProduct.price.toLocaleString()}{" "}
-              VND
+              <strong>Danh mục:</strong> {selectedProduct.category_name}
             </p>
             <p>
-              <strong>Quantity:</strong> {selectedProduct.quantity}
+              <strong>Giá:</strong> {selectedProduct.price.toLocaleString()} VND
             </p>
             <p>
-              <strong>Description:</strong> {selectedProduct.description}
+              <strong>Số lượng:</strong> {selectedProduct.quantity}
             </p>
             <p>
-              <strong>Posted By:</strong> {selectedProduct.username}
+              <strong>Mô tả:</strong> {selectedProduct.description}
+            </p>
+            <p>
+              <strong>Ngày đăng:</strong>{" "}
+              {new Date(selectedProduct.createdAt).toLocaleString("vi-VN")}
             </p>
             <img
               src={selectedProduct.image_url}

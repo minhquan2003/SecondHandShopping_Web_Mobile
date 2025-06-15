@@ -17,13 +17,12 @@ const RegulationManage = () => {
 
   return (
     <div className="w-5/6 ml-[16.6666%] p-4 bg-gray-100 rounded-md">
-      <h2 className="text-2xl font-semibold mb-4 pl-4">Regulation List</h2>
       <div className="mt-4 pl-4">
         <button
           onClick={() => openCategoryForm()}
           className="bg-green-500 text-white px-4 py-2 rounded"
         >
-          Create New Regulation
+          Tạo quy định mới
         </button>
       </div>
       <div className="mb-6">

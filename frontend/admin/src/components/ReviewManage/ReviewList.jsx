@@ -64,9 +64,9 @@ const ReviewList = () => {
           }}
         >
           <option value="choose" disabled>
-            Choose action...
+            Chọn hành động
           </option>
-          <option value="deleteReviews">Delete selected reviews</option>
+          <option value="deleteReviews">Xóa đánh giá</option>
         </select>
         <div className="w-full flex border-2 border-gray-200 mb-4 p-1 ml-4">
           <div className="flex w-full mx-10 rounded bg-white">
@@ -74,7 +74,7 @@ const ReviewList = () => {
               className="text-sm w-full border-none bg-transparent px-4 py-1 text-gray-400 outline-none focus:outline-none "
               type="search"
               name="search"
-              placeholder="Search by buyer name..."
+              placeholder="Tìm kiếm theo tên người đánh giá..."
               value={searchKey}
               onChange={(e) => setSearchKey(e.target.value)}
             />
@@ -100,32 +100,33 @@ const ReviewList = () => {
                 />
               </th>
               <th className="text-sm px-4 py-2 text-center font-bold border">
-                Product Image
+                Ảnh sản phẩm
               </th>
               <th className="border px-4 py-2 text-center whitespace-nowrap">
                 <span className="text-sm inline-flex items-center gap-x-2">
-                  Product Name{" "}
-                  <FaSort onClick={() => handleSort("product_name")} />
+                  Sản phẩm <FaSort onClick={() => handleSort("product_name")} />
                 </span>
               </th>
               <th className="border px-4 py-2 text-center whitespace-nowrap">
                 <span className="text-sm inline-flex items-center gap-x-2">
-                  User Name <FaSort onClick={() => handleSort("username")} />
+                  Người đánh giá{" "}
+                  <FaSort onClick={() => handleSort("username")} />
                 </span>
               </th>
               <th className="border px-4 py-2 text-center whitespace-nowrap">
                 <span className="text-sm inline-flex items-center gap-x-2">
-                  Rating <FaSort onClick={() => handleSort("rating")} />
+                  Xếp hạng <FaSort onClick={() => handleSort("rating")} />
                 </span>
               </th>
               <th className="border px-4 py-2 text-center whitespace-nowrap">
                 <span className="text-sm inline-flex items-center gap-x-2">
-                  Content <FaSort onClick={() => handleSort("comment")} />
+                  Nội dung <FaSort onClick={() => handleSort("comment")} />
                 </span>
               </th>
               <th className="border px-4 py-2 text-center whitespace-nowrap">
                 <span className="text-sm inline-flex items-center gap-x-2">
-                  Review Date <FaSort onClick={() => handleSort("createdAt")} />
+                  Ngày đánh giá{" "}
+                  <FaSort onClick={() => handleSort("createdAt")} />
                 </span>
               </th>
             </tr>
@@ -157,14 +158,14 @@ const ReviewList = () => {
                   <td className="text-sm border px-4 py-2">{review.rating}</td>
                   <td className="text-sm border px-4 py-2">{review.comment}</td>
                   <td className="text-sm border px-4 py-2">
-                    {new Date(review.createdAt).toLocaleString()}
+                    {new Date(review.createdAt).toLocaleString("vi-VN")}
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
                 <td colSpan="3" className="p-4 text-center">
-                  No categories available.
+                  Không có đánh giá.
                 </td>
               </tr>
             )}
@@ -179,17 +180,17 @@ const ReviewList = () => {
           disabled={page === 1}
           onClick={() => setPage(page - 1)}
         >
-          Previous
+          Trước
         </button>
         <span className="px-3 py-1 mx-2">
-          Page {page} of {totalPages}
+          Trang {page} của {totalPages}
         </span>
         <button
           className="px-3 py-1 mx-1 bg-gray-200 rounded disabled:opacity-50"
           disabled={page >= totalPages}
           onClick={() => setPage(page + 1)}
         >
-          Next
+          Sau
         </button>
       </div>
     </div>

@@ -12,8 +12,21 @@ const updateProfile = async (id, info) => {
     const data = response.data;
     return data;
   } catch (error) {
-    console.error("Error fetching cart items:", error);
-    throw error; // Ném lỗi để có thể xử lý ở nơi gọi hàm này
+    if (error.response) {
+      // Server responded with a status code outside 2xx
+      console.error("Server responded with error:", {
+        status: error.response.status,
+        data: error.response.data,
+        headers: error.response.headers,
+      });
+    } else if (error.request) {
+      // Request was made but no response received
+      console.error("No response received:", error.request);
+    } else {
+      // Error setting up the request
+      console.error("Error setting up request:", error.message);
+    }
+    throw error;
   }
 };
 

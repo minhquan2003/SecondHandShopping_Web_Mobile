@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useTopOrderProduct } from "../../hooks/useDashboard";
 
 const TopTenBuyer = () => {
-  const [month, setMonth] = useState(12);
-  const [year, setYear] = useState(2024);
+  const [month, setMonth] = useState(6);
+  const [year, setYear] = useState(2025);
   const { topOrderProducts, loading, error } = useTopOrderProduct(month, year);
 
   const handleMonthChange = (e) => {

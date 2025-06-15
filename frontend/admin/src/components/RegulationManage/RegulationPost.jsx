@@ -38,19 +38,17 @@ const RegulationPost = ({ onRegulationPosted, closeForm }) => {
     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
       <div className="bg-white p-6 rounded-lg shadow-lg">
         <h1 className="text-2xl text-center font-semibold mb-4">
-          Create New Regulation
+          Tạo quy định mới
         </h1>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         {success && (
-          <p className="text-green-500 text-center mb-4">
-            Regulation posted successfully!
-          </p>
+          <p className="text-green-500 text-center mb-4">Tạo thành công!</p>
         )}
 
         <form onSubmit={handlePostRegulation} className="space-y-10 mx-10">
           <div>
             <label htmlFor="title" className="block text-sm text-gray-700 mb-2">
-              Title
+              Tiêu đề
             </label>
             <input
               type="text"
@@ -68,7 +66,7 @@ const RegulationPost = ({ onRegulationPosted, closeForm }) => {
               htmlFor="description"
               className="block text-sm text-gray-700 mb-2"
             >
-              Description
+              Mô tả
             </label>
             <textarea
               id="description"
@@ -86,14 +84,14 @@ const RegulationPost = ({ onRegulationPosted, closeForm }) => {
               className="w-full py-2 px-4 bg-blue-500 text-white rounded-md focus:outline-none hover:bg-blue-600 transition duration-300"
               disabled={loading}
             >
-              {loading ? "Posting..." : "Post Regulation"}
+              {loading ? "Posting..." : "Tạo"}
             </button>
             <button
               type="button"
               className="mr-4 text-gray-500"
               onClick={closeForm}
             >
-              Cancel
+              Hủy
             </button>
           </div>
         </form>

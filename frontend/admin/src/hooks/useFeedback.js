@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const useFeedback = (page = 1, fieldSort, orderSort, searchKey) => {
+const useFeedback = (
+  page = 1,
+  fieldSort,
+  orderSort,
+  searchKey,
+  refetchTrigger = 0
+) => {
   const [feedbacks, setFeedbacks] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -46,7 +52,7 @@ const useFeedback = (page = 1, fieldSort, orderSort, searchKey) => {
     };
 
     fetchFeedback();
-  }, [page, fieldSort, orderSort, searchKey]);
+  }, [page, fieldSort, orderSort, searchKey, refetchTrigger]);
 
   const ReplyFeedback = async (feedbackId, subject, message) => {
     try {

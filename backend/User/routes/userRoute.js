@@ -21,7 +21,7 @@ userRoute.get("/:id", getUserById);
 // userRoute.get("/:id", authorize, getUserById);
 userRoute.post("/comparePassword", comparePassword);
 
-userRoute.put("/:id", authorize, updateUserById);
+userRoute.put("/:id", updateUserById);
 userRoute.delete("/:id", deleteUserById);
 
 export default userRoute;
