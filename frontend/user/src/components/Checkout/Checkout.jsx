@@ -1261,7 +1261,7 @@ const Checkout = () => {
                             className="w-16 h-16 object-cover rounded mr-4"
                           /> */}
                           {item.product_imageUrl?.toLowerCase().endsWith('.mp4') ? (
-                              <video controls className="w-16 h-16 object-cover rounded mr-4">
+                              <video className="w-16 h-16 object-cover rounded mr-4">
                                   <source src={item.product_imageUrl} type="video/mp4" />
                                   Your browser does not support the video tag.
                               </video>

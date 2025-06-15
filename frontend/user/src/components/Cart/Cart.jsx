@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { getCartItemsByUserId, removeFromCart} from '../../hooks/Carts';
 import {useNavigate } from 'react-router-dom';
 import { FaTrash } from 'react-icons/fa';
@@ -15,6 +15,8 @@ const Cart = () => {
 
     const [cartItems, setCartItems] = useState([]);
     const navigate = useNavigate();
+
+    const videoRef = useRef(null);
 
     useEffect(() => {
         const fetchCartItems = async () => {
@@ -63,8 +65,8 @@ const Cart = () => {
             {cartItems && cartItems.length > 0 ? (
                 <ul className="divide-y divide-gray-300">
                     {cartItems.map(item => (
-                        <li key={item._id} className="flex items-center justify-between py-2 " onClick={()=>navigate(`/product/${item.product_id}`)}>
-                            <div className="flex items-center">
+                        <li key={item._id} className="flex items-center justify-between py-2 ">
+                            <div className="flex items-center" onClick={()=>navigate(`/product/${item.product_id}`)}>
                                 {/* <input 
                                     type="checkbox" 
                                     checked={item.selected} 
@@ -72,7 +74,7 @@ const Cart = () => {
                                     className="mr-4"
                                 /> */}
                                 {item.product_imageUrl?.toLowerCase().endsWith('.mp4') || item.product_imageUrl?.toLowerCase().endsWith('.mov') || item.product_imageUrl?.toLowerCase().endsWith('.webm') ? (
-                                    <video controls className="w-16 h-16 object-cover rounded mr-4">
+                                    <video className="w-16 h-16 object-cover rounded mr-4">
                                         <source src={item.product_imageUrl} type="video/mp4" />
                                         Your browser does not support the video tag.
                                     </video>

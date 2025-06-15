@@ -83,7 +83,7 @@ const EditSalePage = () => {
             <div className="flex items-center mb-4">
                 <BackButton />
             </div>
-            <div className="flex">
+            <div className=" flex flex justify-start items-start">
                 <div className="w-1/4 p-4 border rounded-lg flex flex-col justify-center items-center">
                     <div className="w-full h-45 overflow-hidden mt-4 flex flex-col justify-center items-center">
                         {sellerInfo.avatar_url ? (
