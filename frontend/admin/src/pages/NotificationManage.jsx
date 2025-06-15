@@ -19,13 +19,12 @@ const NotificationManage = () => {
 
   return (
     <div className="w-5/6 ml-[16.6666%] p-4 bg-gray-100 rounded-md ">
-      <h2 className="text-2xl font-semibold mb-4 pl-4">Notification List</h2>
       <div className="mt-4 pl-4">
         <button
           onClick={() => openNotificationForm()}
           className="bg-green-500 text-white px-4 py-2 rounded"
         >
-          Create New Notification
+          Tạo thông báo mới
         </button>
       </div>
       <div className="mb-6">

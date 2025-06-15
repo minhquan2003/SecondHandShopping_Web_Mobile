@@ -255,6 +255,9 @@ export const getAllOrders = async (page = 1, limit = 10, sort, filter) => {
           status_order: {
             $ifNull: ["$order.status_order", "Unknown"],
           },
+          shipping_method: {
+            $ifNull: ["$order.shipping_method", "Unknown"],
+          },
           note: {
             $ifNull: ["$order.note", "Unknown"],
           },

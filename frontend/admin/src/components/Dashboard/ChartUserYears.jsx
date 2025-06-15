@@ -27,7 +27,7 @@ const ChartUserYears = () => {
   const currentYear = new Date().getFullYear();
   const startYear = 2021; // Bắt đầu từ năm 2021
   const years = Array.from(
-    { length: currentYear - startYear + 2 },
+    { length: currentYear - startYear + 1 },
     (_, i) => startYear + i
   );
 

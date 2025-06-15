@@ -18,7 +18,7 @@ function CategoryCustom({ selectedCategory, closeForm }) {
 
     // Validate file type (optional)
     if (!file.type.startsWith("image/")) {
-      setUploadError("Please upload a valid image.");
+      setUploadError("Hãy tải đúng ảnh");
       return;
     }
 
@@ -43,10 +43,10 @@ function CategoryCustom({ selectedCategory, closeForm }) {
       if (data.secure_url) {
         setImage(data.secure_url); // Set the image URL after successful upload
       } else {
-        setUploadError("Image upload failed. Please try again.");
+        setUploadError("Tải ảnh thất bại");
       }
     } catch (error) {
-      setUploadError("Error uploading image: " + error.message);
+      setUploadError("Lỗi tải ảnh lên: " + error.message);
     } finally {
       setLoadingImage(false);
     }
@@ -56,7 +56,7 @@ function CategoryCustom({ selectedCategory, closeForm }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!categoryName || !image) {
-      alert("Please provide a category name and image.");
+      alert("Hãy thêm tên danh mục hoặc ảnh cho danh mục");
       return;
     }
 
@@ -77,12 +77,12 @@ function CategoryCustom({ selectedCategory, closeForm }) {
     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
       <div className="bg-white p-6 rounded-lg shadow-lg">
         <h2 className="text-2xl font-semibold mb-4">
-          {selectedCategory ? "Edit Category" : "Create New Category"}
+          {selectedCategory ? "Sửa danh mục" : "Tạo danh mục mới"}
         </h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
-              Category Name
+              Tên danh mục
             </label>
             <input
               type="text"
@@ -94,7 +94,7 @@ function CategoryCustom({ selectedCategory, closeForm }) {
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
-              Image
+              Ảnh
             </label>
             <input type="file" onChange={handleImageUpload} />
             {loadingImage && <p>Uploading image...</p>}
@@ -113,7 +113,7 @@ function CategoryCustom({ selectedCategory, closeForm }) {
               className="mr-4 text-gray-500"
               onClick={closeForm}
             >
-              Cancel
+              Hủy
             </button>
             <button
               type="submit"

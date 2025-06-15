@@ -12,8 +12,9 @@ app = Flask(__name__)
 CORS(app)
 
 
-client = MongoClient("mongodb://localhost:27017/")
-db = client["MuaBanDoCu"]
+MONGODB_URI = "mongodb+srv://minhquan31102003:f3n9fJaQYv7YYdIa@muabandocu.8c5m9.mongodb.net/?retryWrites=true&w=majority&appName=MuaBanDoCu"
+client = MongoClient(MONGODB_URI)
+db = client["test"]
 products_collection = db["products"]
 reviews_collection = db["reviews"]
 

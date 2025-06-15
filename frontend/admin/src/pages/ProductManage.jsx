@@ -8,9 +8,6 @@ const ProductManage = () => {
 
   return (
     <div className="w-5/6 ml-[16.6666%] p-4 bg-gray-100 rounded-md ">
-      <h2 className="text-2xl font-bold text-blue-600 mb-4 text-center">
-        Product Management
-      </h2>
       <PurchaseOverview />
       <div className="mb-4 flex justify-center gap-4">
         <button
@@ -21,7 +18,7 @@ const ProductManage = () => {
               : "bg-gray-200 text-gray-800"
           }`}
         >
-          Pending Approvals
+          Sản phẩm chờ duyệt
         </button>
         <button
           onClick={() => setView("list")}
@@ -31,7 +28,7 @@ const ProductManage = () => {
               : "bg-gray-200 text-gray-800"
           }`}
         >
-          Products List
+          Danh sách sản phẩm
         </button>
       </div>
 
