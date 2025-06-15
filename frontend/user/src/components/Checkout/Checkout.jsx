@@ -927,7 +927,7 @@ const Checkout = () => {
                   {/* <h3 className="text-lg font-semibold">
                     Người bán: {sellerInfo?.name || "Đang tải..."}
                   </h3> */}
-                  <h3 className="text-lg font-semibold flex items-center">
+                  {/* <h3 className="text-lg font-semibold flex items-center">
                     <FiUser className="h-5 w-5 mr-2" />
 
                     Người bán: {sellerInfo?.name || "Đang tải..."}
