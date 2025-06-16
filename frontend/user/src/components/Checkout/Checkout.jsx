@@ -720,7 +720,7 @@ const Checkout = () => {
           navigate("/");
           return;
         }
-
+        totalOrderAmount = totalAmount + sellerShippingCost;
         const order = await createOrder({
           user_id_buyer: userInfo?._id || "",
           user_id_seller: item.user_seller,
@@ -788,7 +788,7 @@ const Checkout = () => {
           const orderDescription = uuidv4();
           console.log("VNPay orderDescription:", orderDescription); // Log để kiểm tra
           const paymentResponse = await createVNPayPayment({
-            amount: 1000000,
+            amount: totalOrderAmount,
             orderDescription,
             orderType: "other",
             language: "vn",
