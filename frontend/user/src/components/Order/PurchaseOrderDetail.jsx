@@ -8,7 +8,7 @@ import { updateStatusOrder } from '../../hooks/Orders';
 import { createNotification } from '../../hooks/Notifications';
 import io from 'socket.io-client';
 import { IP } from '../../config';
-import { FiInfo, FiPackage, FiSend, FiShoppingCart, FiStar, FiUser, FiXCircle } from 'react-icons/fi';
+import { FiArrowDownRight, FiArrowRight, FiCheckCircle, FiCheckSquare, FiInfo, FiPackage, FiSend, FiShoppingCart, FiStar, FiUser, FiXCircle } from 'react-icons/fi';
 
 const socket = io(`http://localhost:5555`);
 
@@ -71,6 +71,27 @@ const PurchaseOrderDetail = () => {
             console.error("Có lỗi xảy ra khi huỷ đơn hàng:", error);
             alert("Có lỗi xảy ra. Vui lòng thử lại.");
         }
+    };
+
+    const handleChangeStatus = async (e) => {
+        e.preventDefault();
+        let status_order = "";
+
+        if (order.status_order === 'Success') {
+            if (order.user_id_buyer) {
+                const notification = await createNotification({
+                    user_id_created: order.user_id_buyer,
+                    user_id_receive: order.user_id_seller,
+                    message: `Đơn hàng của ${order.name} số điện thoại ${order.phone} đã xác nhận nhận hàng thành công.`
+                });
+                socket.emit('sendNotification'); // Gửi thông báo qua WebSocket
+            }
+            status_order = 'Received';
+        }
+
+        alert(`Đơn hàng đã được xác nhận là đã nhận hàng.`);
+        await updateStatusOrder(orderId, status_order);
+        navigate(`/order/${orderId}`);
     };
 
     useEffect(() => {
@@ -148,7 +169,7 @@ const PurchaseOrderDetail = () => {
                     <span className='m-3'>Thông tin đơn hàng</span>
                 </h1>
                 <div className="flex bg-white rounded-lg shadow-md w-4/5">
-                    <div className="bg-white h-full w-4/6 flex rounded-lg shadow-md p-6">
+                    <div className="bg-white h-full w-4/6 flex rounded-lg p-6">
                         <div className="bg-white w-2/5 rounded-lg p-6 flex flex-col items-center justify-center">
                             {/* <img src={product.image_url} alt={product.name} className="w-full h-auto rounded-md mb-4" /> */}
                             {product.video_url?.toLowerCase().endsWith('.mp4') ? (
@@ -183,7 +204,7 @@ const PurchaseOrderDetail = () => {
                             }
                             <div className="mt-3 ">
                                 {/* <h3 className="text-xl font-semibold mt-4">Thông tin người bán</h3> //border-r-2 border-r-yellow-400 border-l-2 border-l-yellow-400 */}
-                                <h3 className="text-xl font-semibold mt-4 flex items-center justify-center bg-yellow-400">
+                                <h3 className="text-xl font-semibold mt-4 flex items-center justify-center border-b-4 border-b-yellow-400">
                                     <FiUser className="mr-2" />
                                     Thông tin người bán
                                 </h3>
@@ -235,10 +256,35 @@ const PurchaseOrderDetail = () => {
                                         </button>
                                     </div>
                             </div>)
-                        : order.status_order == 'Success' ?
-                            (<div className="mt-4">
+                        : (order.status_order == 'Success' || order.status_order == 'Received') ?
+                            (<div>
+                                {order.status_order == 'Success' ? 
+                                <div>
+                                    <h2 className="text-xl font-semibold flex items-center justify-center border-b-4 border-b-yellow-400">
+                                        <FiCheckCircle className="mr-2" />
+                                        Xác nhận đã nhận hàng
+                                    </h2>
+                                    <div className='flex flex-col justify-center items-center'>
+                                        <div className='flex-col justify-center'>
+                                            <div class="text-justify"> Hãy chắc chắn rằng món hàng của bạn nhận được đúng với mô tả và bạn hài lòng với món hàng đó. Hãy kiểm tra món hàng thật kỹ trước khi xác nhận. Hãy xác nhận đã nhận hàng nếu bạn không có bất kì ý kiến phản hồi về chất lượng sản phẩm bạn nhận được.</div>
+                                            <div className="flex items-center justify-center">
+                                                <span className='font-bold'>Thành công</span>
+                                                <FiArrowRight className="mx-2" />
+                                                <span className='font-bold text-red-500'>Đã nhận hàng</span>
+                                            </div>
+                                        </div>
+                                        <button 
+                                            onClick={handleChangeStatus} 
+                                            className="bg-green-500 mt-3 mb-3 flex items-center justify-center text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-300 transition duration-200"
+                                        >
+                                            <FiCheckCircle className="mr-2" />
+                                            Xác nhận đã nhận hàng
+                                        </button>
+                                    </div>
+                                </div>
+                                : null}
                                 {/* <h2 className="text-xl font-semibold">Đánh giá sản phẩm</h2> */}
-                                <h2 className="text-xl font-semibold flex items-center justify-center bg-yellow-400">
+                                <h2 className="text-xl font-semibold flex items-center justify-center border-b-4 border-b-yellow-400">
                                     <FiStar className="mr-2" />
                                     Đánh giá sản phẩm
                                 </h2>

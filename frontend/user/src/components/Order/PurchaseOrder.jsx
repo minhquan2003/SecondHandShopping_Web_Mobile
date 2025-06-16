@@ -13,6 +13,7 @@ const PurchaseOrder = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
+    const [sortOrder, setSortOrder] = useState('none');
     const limit = 10; // Set limit per page
 
     const statusMap = {
@@ -22,6 +23,7 @@ const PurchaseOrder = () => {
         Packaged: 'Đã đóng gói',
         Shipping: 'Đang giao',
         Success: 'Thành công',
+        Received: 'Đã nhận hàng',
         'Request Cancel': 'Yêu cầu hủy',
         Cancelled: 'Đã hủy',
     };
@@ -86,7 +88,13 @@ const PurchaseOrder = () => {
     });
 
     const sortOrders = (orders) => {
-        return orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        if(sortOrder == 'newest'){
+            return orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        }else if(sortOrder == 'oldest'){
+            return orders.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        }else{
+            return orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        }
     };
 
     const filteredAndSortedBuyOrders = sortOrders(filteredBuyOrders);
@@ -95,6 +103,7 @@ const PurchaseOrder = () => {
         setStartDate('');
         setEndDate('');
         setSearchTerm('');
+        setSortOrder('none');
         setActiveBuyStatus('All');
     };
 
@@ -117,9 +126,19 @@ const PurchaseOrder = () => {
                     <option value="Packaged">Đang đóng gói</option>
                     <option value="Shipping">Đang vận chuyển</option>
                     <option value="Success">Thành công</option>
+                    <option value="Received">Đã nhận hàng</option>
                     <option value="Request Cancel">Yêu cầu hủy</option>
                     <option value="Cancelled">Đã hủy</option>
                 </select>
+                <select 
+                        value={sortOrder}
+                        onChange={(e) => setSortOrder(e.target.value)}
+                        className="border border-gray-300 p-2 rounded"
+                    >
+                        <option value="none">Không sắp xếp</option>
+                        <option value="newest">Mới nhất</option>
+                        <option value="oldest">Cũ nhất</option>
+                    </select>
                 <button 
                     onClick={handleResetFilters}
                     className="bg-red-500 text-white font-bold py-2 px-4 rounded ml-2 flex items-center hover:bg-red-400"

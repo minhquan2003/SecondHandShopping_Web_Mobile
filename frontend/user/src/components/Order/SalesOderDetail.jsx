@@ -106,7 +106,9 @@ const SalesOrderDetail = () => {
             status_order = 'Packaged';
         } else if (order.status_order === 'Packaged') {
             status_order = 'Shipping';
-        } else if (order.status_order === 'Request Cancel') {
+        } else if (order.status_order === 'Success') {
+            status_order = 'Received';
+        }else if (order.status_order === 'Request Cancel') {
             if (order.user_id_buyer) {
                 const notification = await createNotification({
                     user_id_created: userInfo._id,
@@ -201,7 +203,7 @@ const SalesOrderDetail = () => {
                             order.status_order === 'Packaged' || order.status_order === 'Confirmed') ? (
                                 <div className="bg-white rounded-lg">
                                     {/* <h2 className="text-xl font-semibold">Cập nhật đơn hàng</h2> */}
-                                    <h2 className="text-xl font-semibold flex items-center justify-center bg-yellow-400">
+                                    <h2 className="text-xl font-semibold flex items-center justify-center border-b-4 border-b-yellow-400">
                                         <FiCheckCircle   className="mr-2" />
                                         Cập nhật đơn hàng
                                     </h2>
@@ -250,7 +252,7 @@ const SalesOrderDetail = () => {
                                             Xác nhận đơn hàng
                                         </button>
                                     </div>
-                                    <h2 className="text-xl font-semibold flex items-center justify-center bg-yellow-400">
+                                    <h2 className="text-xl font-semibold flex items-center justify-center border-b-4 border-b-yellow-400">
                                         <FiXCircle className="mr-2" />
                                         Huỷ đơn hàng
                                     </h2>
