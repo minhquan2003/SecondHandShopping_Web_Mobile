@@ -503,7 +503,16 @@ import { useLocationAddress, useUsersByIds } from "../../hooks/Users";
 import io from "socket.io-client";
 import axios from "axios";
 import { useMemo } from "react";
-import { FiShoppingCart, FiTruck, FiFileText, FiUser, FiCreditCard, FiDollarSign  } from 'react-icons/fi';
+import {
+  FiShoppingCart,
+  FiTruck,
+  FiFileText,
+  FiUser,
+  FiCreditCard,
+  FiDollarSign,
+} from "react-icons/fi";
+import { createVNPayPayment } from "../../hooks/VNPay";
+import { v4 as uuidv4 } from "uuid";
 
 const socket = io(`http://localhost:5555`);
 
@@ -688,6 +697,7 @@ const Checkout = () => {
     }
 
     let orderIds = [];
+    let totalOrderAmount = 0;
     for (const sellerId of Object.keys(groupedItems)) {
       const items = groupedItems[sellerId].items;
       const totalAmount = groupedItems[sellerId].total;
@@ -723,6 +733,7 @@ const Checkout = () => {
           districtId: districtId,
           shipping_method: selectedShipping,
           shipping_cost: sellerShippingCost,
+          payment_method: paymentMethod,
         });
 
         orderIds.push({
@@ -765,7 +776,31 @@ const Checkout = () => {
 
     try {
       if (paymentMethod === "onlinepay") {
-        navigate(`/payment/${orderIds[0].id}`, { state: { cartItems } });
+        try {
+          // const paymentResponse = await createVNPayPayment({
+          //   amount: 1000000,
+          //   orderDescription: uuidv4(),
+          //   orderType: "other",
+          //   language: "vn",
+          // });
+          // sessionStorage.setItem("orderIds", JSON.stringify(orderIds));
+          // window.location.href = paymentResponse.paymentUrl;
+          const orderDescription = uuidv4();
+          console.log("VNPay orderDescription:", orderDescription); // Log để kiểm tra
+          const paymentResponse = await createVNPayPayment({
+            amount: 1000000,
+            orderDescription,
+            orderType: "other",
+            language: "vn",
+          });
+
+          console.log("VNPay Payment Response:", paymentResponse); // Log phản hồi
+          sessionStorage.setItem("orderIds", JSON.stringify(orderIds));
+          window.location.href = paymentResponse.paymentUrl;
+        } catch (error) {
+          console.error("Error creating VNPay payment:", error);
+          alert("Lỗi khi tạo thanh toán VNPay. Vui lòng thử lại.");
+        }
       } else {
         alert(
           "Đơn hàng đã được tạo thành công! Bạn sẽ thanh toán khi nhận hàng."
@@ -933,8 +968,8 @@ const Checkout = () => {
                     Người bán: {sellerInfo?.name || "Đang tải..."}
                   </h3> */}
                   <h3 className="text-lg font-semibold flex items-center">
-                      <FiUser className="h-5 w-5 mr-2" />
-                      Người bán: {sellerInfo?.name || "Đang tải..."}
+                    <FiUser className="h-5 w-5 mr-2" />
+                    Người bán: {sellerInfo?.name || "Đang tải..."}
                   </h3>
                   <ul className="divide-y divide-gray-300">
                     {sellerItems.map((item) => (
@@ -949,11 +984,16 @@ const Checkout = () => {
                             alt={item.product_name}
                             className="w-16 h-16 object-cover rounded mr-4"
                           /> */}
-                          {item.product_imageUrl?.toLowerCase().endsWith('.mp4') ? (
-                              <video className="w-16 h-16 object-cover rounded mr-4">
-                                  <source src={item.product_imageUrl} type="video/mp4" />
-                                  Your browser does not support the video tag.
-                              </video>
+                          {item.product_imageUrl
+                            ?.toLowerCase()
+                            .endsWith(".mp4") ? (
+                            <video className="w-16 h-16 object-cover rounded mr-4">
+                              <source
+                                src={item.product_imageUrl}
+                                type="video/mp4"
+                              />
+                              Your browser does not support the video tag.
+                            </video>
                           ) : (
                             <img
                               src={item.product_imageUrl}

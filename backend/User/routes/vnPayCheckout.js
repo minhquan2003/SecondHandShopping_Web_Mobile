@@ -1,90 +1,121 @@
-// import express from "express";
-// import querystring from "querystring";
-// import crypto from "crypto";
-// import moment from "moment";
-// import dotenv from "dotenv";
+import express from "express";
+import crypto from "crypto";
+import moment from "moment";
+import qs from "qs";
+import config from "config";
+import dateFormat from "dateformat";
 
-// dotenv.config();
+const vnPayCheckout = express.Router();
 
-// const vnPayCheckout = express.Router();
+const vnp_TmnCode = "OOPSJWRW";
+const vnp_HashSecret = "QPGX59MTK8ALSXS7I9LF45N39IVU30HK";
+// const vnp_TmnCode = "EFS8N5KY";
+// const vnp_HashSecret = "M5FWOUC6GYY7LGS1JLJIUQ10S7DF3D5Z";
+const vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+const vnp_ReturnUrl = "http://localhost:5173/";
 
-// // Route để tạo URL thanh toán VNPay
-// vnPayCheckout.get("/create-payment", (req, res) => {
-//   const tmnCode = process.env.VNP_TMN_CODE;
-//   const secretKey = process.env.VNP_HASH_SECRET;
-//   const vnpUrl = process.env.VNP_URL;
-//   const returnUrl = process.env.VNP_RETURN_URL;
+// Hàm sắp xếp object theo thứ tự key tăng dần
+function sortObject(obj) {
+  let sorted = {};
+  let keys = Object.keys(obj).sort();
+  keys.forEach((key) => {
+    sorted[key] = encodeURIComponent(obj[key]).replace(/%20/g, "+");
+  });
+  return sorted;
+}
 
-//   const date = new Date();
+vnPayCheckout.post("/create_payment_url", function (req, res, next) {
+  const ipAddr =
+    req.headers["x-forwarded-for"] ||
+    req.connection.remoteAddress ||
+    req.socket?.remoteAddress ||
+    req.connection?.socket?.remoteAddress;
 
-//   const createDate = moment(date).format("YYYYMMDDHHmmss");
-//   const orderId = moment(date).format("HHmmss");
-//   const amount = 100000; // 100,000 VND
-//   const bankCode = "NCB";
+  const date = new Date();
+  const createDate = dateFormat(date, "yyyymmddHHMMss");
+  const orderId = dateFormat(date, "HHMMss");
+  const expireDate = dateFormat(
+    new Date(date.getTime() + 15 * 60000),
+    "yyyymmddHHMMss"
+  );
 
-//   const ipAddr = req.ip;
+  const amount = req.body.amount;
+  const bankCode = req.body.bankCode;
+  const orderInfo = req.body.orderDescription;
+  const orderType = req.body.orderType;
+  let locale = req.body.language || "vn";
 
-//   const vnp_Params = {
-//     vnp_Version: "2.1.0",
-//     vnp_Command: "pay",
-//     vnp_TmnCode: tmnCode,
-//     vnp_Locale: "vn",
-//     vnp_CurrCode: "VND",
-//     vnp_TxnRef: orderId,
-//     vnp_OrderInfo: "Thanh toan don hang test",
-//     vnp_OrderType: "other",
-//     vnp_Amount: amount * 100, // VNPay yêu cầu x100
-//     vnp_ReturnUrl: returnUrl,
-//     vnp_IpAddr: ipAddr,
-//     vnp_CreateDate: createDate,
-//     vnp_BankCode: bankCode,
-//   };
+  const currCode = "VND";
 
-//   // Bước 1: Sort params theo thứ tự alphabet
-//   const sortedParams = sortObject(vnp_Params);
-//   const signData = querystring.stringify(sortedParams, { encode: false });
+  let vnp_Params = {
+    vnp_Version: "2.1.0",
+    vnp_Command: "pay",
+    vnp_TmnCode: vnp_TmnCode,
+    vnp_Locale: locale,
+    vnp_CurrCode: currCode,
+    vnp_TxnRef: orderId,
+    vnp_OrderInfo: orderInfo,
+    vnp_OrderType: orderType,
+    vnp_Amount: (amount * 100).toFixed(0),
+    vnp_ReturnUrl: vnp_ReturnUrl,
+    vnp_IpAddr: ipAddr,
+    vnp_CreateDate: createDate,
+    vnp_ExpireDate: expireDate,
+  };
 
-//   const hmac = crypto.createHmac("sha512", secretKey);
-//   const secureHash = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
+  if (bankCode) {
+    vnp_Params["vnp_BankCode"] = bankCode;
+  }
 
-//   sortedParams.vnp_SecureHash = secureHash;
-//   const paymentUrl = `${vnpUrl}?${querystring.stringify(sortedParams, {
-//     encode: false,
-//   })}`;
+  // Sắp xếp và tạo chuỗi ký
+  vnp_Params = sortObject(vnp_Params);
+  const signData = qs.stringify(vnp_Params, { encode: false });
+  const hmac = crypto.createHmac("sha512", vnp_HashSecret);
+  const signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
 
-//   res.redirect(paymentUrl);
-// });
+  vnp_Params["vnp_SecureHash"] = signed;
 
-// // Route để xử lý callback sau khi thanh toán
-// vnPayCheckout.get("/vnpay_return", (req, res) => {
-//   const vnp_Params = req.query;
-//   const secureHash = vnp_Params.vnp_SecureHash;
+  const finalUrl = vnp_Url + "?" + qs.stringify(vnp_Params, { encode: false });
 
-//   delete vnp_Params.vnp_SecureHash;
-//   delete vnp_Params.vnp_SecureHashType;
+  // ✅ Trả về URL như JSON thay vì redirect
+  return res.status(201).json({ paymentUrl: finalUrl });
+});
 
-//   const secretKey = process.env.VNP_HASH_SECRET;
-//   const sortedParams = sortObject(vnp_Params);
-//   const signData = querystring.stringify(sortedParams, { encode: false });
+vnPayCheckout.get("/check-payment-vnpay", function (req, res, next) {
+  let vnp_Params = req.query;
+  let secureHash = vnp_Params["vnp_SecureHash"];
 
-//   const hmac = crypto.createHmac("sha512", secretKey);
-//   const checkSum = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
+  delete vnp_Params["vnp_SecureHash"];
+  delete vnp_Params["vnp_SecureHashType"];
 
-//   if (secureHash === checkSum) {
-//     // Giao dịch thành công
-//     res.send("Thanh toán thành công");
-//   } else {
-//     res.send("Chữ ký không hợp lệ");
-//   }
-// });
+  vnp_Params = sortObject(vnp_Params);
+  let signData = qs.stringify(vnp_Params, { encode: false });
+  let hmac = crypto.createHmac("sha512", vnp_HashSecret);
+  let signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
 
-// function sortObject(obj) {
-//   const sorted = {};
-//   const keys = Object.keys(obj).sort();
-//   for (const key of keys) {
-//     sorted[key] = obj[key];
-//   }
-//   return sorted;
-// }
+  if (secureHash === signed) {
+    // Kiểm tra chữ ký hợp lệ
+    if (vnp_Params["vnp_ResponseCode"] === "00") {
+      // Thanh toán thành công
+      res.status(200).json({
+        code: vnp_Params["vnp_ResponseCode"],
+        message: "Thanh toán thành công",
+        data: vnp_Params,
+      });
+    } else {
+      // Thanh toán thất bại
+      res.status(200).json({
+        code: vnp_Params["vnp_ResponseCode"],
+        message: "Thanh toán thất bại",
+        data: vnp_Params,
+      });
+    }
+  } else {
+    res.status(400).json({
+      code: "97",
+      message: "Chữ ký không hợp lệ",
+    });
+  }
+});
 
-// export default vnPayCheckout;
+export default vnPayCheckout;
