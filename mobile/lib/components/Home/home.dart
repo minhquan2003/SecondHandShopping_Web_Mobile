@@ -31,9 +31,9 @@ class Home extends StatelessWidget {
                       children: [
                         ClipRRect(
                           borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(5)),
+                              BorderRadius.zero, //vertical(top: Radius.circular(5))
                           child: Image.network(
-                            'https://tenten.vn/tin-tuc/wp-content/uploads/2022/09/cach-ban-hang-online-hieu-qua.png',
+                            "https://tenten.vn/tin-tuc/wp-content/uploads/2021/11/xay-dung-he-thong-ban-hang-online-1-nguoi.png",
                             width: double.infinity,
                             height: 170,
                             fit: BoxFit.cover,

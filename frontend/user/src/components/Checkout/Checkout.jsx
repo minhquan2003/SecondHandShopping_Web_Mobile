@@ -777,6 +777,7 @@ const Checkout = () => {
     try {
       if (paymentMethod === "onlinepay") {
         try {
+          //navigate(`/payment/${orderIds[0].id}`, { state: { cartItems } });
           // const paymentResponse = await createVNPayPayment({
           //   amount: 1000000,
           //   orderDescription: uuidv4(),
@@ -788,6 +789,7 @@ const Checkout = () => {
           const orderDescription = uuidv4();
           console.log("VNPay orderDescription:", orderDescription); // Log để kiểm tra
           const paymentResponse = await createVNPayPayment({
+            amount: totalOrderAmount,
             amount: totalOrderAmount,
             orderDescription,
             orderType: "other",

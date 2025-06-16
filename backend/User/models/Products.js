@@ -68,6 +68,7 @@ const productSchema = new mongoose.Schema(
     weight: {
       type: Number,
       required: true, // Không bắt buộc
+      default: 100,
     },
   },
   {

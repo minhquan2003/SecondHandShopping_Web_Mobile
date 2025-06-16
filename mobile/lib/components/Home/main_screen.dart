@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/components/Feedback/form_feedback.dart';
 import 'package:mobile/components/Messenger/conversations.dart';
 import 'package:mobile/components/Order/purchase_order.dart';
 import 'package:mobile/components/Order/sale_order.dart';
+import 'package:mobile/components/Sign%20Up/signup.dart';
 import 'package:mobile/providers/login_info.dart';
 import 'package:provider/provider.dart';
 import 'home.dart';
@@ -168,22 +170,49 @@ class _MainScreenState extends State<MainScreen> {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => SaleOrder()));
                   break;
+                case 'Đăng ký':
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => SignUp()));
+                  break;
+                case 'Đăng nhập':
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Login()));
+                  break;
+                case 'Đăng xuất':
+                  Provider.of<LoginInfo>(context, listen: false).logout();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => MainScreen()),
+                    (Route<dynamic> route) => false, // Loại bỏ tất cả các route cũ
+                  );
+                  break;
                 case 'Quy định chung':
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => Regulation()),
                   );
                   break;
-                // case 'Bốn':
-                //   // Thực hiện hành động cho 'Bốn'
-                //   ScaffoldMessenger.of(context).showSnackBar(
-                //     SnackBar(content: Text('Bạn đã chọn: Bốn')),
-                //   );
-                //   break;
+                case 'Đóng góp ý kiến':
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => FeedbackForm()),
+                  );
+                  break;
               }
             },
             itemBuilder: (BuildContext context) {
-              return {'Đơn mua', 'Đơn bán', 'Quy định chung', 'Bốn'}.map((String choice) {
+              // Danh sách mặc định
+              List<String> choices = ['Đơn mua', 'Đơn bán', 'Quy định chung', 'Đóng góp ý kiến'];
+
+              // Thêm 'Đăng ký' và 'Đăng nhập' nếu chưa đăng nhập
+              if (loginInfo.id == null) {
+                choices.addAll(['Đăng ký', 'Đăng nhập']);
+              } else {
+                choices.add('Đăng xuất');
+              }
+
+              // Tạo danh sách PopupMenuItem
+              return choices.map((String choice) {
                 return PopupMenuItem<String>(
                   value: choice,
                   child: Text(choice),
@@ -195,6 +224,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
       body: _pages[_selectedIndex], // Hiển thị màn hình dựa trên _selectedIndex
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color.fromARGB(255, 255, 238, 84),
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.assignment),
@@ -217,7 +247,7 @@ class _MainScreenState extends State<MainScreen> {
             label: 'Tài khoản',
           ),
         ],
-        selectedItemColor: Colors.blue,
+        selectedItemColor: Colors.black,
         unselectedItemColor: Colors.grey,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
