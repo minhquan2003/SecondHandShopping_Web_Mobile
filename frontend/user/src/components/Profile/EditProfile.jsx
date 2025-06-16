@@ -211,7 +211,7 @@ const EditProfile = () => {
             >
               Thay đổi hình đại diện
             </button>
-            <div className="flex-none text-center">
+            {/* <div className="flex-none text-center">
               <h2 className="text-xl font-semibold mt-4">Mã QR:</h2>
               {qrUrl ? (
                 <img
@@ -222,7 +222,7 @@ const EditProfile = () => {
               ) : (
                 <div className="text-xl font-bold mb-4">Chưa có</div>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="w-2/3 ml-4">
@@ -342,7 +342,7 @@ const EditProfile = () => {
                 required
               />
             </div>
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <label className="block text-sm font-medium">Mã QR</label>
               <input
                 type="file"
@@ -353,7 +353,7 @@ const EditProfile = () => {
                 }`}
                 disabled={!isEditing}
               />
-            </div>
+            </div> */}
             <div className="flex justify-end space-x-2">
               {!isEditing && (
                 <>
@@ -364,7 +364,7 @@ const EditProfile = () => {
                   >
                     Chỉnh sửa
                   </button>
-                  {userInfo.role === "user" ? (
+                  {/* {userInfo.role === "user" ? (
                     <button
                       type="button"
                       onClick={handleRegisterAsPartner}
@@ -388,7 +388,7 @@ const EditProfile = () => {
                     >
                       Xem lại quy định đối tác
                     </button>
-                  ) : null}
+                  ) : null} */}
                 </>
               )}
               {isEditing && (
