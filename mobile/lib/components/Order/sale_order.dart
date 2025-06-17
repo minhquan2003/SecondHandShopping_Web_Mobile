@@ -27,6 +27,7 @@ class _SaleOrderState extends State<SaleOrder> with SingleTickerProviderStateMix
     "Packaged",
     "Shipping",
     "Success",
+    "Received",
     "Request Cancel",
     "Cancelled",
   ];
@@ -129,7 +130,7 @@ class _SaleOrderState extends State<SaleOrder> with SingleTickerProviderStateMix
                 children: [
                   Expanded(
                     child: filteredOrders.isEmpty
-                        ? Center(child: CircularProgressIndicator())
+                        ? Center(child: Text('Không có đơn hàng nào.'))
                         : ListView.builder(
                             itemCount: filteredOrders.length,
                             itemBuilder: (context, index) {

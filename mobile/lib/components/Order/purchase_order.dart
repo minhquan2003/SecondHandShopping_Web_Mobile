@@ -26,6 +26,7 @@ class _PurchaseOrderState extends State<PurchaseOrder> with SingleTickerProvider
     "Packaged",
     "Shipping",
     "Success",
+    "Received",
     "Request Cancel",
     "Cancelled",
   ];
@@ -150,7 +151,7 @@ class _PurchaseOrderState extends State<PurchaseOrder> with SingleTickerProvider
                 children: [
                   Expanded(
                     child: filteredOrders.isEmpty 
-                    ?Center(child: CircularProgressIndicator())
+                    ?Center(child: Text('Không có đơn hàng nào.')) //Center(child: CircularProgressIndicator())
                     : filteredOrders.isEmpty ? 
                     Center(child: Text('Không có đơn hàng nào.'))
                     : ListView.builder(

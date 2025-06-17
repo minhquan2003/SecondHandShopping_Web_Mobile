@@ -17,7 +17,7 @@ const ListVideoProducts = ({ data }) => {
             ) : verror ? (
                 <div className="text-red-500 font-bold">Error: {verror}</div>
             ) : (
-                <div className="mt-2 mb-2 bg-white justify-center items-center">
+                <div className="mt-2 mb-2 bg-white w-full justify-center items-center">
                     <div className="flex flex-wrap justify-start items-center">
                         {Array.isArray(vproducts) && vproducts.map((product) => {
                             const mediaUrl = product.video_url || product.image_url;
