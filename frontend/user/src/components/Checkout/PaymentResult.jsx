@@ -19,7 +19,7 @@ const PaymentResult = () => {
 
         const paymentResult = await checkVNPayPayment(params);
 
-        if (paymentResult.code === "201") {
+        if (paymentResult.code === "00") {
           // Thanh toán thành công, cập nhật trạng thái đơn hàng
           const orderIds = JSON.parse(
             sessionStorage.getItem("orderIds") || "[]"
@@ -34,11 +34,33 @@ const PaymentResult = () => {
           setPaymentStatus("success");
           sessionStorage.removeItem("orderIds");
         } else {
+          // Thanh toán thất bại, cập nhật payment_method thành "cash"
+          const orderIds = JSON.parse(
+            sessionStorage.getItem("orderIds") || "[]"
+          );
+
+          for (const order of orderIds) {
+            await updateOrder(order.id, {
+              payment_method: "cash",
+            });
+          }
+
           setPaymentStatus("failed");
+          sessionStorage.removeItem("orderIds");
         }
       } catch (error) {
         console.error("Error processing payment result:", error);
+        // Xử lý lỗi, cập nhật payment_method thành "cash"
+        const orderIds = JSON.parse(sessionStorage.getItem("orderIds") || "[]");
+
+        for (const order of orderIds) {
+          await updateOrder(order.id, {
+            payment_method: "cash",
+          });
+        }
+
         setPaymentStatus("failed");
+        sessionStorage.removeItem("orderIds");
       }
     };
 
@@ -64,12 +86,12 @@ const PaymentResult = () => {
       {paymentStatus === "failed" && (
         <div>
           <p className="text-red-600">Thanh toán thất bại!</p>
-          <p>Vui lòng thử lại hoặc chọn phương thức thanh toán khác.</p>
+          <p>Bạn vui lòng thanh toán khi nhận hàng.</p>
           <button
-            onClick={() => navigate("/checkout")}
+            onClick={() => navigate("/")}
             className="mt-4 bg-blue-500 text-white rounded p-2"
           >
-            Thử lại
+            Về trang chủ
           </button>
         </div>
       )}

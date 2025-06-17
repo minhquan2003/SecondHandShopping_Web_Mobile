@@ -7,12 +7,10 @@ import dateFormat from "dateformat";
 
 const vnPayCheckout = express.Router();
 
-const vnp_TmnCode = "OOPSJWRW";
-const vnp_HashSecret = "QPGX59MTK8ALSXS7I9LF45N39IVU30HK";
-// const vnp_TmnCode = "EFS8N5KY";
-// const vnp_HashSecret = "M5FWOUC6GYY7LGS1JLJIUQ10S7DF3D5Z";
-const vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-const vnp_ReturnUrl = "http://localhost:5173/";
+const vnp_TmnCode = config.get("vnp_TmnCode");
+const vnp_HashSecret = config.get("vnp_HashSecret");
+const vnp_Url = config.get("vnp_Url");
+const vnp_ReturnUrl = config.get("vnp_ReturnUrl");
 
 // Hàm sắp xếp object theo thứ tự key tăng dần
 function sortObject(obj) {

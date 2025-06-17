@@ -31,6 +31,7 @@ export const checkVNPayPayment = async (queryParams) => {
         params: queryParams,
       }
     );
+    console.log("checkVNPayPayment response:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error checking VNPay payment:", error);
