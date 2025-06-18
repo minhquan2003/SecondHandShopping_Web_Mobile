@@ -459,6 +459,7 @@ class _ProductDetailState extends State<ProductDetail> {
                         ],
                       ),
                       child: Column(
+                        
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -515,7 +516,12 @@ class _ProductDetailState extends State<ProductDetail> {
                               }).toList(),
                             )
                           else
-                            Text('Chưa có đánh giá nào.'),
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.9,
+                            child: 
+                          Text('Chưa có đánh giá nào.')
+                          ,)
+                            
                         ],
                       ),
                     ),
@@ -575,6 +581,37 @@ class _ProductDetailState extends State<ProductDetail> {
                   flex: 2,
                   child: ElevatedButton(
                       onPressed: () {
+                        if ((loginInfo.id != null && (product['user_id'] == loginInfo.id))) {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text("Thông báo"),
+                              content: Text("Đây là sản phẩm của bạn!"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  child: Text("OK"),
+                                ),
+                              ],
+                            ),
+                          );
+                        return;}
+                        int quantity = int.tryParse(_quantityController.text) ?? 0;
+                        if (product['quantity'] < quantity) {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text("Thông báo"),
+                              content: Text("Bạn đã chọn quá số lượng còn lại của sản phẩm!"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  child: Text("OK"),
+                                ),
+                              ],
+                            ),
+                          );
+                        return;}
                         List<dynamic> product1 = [
                           {
                             'user_buyer': loginInfo.id ?? '',

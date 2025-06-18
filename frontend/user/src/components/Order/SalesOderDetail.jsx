@@ -7,7 +7,7 @@ import { updateStatusOrder } from '../../hooks/Orders';
 import { createNotification } from '../../hooks/Notifications';
 import io from 'socket.io-client';
 import { IP } from '../../config';
-import { FiInfo, FiPackage, FiXCircle, FiCheckCircle, FiArrowRight } from 'react-icons/fi';
+import { FiInfo, FiPackage,FiCheck , FiXCircle, FiCheckCircle, FiArrowRight } from 'react-icons/fi';
 
 const socket = io(`http://localhost:5555`); // Đảm bảo cổng đúng
 
@@ -279,12 +279,21 @@ const SalesOrderDetail = () => {
                                 </div>
                             ) : order.status_order === 'Success' ? null :
                             order.status_order === 'Request Cancel' ? (
-                                <button 
-                                    onClick={handleChangeStatus} 
-                                    className="bg-green-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200"
-                                >
-                                    Xác nhận huỷ
-                                </button>
+                                <div className='flex flex-col jusstify-center'>
+                                    <h2 className="text-xl font-semibold flex items-center justify-center border-b-4 border-b-yellow-400">
+                                        <FiCheckCircle   className="mr-2" />
+                                        Xác nhận huỷ đơn hàng
+                                    </h2>
+                                    <button 
+                                        onClick={handleChangeStatus} 
+                                        className="bg-green-400 text-white mt-4 mb-4 font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200 flex justify-center items-center"
+                                    >
+                                        <FiCheck className="mr-2" /> {/* Thêm icon vào đây */}
+                                        Xác nhận huỷ
+                                    </button>
+                                    <div class="text-justify">Khi bạn xác nhận huỷ thì đơn hàng sẽ chuyển qua trạng thái đã huỷ và số lượng sản phẩm trên trang bán hàng của bạn vẫn bị giảm và không thêm trở lại, thế nên bạn hãy cập nhật lại thông tin món hàng của mình để xem lại có điều gì kiến cho người mua không hài lòng không.</div>
+                                </div>
+                                
                             ) : null}
                         </div>
                     </div>

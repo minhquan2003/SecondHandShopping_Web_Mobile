@@ -84,8 +84,8 @@ class _ConversationsState extends State<Conversations> {
           ? Center(child: CircularProgressIndicator()) // Hiển thị loading
           : Column(
               children: [
-                Container(
-                  height: 400,
+                Expanded(
+                  // height: 400,
                   child: ListView.builder(
                     itemCount: conversations.length,
                     itemBuilder: (context, index) {
@@ -140,12 +140,12 @@ class _ConversationsState extends State<Conversations> {
                     },
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    print(conversations);
-                  },
-                  child: Text('Bam'),
-                ),
+                // ElevatedButton(
+                //   onPressed: () {
+                //     print(conversations);
+                //   },
+                //   child: Text('Bam'),
+                // ),
               ],
             ),
     );

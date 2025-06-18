@@ -32,7 +32,7 @@ class _ProductListState extends State<ProductList> {
     // Tạo một Future cho việc tải dữ liệu và khoảng thời gian chờ
     final response = await Future.wait([
       http.get(Uri.parse(widget.urlBase)),
-      Future.delayed(Duration(seconds: 3)), // Khoảng thời gian chờ 3 giây
+      Future.delayed(Duration(seconds: 2)), // Khoảng thời gian chờ 3 giây
     ]);
 
     // Kiểm tra phản hồi từ API
