@@ -369,6 +369,7 @@ class _ProductDetailState extends State<ProductDetail> {
                         hintText: 'Nhập số lượng',
                       ),
                     ),
+                    const SizedBox(height: 8,),
                     Center(
   child: Row(
     mainAxisAlignment: MainAxisAlignment.center, // Căn giữa hàng
@@ -400,7 +401,7 @@ class _ProductDetailState extends State<ProductDetail> {
           handleTextToSeller()
         },
         icon: Icon(Icons.message), // Biểu tượng cho nút "Nhắn tin với người bán"
-        label: Text('Nhắn với người bán'),
+        label: Text('Nhắn tin'),
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white, backgroundColor: Colors.green, // Màu chữ trắng
           shape: RoundedRectangleBorder(

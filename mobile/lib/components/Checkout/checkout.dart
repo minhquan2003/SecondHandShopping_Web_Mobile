@@ -2074,7 +2074,7 @@ class _CheckOutState extends State<CheckOut> {
                     ),
                   ),
                   Container(
-                    height: 90,
+                    // height: 90,
                     child: GestureDetector(
                       onTap: () {
                         List<Map<String, dynamic>> updatedProducts =
@@ -2097,7 +2097,14 @@ class _CheckOutState extends State<CheckOut> {
                                         '${fullName.text}  ${phoneNumber.text}'),
                                   ],
                                 ),
-                                Text(address.text),
+                                // Text(address.text),
+                                Container(
+                                  width: MediaQuery.of(context).size.width * 0.9, // 90% chiều rộng màn hình
+                                  child: Text(
+                                    address.text,
+                                    overflow: TextOverflow.visible, // Để hiển thị toàn bộ văn bản
+                                  ),
+                                ),
                                 Text('Tỉnh/Thành: $provinceName'),
                                 Text('Quận/Huyện: $districtName'),
                               ],
@@ -2204,7 +2211,7 @@ class _CheckOutState extends State<CheckOut> {
                           hint: Text('Chọn phương thức vận chuyển'),
                         ),
                         SizedBox(height: 20.0),
-                        Text('Chọn phương thức thanh toán:'),
+                        // Text('Chọn phương thức thanh toán:'),
                         CupertinoSegmentedControl<String>(
                           children: {
                             'onlinepay': Text('Thanh toán online'),
@@ -2218,10 +2225,10 @@ class _CheckOutState extends State<CheckOut> {
                           groupValue: _paymentMethod,
                         ),
                         SizedBox(height: 10.0),
-                        Text(
-                          'Phương thức thanh toán đã chọn: ${_paymentMethod ?? "Chưa chọn"}',
-                          style: TextStyle(fontSize: 16),
-                        ),
+                        // Text(
+                        //   'Phương thức thanh toán đã chọn: ${_paymentMethod ?? "Chưa chọn"}',
+                        //   style: TextStyle(fontSize: 16),
+                        // ),
                       ],
                     ),
                   ),

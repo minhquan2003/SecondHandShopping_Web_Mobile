@@ -14,16 +14,20 @@ class BeforeLogin extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('Bạn chưa đăng nhập'),
+            const Text('Hãy đăng nhập để có trải nghiệm tốt nhất.'),
             const SizedBox(height: 20),
-            ElevatedButton(
+            ElevatedButton.icon(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Login()),
                 );
               },
-              child: const Text('Đăng nhập'),
+              icon: const Icon(Icons.login), // Thêm biểu tượng
+              label: const Text('Đăng nhập'),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white, backgroundColor: Colors.green, // Màu chữ trắng
+              ),
             ),
           ],
         ),

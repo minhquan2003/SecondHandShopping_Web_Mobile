@@ -9,7 +9,7 @@ class SearchbarWidget extends StatelessWidget {
     Key? key,
     required this.hintText,
     required this.icon,
-    required this.onTap,
+    required this.onTap, required TextStyle hintStyle,
   }) : super(key: key);
 
   @override

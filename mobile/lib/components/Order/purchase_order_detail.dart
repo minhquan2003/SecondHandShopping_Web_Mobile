@@ -6,6 +6,7 @@ import '../../providers/login_info.dart';
 import 'package:http/http.dart' as http;
 import '../../config.dart';
 import '../../utils/convert.dart';
+import 'package:intl/intl.dart';
 
 class PurchaseOrderDetail extends StatefulWidget {
   final Map<String, dynamic> order;
@@ -39,6 +40,11 @@ class _PurchaseOrderDetailState extends State<PurchaseOrderDetail> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     loginInfo = Provider.of<LoginInfo>(context);
+  }
+
+  String formatDate1(String dateString) {
+    DateTime dateTime = DateTime.parse(dateString); // Chuyển đổi chuỗi thành DateTime
+    return DateFormat('dd/MM/yyyy').format(dateTime); // Định dạng lại ngày
   }
 
   Future<void> fetchOderInfo() async {
@@ -173,9 +179,11 @@ class _PurchaseOrderDetailState extends State<PurchaseOrderDetail> {
                     Text('${product?['name']}'),
                     Text('Đơn giá: ${formatPrice(product?['price'])} x${product?['quantity']}'),
                     Text('Thành tiền: ${formatPrice(ordeR['total_amount'])}'),
+                    Text('Ngày tạo đơn: ${formatDate1(ordeR['createdAt'])}'),
 
                     // Phần đánh giá sản phẩm
-                    ordeR['status_order'] == 'Success' 
+                    SizedBox(height: 10),
+                    ordeR['status_order'] == 'Success'  || ordeR['status_order'] == 'Received' 
                     ? Column(children: [
                         Text('Đánh giá sản phẩm', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                         Row(
@@ -200,7 +208,7 @@ class _PurchaseOrderDetailState extends State<PurchaseOrderDetail> {
                             labelText: 'Nhập nhận xét',
                             border: OutlineInputBorder(),
                           ),
-                          maxLines: 4,
+                          maxLines: 1,
                         ),
                         SizedBox(height: 8),
                         ElevatedButton(
@@ -222,7 +230,20 @@ class _PurchaseOrderDetailState extends State<PurchaseOrderDetail> {
                               );
                             }
                           },
-                          child: Text('Gửi đánh giá'),
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white, backgroundColor: Colors.green, // Màu chữ
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0), // Bo góc nhẹ
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min, // Để không chiếm quá nhiều không gian
+                            children: [
+                              Icon(Icons.send, color: Colors.white), // Thêm icon gửi
+                              SizedBox(width: 8), // Khoảng cách giữa icon và chữ
+                              Text('Gửi đánh giá'),
+                            ],
+                          ),
                         ),
                       ]) : SizedBox.shrink(),
 
@@ -240,13 +261,34 @@ class _PurchaseOrderDetailState extends State<PurchaseOrderDetail> {
                                 labelText: 'Nguyên nhân muốn huỷ đơn hàng',
                                 border: OutlineInputBorder(),
                               ),
-                              maxLines: 2,
+                              maxLines: 1,
                             ),
                           ),
                           ElevatedButton(
-                            onPressed: handleCancel,
-                            child: Text('Huỷ đơn hàng'),
-                          ),
+                            onPressed: () {
+                              if (_cancelTextController.text.isNotEmpty) {
+                                handleCancel();
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Vui lòng nhập nguyên nhân huỷ đơn!')),
+                                );
+                              }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white, backgroundColor: Colors.red, // Màu chữ
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0), // Bo góc nhẹ
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min, // Để không chiếm quá nhiều không gian
+                                children: [
+                                  Icon(Icons.cancel, color: Colors.white), // Thêm icon
+                                  SizedBox(width: 8), // Khoảng cách giữa icon và chữ
+                                  Text('Huỷ đơn hàng'),
+                                ],
+                              ),
+                            ),
                         ],
                       )
                     : SizedBox.shrink(),

@@ -6,6 +6,7 @@ import '../../providers/login_info.dart';
 import 'package:http/http.dart' as http;
 import '../../config.dart';
 import '../../utils/convert.dart';
+import 'package:intl/intl.dart';
 
 class PurchaseOrder extends StatefulWidget {
   const PurchaseOrder({super.key});
@@ -48,6 +49,10 @@ class _PurchaseOrderState extends State<PurchaseOrder> with SingleTickerProvider
     fetchPurchaseOrders();
   }
 
+  String formatDate1(String dateString) {
+    DateTime dateTime = DateTime.parse(dateString); // Chuyển đổi chuỗi thành DateTime
+    return DateFormat('dd/MM/yyyy').format(dateTime); // Định dạng lại ngày
+  }
 
   Future<void> fetchPurchaseOrders() async {
     if (isLoading) return; // Ngăn tải lại khi đang tải dữ liệu
@@ -125,7 +130,7 @@ class _PurchaseOrderState extends State<PurchaseOrder> with SingleTickerProvider
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Đơn mua'),
+        title: Center(child: Text('Đơn mua')),
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
@@ -194,6 +199,8 @@ class _PurchaseOrderState extends State<PurchaseOrder> with SingleTickerProvider
                                 children: [
                                   Text('${order['product']?['name'] ?? 'Tên sản phẩm không xác định'}'),
                                   Text('Tổng tiền: ${formatPrice(order['total_amount'])} đ\nTrạng thái: ${order['status_order']}'),
+                                  Text('Ngày tạo đơn: ${formatDate1(order['createdAt'])}'),
+                                  Divider(thickness: 2.0, color: Colors.black),
                                 ],
                               ),
                             ],

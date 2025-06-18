@@ -6,7 +6,7 @@ import '../../providers/login_info.dart';
 import 'package:http/http.dart' as http;
 import '../../config.dart';
 import '../../utils/convert.dart';
-
+import 'package:intl/intl.dart';
 
 class SaleOrder extends StatefulWidget {
   const SaleOrder({super.key});
@@ -35,6 +35,16 @@ class _SaleOrderState extends State<SaleOrder> with SingleTickerProviderStateMix
   int currentPage = 1; // Biến để theo dõi trang hiện tại
   bool isLoading = false; // Biến để theo dõi trạng thái tải
   bool isLoadingMore = false; // Biến để theo dõi trạng thái tải thêm dữ liệu
+
+  DateTime? startDate;
+DateTime? endDate;
+String searchTerm = '';
+String searchPhone = '';
+
+String formatDate1(String dateString) {
+  DateTime dateTime = DateTime.parse(dateString); // Chuyển đổi chuỗi thành DateTime
+  return DateFormat('dd/MM/yyyy').format(dateTime); // Định dạng lại ngày
+}
 
   @override
   void initState() {
@@ -92,6 +102,28 @@ class _SaleOrderState extends State<SaleOrder> with SingleTickerProviderStateMix
     isLoading = false; // Kết thúc trạng thái tải
   }
 
+  void filterOrders() {
+  setState(() {
+    saleOrder = saleOrder.where((order) {
+      bool matchesName = order['name'].toString().toLowerCase().contains(searchTerm.toLowerCase());
+      bool matchesPhone = order['phone'].toString().contains(searchPhone);
+      bool matchesDate = true;
+
+      if (startDate != null) {
+        matchesDate = DateTime.parse(order['createdAt']).isAfter(startDate!);
+      }
+      if (endDate != null) {
+        matchesDate = matchesDate && DateTime.parse(order['createdAt']).isBefore(endDate!);
+      }
+
+      return matchesName && matchesPhone && matchesDate;
+    }).toList();
+  });
+}
+
+String formatDate(DateTime date) {
+  return "${date.day}/${date.month}/${date.year}";
+}
   List<dynamic> getFilteredOrders(String status) {
     if (status == "All") {
       return saleOrder;
@@ -104,12 +136,109 @@ class _SaleOrderState extends State<SaleOrder> with SingleTickerProviderStateMix
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Đơn bán'),
+        title: Center(child: Text('Đơn bán')),
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
           tabs: statuses.map((status) => Tab(text: status)).toList(),
         ),
+        actions: [
+        IconButton(
+          icon: Icon(Icons.search),
+          onPressed: () {
+            // Mở hộp thoại tìm kiếm hoặc bộ lọc
+            showDialog(
+  context: context,
+  builder: (context) => AlertDialog(
+    title: Text('Tìm kiếm đơn hàng'),
+    content: SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            decoration: InputDecoration(labelText: 'Tìm theo tên người mua'),
+            onChanged: (value) {
+              searchTerm = value;
+            },
+          ),
+          TextField(
+            decoration: InputDecoration(labelText: 'Tìm theo số điện thoại'),
+            onChanged: (value) {
+              searchPhone = value;
+            },
+          ),
+          GestureDetector(
+            onTap: () async {
+              DateTime? pickedDate = await showDatePicker(
+                context: context,
+                initialDate: startDate ?? DateTime.now(),
+                firstDate: DateTime(2000),
+                lastDate: DateTime(2101),
+              );
+              if (pickedDate != null) {
+                setState(() {
+                  startDate = pickedDate;
+                });
+              }
+            },
+            child: AbsorbPointer( // Ngăn không cho nhập trực tiếp
+              child: TextField(
+                decoration: InputDecoration(
+                  labelText: 'Từ ngày',
+                  hintText: startDate != null ? formatDate(startDate!) : 'Chọn ngày',
+                ),
+                readOnly: true,
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () async {
+              DateTime? pickedDate = await showDatePicker(
+                context: context,
+                initialDate: endDate ?? DateTime.now(),
+                firstDate: DateTime(2000),
+                lastDate: DateTime(2101),
+              );
+              if (pickedDate != null) {
+                setState(() {
+                  endDate = pickedDate;
+                });
+              }
+            },
+            child: AbsorbPointer( // Ngăn không cho nhập trực tiếp
+              child: TextField(
+                decoration: InputDecoration(
+                  labelText: 'Đến ngày',
+                  hintText: endDate != null ? formatDate(endDate!) : 'Chọn ngày',
+                ),
+                readOnly: true,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+    actions: [
+      
+      TextButton(
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+        child: Text('Hủy'),
+      ),
+      TextButton(
+        onPressed: () {
+          Navigator.of(context).pop();
+          filterOrders();
+        },
+        child: Text('Lọc'),
+      ),
+    ],
+  ),
+);
+          },
+        ),
+      ],
       ),
       body: loginInfo.name == null
           ? Center(child: Text('Hãy đăng nhập để có trải nghiệm tốt nhất'))
@@ -141,7 +270,7 @@ class _SaleOrderState extends State<SaleOrder> with SingleTickerProviderStateMix
                                   MaterialPageRoute(builder: (context) => SaleOrderDetail(order: order)));
                                 },
                                 child: ListTile(
-  contentPadding: EdgeInsets.all(8.0), // Thêm khoảng cách
+  contentPadding: EdgeInsets.all(2.0), // Thêm khoảng cách
   title: Row(
     children: [
       ClipRRect(
@@ -166,15 +295,20 @@ class _SaleOrderState extends State<SaleOrder> with SingleTickerProviderStateMix
                 color: Colors.grey, // Màu nền khi không có URL
               ),
       ),
-      SizedBox(width: 10), // Khoảng cách giữa hình và thông tin
+      SizedBox(width: 2), // Khoảng cách giữa hình và thông tin
       Expanded( // Để thông tin chiếm không gian còn lại
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(order['name'] ?? 'Người mua không xác định'),
-            Text(order['_id']),
+            // Text(order['_id']),
             Text(order['product']?['name'] ?? 'Tên sản phẩm không xác định'),
             Text('Tổng tiền: ${formatPrice(order['total_amount'])} đ\nTrạng thái: ${order['status_order']}'),
+            Text('Ngày tạo đơn: ${formatDate1(order['createdAt'])}'),
+            Divider(
+  thickness: 2.0, // Độ dày của đường kẻ
+  color: Colors.black, // Màu của đường kẻ
+),
           ],
         ),
       ),

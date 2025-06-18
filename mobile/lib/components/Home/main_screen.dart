@@ -68,7 +68,7 @@ class _MainScreenState extends State<MainScreen> {
             // ),
             Expanded(
               child: SearchbarWidget(
-                hintText: "Tìm kiếm",
+                hintText: "Tìm",
                 icon: Icons.search,
                 onTap: () {
                   Navigator.push(
@@ -76,7 +76,7 @@ class _MainScreenState extends State<MainScreen> {
                     MaterialPageRoute(
                         builder: (context) => const SearchScreen()),
                   );
-                },
+                }, hintStyle: TextStyle(fontSize: 10, color: Colors.grey),
               ),
             ),
 

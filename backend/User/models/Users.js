@@ -51,6 +51,18 @@ const userChema = mongoose.Schema(
       type: String,
       require: false,
     },
+    bankName: {
+      type: String,
+      required: false,
+    },
+    cardHolderName: {
+      type: String,
+      required: false,
+    },
+    accountNumber: {
+      type: String,
+      required: false,
+    },
     // created_at:{
     //     type: Date,
     //     require: true
