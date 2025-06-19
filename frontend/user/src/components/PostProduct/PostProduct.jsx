@@ -22,13 +22,13 @@ const ProductUpload = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const { categories } = getCategories();
   const navigate = useNavigate();
-  const [countries, setCountries] = useState([]); // State cho quốc gia
+  const [countries, setCountries] = useState([]); 
   const [isOtherOrigin, setIsOtherOrigin] = useState(false);
   const [otherOrigin, setOtherOrigin] = useState("");
   const [img, setimg] = useState("");
   const [video, setvideo] = useState("");
 
-  const [subcategories, setSubcategories] = useState([]); // State cho danh mục con
+  const [subcategories, setSubcategories] = useState([]);
   const [selectedSubcategory, setSelectedSubcategory] = useState("");
 
   const handleCategoryChange = async (categoryId) => {
@@ -60,16 +60,18 @@ const ProductUpload = () => {
             Media?.toLowerCase().endsWith(".mov") ||
             Media?.toLowerCase().endsWith(".webm");
           isVideo ? setvideo(product.video_url) : (setimg(product.image_url))
-          setMediaUrl(product.image_url || product.video_url); // Lấy URL từ cả hai
+          setMediaUrl(product.image_url || product.video_url);
         }
       } else {
         resetForm();
       }
     };
+
     const fetchCountries = async () => {
       const countryData = await getAllCountries();
-      setCountries(countryData); // Lưu danh sách quốc gia vào state
+      setCountries(countryData);
     };
+    
     fetchCountries();
     fetchProduct();
   }, [productId]);
@@ -122,19 +124,19 @@ const ProductUpload = () => {
     try {
       let url = ''
       if (media) {
-      const uploadUrl = media.type.startsWith("image/")
-        ? "https://api.cloudinary.com/v1_1/dd6pnq2is/image/upload"
-        : "https://api.cloudinary.com/v1_1/dd6pnq2is/video/upload";
+        const uploadUrl = media.type.startsWith("image/")
+          ? "https://api.cloudinary.com/v1_1/dd6pnq2is/image/upload"
+          : "https://api.cloudinary.com/v1_1/dd6pnq2is/video/upload";
 
-      const response = await fetch(uploadUrl, {
-        method: "POST",
-        body: formData,
-      });
+        const response = await fetch(uploadUrl, {
+          method: "POST",
+          body: formData,
+        });
 
-      const uploadedMediaUrl = await response.json();
-      setMediaUrl(uploadedMediaUrl.secure_url);
-      url = uploadedMediaUrl.secure_url
-    }
+        const uploadedMediaUrl = await response.json();
+        setMediaUrl(uploadedMediaUrl.secure_url);
+        url = uploadedMediaUrl.secure_url
+      }
       
       let partner = userInfo.role === "partner";
 
@@ -176,16 +178,12 @@ const ProductUpload = () => {
 
   return (
     <div className="max-w-4xl mx-auto mt-6 mb-6 p-6 bg-white shadow-lg rounded-lg">
-      {/* <h2 className="text-2xl font-bold mb-6 text-center">Đăng Sản Phẩm Mới</h2> */}
       <h2 className="text-2xl font-bold mb-6 text-center text-yellow-400">
           <FiUpload className="inline-block mr-2 mb-2 font-bold text-yellow-400" />
           Đăng Sản Phẩm Mới
       </h2>
       <div className="flex flex-col md:flex-row md:space-x-8">
         <div className="md:w-1/2 p-4 border border-gray-300 rounded-lg">
-          {/* <h3 className="text-xl font-semibold mb-4">
-            Chọn Hình Ảnh hoặc Video
-          </h3> */}
           <h3 className="text-xl font-semibold mb-4 text-yellow-400">
               <FiImage className="inline-block mr-2 mb-1 text-yellow-400" />
               Hình Ảnh hoặc Video
@@ -237,16 +235,16 @@ const ProductUpload = () => {
           )}
         </div>
         <div className="md:w-1/2 p-4 border border-gray-300 rounded-lg">
-          {/* <h3 className="text-xl font-semibold mb-4">Thông Tin Sản Phẩm</h3> */}
           <h3 className="text-xl font-semibold mb-4 text-yellow-400">
               <FiBox className="inline-block mr-2 text-yellow-400 mb-1" />
               Thông Tin Sản Phẩm
           </h3>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
+              <label className="text-gray-700">Tên sản phẩm</label>
               <input
                 type="text"
-                placeholder="Tên sản phẩm"
+                placeholder=" "
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="border border-gray-300 p-2 w-full rounded"
@@ -254,8 +252,9 @@ const ProductUpload = () => {
               />
             </div>
             <div className="mb-4">
+              <label className="text-gray-700">Mô tả sản phẩm</label>
               <textarea
-                placeholder="Mô tả sản phẩm"
+                placeholder=" "
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className="border border-gray-300 p-2 w-full rounded"
@@ -263,9 +262,10 @@ const ProductUpload = () => {
               />
             </div>
             <div className="mb-4">
+              <label className="text-gray-700">Giá</label>
               <input
                 type="number"
-                placeholder="Giá"
+                placeholder=" "
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 className="border border-gray-300 p-2 w-full rounded"
@@ -274,9 +274,10 @@ const ProductUpload = () => {
               />
             </div>
             <div className="mb-4">
+              <label className="text-gray-700">Số lượng</label>
               <input
                 type="number"
-                placeholder="Số lượng"
+                placeholder=" "
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
                 className="border border-gray-300 p-2 w-full rounded"
@@ -285,9 +286,10 @@ const ProductUpload = () => {
               />
             </div>
             <div className="mb-4">
+              <label className="text-gray-700">Khối lượng mỗi sản phẩm (g)</label>
               <input
                 type="number"
-                placeholder="Khối lượng mỗi sản phẩm (g)"
+                placeholder=" "
                 value={weight}
                 onChange={(e) => setWeight(e.target.value)}
                 className="border border-gray-300 p-2 w-full rounded"
@@ -296,9 +298,10 @@ const ProductUpload = () => {
               />
             </div>
             <div className="mb-4">
+              <label className="text-gray-700">Hãng</label>
               <input
                 type="text"
-                placeholder="Hãng"
+                placeholder=" "
                 value={brand}
                 onChange={(e) => setBrand(e.target.value)}
                 className="border border-gray-300 p-2 w-full rounded"
@@ -322,7 +325,7 @@ const ProductUpload = () => {
                 value={origin}
                 onChange={(e) => {
                   setOrigin(e.target.value);
-                  setIsOtherOrigin(e.target.value === "Khác"); // Kiểm tra nếu chọn "Khác"
+                  setIsOtherOrigin(e.target.value === "Khác");
                 }}
                 className="border border-gray-300 p-2 w-full rounded"
                 required
@@ -336,7 +339,7 @@ const ProductUpload = () => {
                 <option value="Khác">Khác</option>
               </select>
             </div>
-            {isOtherOrigin && ( // Hiển thị input nếu chọn "Khác"
+            {isOtherOrigin && (
               <div className="mb-4">
                 <input
                   type="text"
@@ -377,46 +380,41 @@ const ProductUpload = () => {
                 ))}
               </select>
             </div>
-            {productId ? (
-              // <div className="flex">
-              //   <button className="border border-green-600 bg-gray-100 text-xl font-bold text-green-600 p-2 rounded hover:bg-gray-300 transition duration-200 w-full">
-              //     Lưu
-              //   </button>
-              //   <button
-              //     onClick={() => navigate(`/editSale/${userInfo._id}`)}
-              //     className="bg-blue-500 ml-6 text-white p-2 rounded hover:bg-blue-600 transition duration-200 w-full"
-              //   >
-              //     Thoát
-              //   </button>
-              // </div>
-              <div className="flex">
+            <div className="flex">
+              {productId ? (
+                <>
                   <button className="bg-yellow-400 text-xl font-bold text-white p-2 rounded hover:bg-yellow-300 transition duration-200 w-full">
-                      <FiSave className="inline-block mr-2 mb-1" />
-                      Lưu
+                    <FiSave className="inline-block mr-2 mb-1" />
+                    Lưu
                   </button>
                   <button
-                      onClick={() => navigate(`/editSale/${userInfo._id}`)}
-                      className="bg-red-500 ml-6 text-white p-2 rounded hover:bg-red-400 transition duration-200 w-full"
+                    onClick={() => navigate(`/editSale/${userInfo._id}`)}
+                    className="bg-red-500 ml-6 text-white p-2 rounded hover:bg-red-400 transition duration-200 w-full"
                   >
-                      <FiLogOut className="inline-block mr-2 mb-1" />
-                      Thoát
+                    <FiLogOut className="inline-block mr-2 mb-1" />
+                    Thoát
                   </button>
-              </div>
-            ) : (
-              // <button
-              //   type="submit"
-              //   className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-200 w-full"
-              // >
-              //   Đăng Sản Phẩm
-              // </button>
-              <button
-                  type="submit"
-                  className="bg-yellow-400 text-white p-2 rounded hover:bg-yellow-300 transition duration-200 w-full"
-              >
-                  <FiUpload className="inline-block mr-2 text-white mb-1" />
-                  <span className="font-bold">Đăng Sản Phẩm</span>
-              </button>
-            )}
+                </>
+              ) : (
+                <>
+                  <button
+                    type="submit"
+                    className="bg-yellow-400 text-white p-2 rounded hover:bg-yellow-300 transition duration-200 w-full"
+                  >
+                    <FiUpload className="inline-block mr-2 text-white mb-1" />
+                    <span className="font-bold">Đăng Sản Phẩm</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={resetForm} // Xử lý sự kiện cho nút hủy
+                    className="bg-gray-500 ml-6 text-white p-2 rounded hover:bg-gray-400 transition duration-200 w-full"
+                  >
+                    <FiLogOut className="inline-block mr-2 mb-1" />
+                    Hủy
+                  </button>
+                </>
+              )}
+            </div>
           </form>
         </div>
       </div>

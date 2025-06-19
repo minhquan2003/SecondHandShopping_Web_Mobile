@@ -104,17 +104,21 @@ class _MainScreenState extends State<MainScreen> {
           IconButton(
             icon: Icon(Icons.notifications),
             onPressed: () {
-              if (loginInfo.name == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                      content: Text('Hãy đăng nhập để có trải nghiệm tốt hơn')),
-                );
-              } else {
-                Navigator.push(
+              // if (loginInfo.name == null) {
+              //   ScaffoldMessenger.of(context).showSnackBar(
+              //     SnackBar(
+              //         content: Text('Hãy đăng nhập để có trải nghiệm tốt hơn')),
+              //   );
+              // } else {
+              //   Navigator.push(
+              //     context,
+              //     MaterialPageRoute(builder: (context) => Notifications()),
+              //   );
+              // }
+              Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Notifications()),
                 );
-              }
             },
           ),
           IconButton(
