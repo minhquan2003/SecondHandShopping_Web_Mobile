@@ -9,9 +9,30 @@ const getActiveNotifications = async () => {
   return await Notifications.find({ status: true });
 };
 
+// const getActiveNotificationsByUserId = async (userId) => {
+//   try {
+//     return await Notifications.find({ user_id_receive: userId, status: true });
+//   } catch (error) {
+//     throw new Error(`Unable to fetch notifications for user: ${error.message}`);
+//   }
+// };
+
 const getActiveNotificationsByUserId = async (userId) => {
   try {
-    return await Notifications.find({ user_id_receive: userId, status: true });
+    const query = { status: true }; // Chỉ lấy thông báo có status là true
+
+    // Nếu có userId, lấy cả thông báo có userId và không có userId
+    if (userId) {
+      query.$or = [
+        { user_id_receive: userId },
+        { user_id_receive: { $exists: false } } // Thông báo không có userId
+      ];
+    } else {
+      // Nếu không có userId, chỉ lấy thông báo không có userId
+      query.user_id_receive = { $exists: false };
+    }
+
+    return await Notifications.find(query);
   } catch (error) {
     throw new Error(`Unable to fetch notifications for user: ${error.message}`);
   }

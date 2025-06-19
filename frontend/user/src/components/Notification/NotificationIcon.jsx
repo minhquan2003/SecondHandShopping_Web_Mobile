@@ -19,16 +19,20 @@ const NotificationIcon = ({ userId }) => {
     };
 
     useEffect(() => {
-        if (userId) {
-            fetchNotifications(userId);
+        // if (userId) {
+        //     fetchNotifications(userId);
+        //     socket.on('receiveNotification', () => {
+        //         fetchNotifications(userId);
+        //     });
+        // } else {
+        //     setNotifications([]);
+        //     setUnreadCount(0);
+        // }
+         fetchNotifications(userId);
             socket.on('receiveNotification', () => {
                 fetchNotifications(userId);
             });
-        } else {
-            setNotifications([]);
-            setUnreadCount(0);
-        }
-    }, [userId]);
+    }, []);
 
     const fetchNotifications = async (userId) => {
         try {
@@ -59,7 +63,7 @@ const NotificationIcon = ({ userId }) => {
                 )}
             </span>
 
-            {isOpen && userInfo && (
+            {isOpen && (
                 <NotificationPopup 
                     notifications={notifications} 
                     onClose={togglePopup} 
