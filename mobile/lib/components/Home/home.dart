@@ -26,7 +26,7 @@ class Home extends StatelessWidget {
             headerSliverBuilder: (BuildContext context, bool innerBoxScrolled) {
               return <Widget>[
                 SliverAppBar(
-                  expandedHeight: 300,
+                  expandedHeight: 600,
                   flexibleSpace: FlexibleSpaceBar(
                     background: Column(
                       children: [
@@ -51,21 +51,19 @@ class Home extends StatelessWidget {
                               urlBase:
                                   'http://$ip:5555/categories/'), // Danh mục sản phẩm
                         ),
+                        Container(
+                          color: Colors.green, // Màu nền cho danh mục sản phẩm
+                          child: RecommendedProductList(
+                              urlBase:
+                                  'http://$flaskIp:$flaskPort/recommend'), // Danh mục sản phẩm
+                        ),
                       ],
                     ),
                   ),
                 ),
               ];
             }, //http://$ip:5555/products/page?page=$page&limit=20
-            body: Column(
-              children: [
-                RecommendedProductList(
-                    urlBase: 'http://$flaskIp:$flaskPort/recommend'),
-                Expanded(
-                  child: ProductList(urlBase: 'http://$ip:5555/products/'),
-                ),
-              ],
-            ),
+            body: ProductList(urlBase: 'http://$ip:5555/products/'),
           ),
         );
       },
