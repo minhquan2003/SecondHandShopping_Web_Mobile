@@ -3,7 +3,7 @@ import axios from "axios";
 export const createVNPayPayment = async (paymentData) => {
   try {
     const response = await axios.post(
-      "http://localhost:5555/vnPayCheckout/create_payment_url",
+      "http://localhost:5555/admin/create_payment_url",
       {
         amount: paymentData.amount,
         orderDescription: paymentData.orderDescription,
@@ -26,7 +26,7 @@ export const createVNPayPayment = async (paymentData) => {
 export const checkVNPayPayment = async (queryParams) => {
   try {
     const response = await axios.get(
-      "http://localhost:5555/vnPayCheckout/check-payment-vnpay",
+      "http://localhost:5555/admin/check-payment-vnpay",
       {
         params: queryParams,
       }

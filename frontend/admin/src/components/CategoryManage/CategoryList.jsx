@@ -4,6 +4,7 @@ import { FaSort } from "react-icons/fa";
 import { FaSearch } from "react-icons/fa";
 import { FaPen } from "react-icons/fa";
 import CategoryCustom from "./CategoryCustom";
+import { Link } from "react-router-dom";
 
 const CategoryList = () => {
   const [page, setPage] = useState(1);
@@ -137,7 +138,12 @@ const CategoryList = () => {
                     />
                   </td>
                   <td className="text-sm border px-4 py-2">
-                    {category.category_name}
+                    <Link
+                      to={`/admin/category/${category._id}/details`}
+                      className="text-blue-500 hover:underline"
+                    >
+                      {category.category_name}
+                    </Link>
                   </td>
                   <td className="border px-2 py-2 text-center">
                     <button

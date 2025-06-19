@@ -40,7 +40,10 @@ const useOrders = (
   page = 1,
   fieldSort = "",
   orderSort = "",
-  searchKey = ""
+  searchKey = "",
+  statusOrder = "",
+  paymentMethod = "",
+  paymentStatus = ""
 ) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -55,6 +58,15 @@ const useOrders = (
       }
       if (searchKey) {
         url += `&filter=name_buyer&filter=${searchKey}`;
+      }
+      if (statusOrder) {
+        url += `&filter=status_order&filter=${statusOrder}`;
+      }
+      if (paymentMethod) {
+        url += `&filter=payment_method&filter=${paymentMethod}`;
+      }
+      if (paymentStatus) {
+        url += `&filter=payment_status&filter=${paymentStatus}`;
       }
       try {
         setLoading(true);
@@ -81,9 +93,35 @@ const useOrders = (
     };
 
     fetchOrders();
-  }, [page, fieldSort, orderSort, searchKey]);
+  }, [
+    page,
+    fieldSort,
+    orderSort,
+    searchKey,
+    statusOrder,
+    paymentMethod,
+    paymentStatus,
+  ]);
 
   return { orders, loading, error, totalPages };
 };
 
-export { usePurchaseOverview, useOrders };
+const updateAdminOrder = async (id, order) => {
+  try {
+    const response = await axios.put(
+      `http://localhost:5555/admin/order/${id}`,
+      order,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+    const data = response.data;
+    return data;
+  } catch (error) {
+    console.error("Error update product:", error);
+    throw error;
+  }
+};
+export { usePurchaseOverview, useOrders, updateAdminOrder };

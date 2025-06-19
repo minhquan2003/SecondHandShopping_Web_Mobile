@@ -85,6 +85,9 @@ def recommend():
     
     result = []
     for score, product in scored_products[:10]: 
+        video_url = product.get("video_url", "")
+        if isinstance(video_url, list):
+            video_url = video_url[0] if video_url else ""
 
         result.append({
             "_id": str(product['_id']),
@@ -101,11 +104,12 @@ def recommend():
             "origin": product.get("origin"),
             "image_url": product.get("image_url"),
             "score": float(score),
-            "video_url": product.get("video_url", []),
+            "video_url": video_url,
             "partner": product.get("partner")
         })
     # print(f"Top 10 scores: {[float(s) for s, _ in scored_products[:10]]}")
     return jsonify(result)
 
 if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
     app.run(port=5000)

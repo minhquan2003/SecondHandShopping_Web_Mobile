@@ -235,31 +235,40 @@ export const getAllOrders = async (page = 1, limit = 10, sort, filter) => {
       {
         $addFields: {
           product_name: {
-            $ifNull: ["$product.name", "Unknown"],
+            $ifNull: ["$product.name", ""],
           },
           name_buyer: {
-            $ifNull: ["$user_buyer.name", "Unknown"],
+            $ifNull: ["$user_buyer.name", ""],
           },
           phone_buyer: {
-            $ifNull: ["$user_buyer.phone", "Unknown"],
+            $ifNull: ["$user_buyer.phone", ""],
           },
           address_buyer: {
-            $ifNull: ["$user_buyer.address", "Unknown"],
+            $ifNull: ["$user_buyer.address", ""],
           },
           name_seller: {
-            $ifNull: ["$user_seller.name", "Unknown"],
+            $ifNull: ["$user_seller.name", ""],
           },
           phone_seller: {
-            $ifNull: ["$user_seller.phone", "Unknown"],
+            $ifNull: ["$user_seller.phone", ""],
           },
           status_order: {
-            $ifNull: ["$order.status_order", "Unknown"],
+            $ifNull: ["$order.status_order", ""],
           },
           shipping_method: {
-            $ifNull: ["$order.shipping_method", "Unknown"],
+            $ifNull: ["$order.shipping_method", ""],
+          },
+          shipping_cost: {
+            $ifNull: ["$order.shipping_cost", ""],
+          },
+          payment_method: {
+            $ifNull: ["$order.payment_method", ""],
+          },
+          payment_status: {
+            $ifNull: ["$order.payment_status", ""],
           },
           note: {
-            $ifNull: ["$order.note", "Unknown"],
+            $ifNull: ["$order.note", ""],
           },
         },
       },
@@ -300,4 +309,8 @@ export const getAllOrders = async (page = 1, limit = 10, sort, filter) => {
   } catch (error) {
     throw new Error(`Error fetching all orders: ${error.message}`);
   }
+};
+
+export const updateOrder = async (orderId, updateData) => {
+  return await Orders.findByIdAndUpdate(orderId, updateData, { new: true });
 };
