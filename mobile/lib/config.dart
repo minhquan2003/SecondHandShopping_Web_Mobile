@@ -1,4 +1,6 @@
 const String ip = '192.168.2.243';
+const String flaskIp = '192.168.2.243';
+const String flaskPort = '5000';
 // const String ip = '192.168.1.14';
 // const String ip = '192.168.1.248';
 // const String ip = '192.168.2.242';

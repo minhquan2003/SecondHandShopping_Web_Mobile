@@ -12,6 +12,8 @@ import OrderManage from "./pages/OrderManage";
 import Login from "./pages/Login";
 import PrivateRoute from "./privateroute/PrivateRoute";
 import ReviewManage from "./pages/ReviewManage";
+import PaymentResult from "./components/OrderManage/PaymentResult";
+import CategoryDetailList from "./components/CategoryManage/CategoryDetailList";
 
 const App = () => (
   <Router>
@@ -116,6 +118,11 @@ const App = () => (
             </AdminLayout>
           </PrivateRoute>
         }
+      />
+      <Route path="/admin/payment-result" element={<PaymentResult />} />
+      <Route
+        path="/admin/category/:categoryId/details"
+        element={<CategoryDetailList />}
       />
     </Routes>
   </Router>

@@ -4,6 +4,7 @@ import '../Category/category_list.dart';
 import '../../config.dart';
 import 'package:provider/provider.dart';
 import '../../providers/login_info.dart';
+import '../Product/recommendedProductList.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -30,8 +31,8 @@ class Home extends StatelessWidget {
                     background: Column(
                       children: [
                         ClipRRect(
-                          borderRadius:
-                              BorderRadius.zero, //vertical(top: Radius.circular(5))
+                          borderRadius: BorderRadius
+                              .zero, //vertical(top: Radius.circular(5))
                           child: Image.network(
                             "https://tenten.vn/tin-tuc/wp-content/uploads/2021/11/xay-dung-he-thong-ban-hang-online-1-nguoi.png",
                             width: double.infinity,
@@ -56,8 +57,15 @@ class Home extends StatelessWidget {
                 ),
               ];
             }, //http://$ip:5555/products/page?page=$page&limit=20
-            body: ProductList(
-                urlBase: 'http://$ip:5555/products/'), // Danh sách sản phẩm
+            body: Column(
+              children: [
+                RecommendedProductList(
+                    urlBase: 'http://$flaskIp:$flaskPort/recommend'),
+                Expanded(
+                  child: ProductList(urlBase: 'http://$ip:5555/products/'),
+                ),
+              ],
+            ),
           ),
         );
       },

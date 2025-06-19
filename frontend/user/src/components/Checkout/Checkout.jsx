@@ -95,12 +95,12 @@ const Checkout = () => {
 
   useEffect(() => {
     if (userInfo) {
-      setFullName(userInfo.name);
-      setPhoneNumber(userInfo.phone);
-      if (!address) setAddress(userInfo.address);
-      setEmail(userInfo.email);
-      if (!provinceId) setProvinceId(userInfo.provinceId || "");
-      if (!districtId) setDistrictId(userInfo.districtId || "");
+      setFullName(userInfo.name || "");
+      setPhoneNumber(userInfo.phone || "");
+      setAddress(userInfo.address || "");
+      setEmail(userInfo.email || "");
+      setProvinceId(userInfo.provinceId || "");
+      setDistrictId(userInfo.districtId || "");
     }
   }, [userInfo]);
 

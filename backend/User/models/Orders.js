@@ -62,6 +62,7 @@ const orderSchema = new mongoose.Schema(
         "Success",
         "Request Cancel",
         "Cancelled",
+        "Received",
       ],
       default: "Pending",
     },
@@ -72,7 +73,7 @@ const orderSchema = new mongoose.Schema(
     },
     payment_status: {
       type: String,
-      enum: ["awaiting_payment", "paid"],
+      enum: ["awaiting_payment", "paid", "released_to_seller"],
       default: "awaiting_payment",
     },
     note: {

@@ -2,6 +2,7 @@ import {
   getTopSellingProducts,
   getOrderStats,
   getAllOrders,
+  updateOrder,
 } from "../../services/order/adminOrderService.js";
 
 export const fetchTopSellingProducts = async (req, res) => {
@@ -42,31 +43,6 @@ export const fetchOrderStats = async (req, res) => {
   }
 };
 
-// export const fetchAllOrders = async (req, res) => {
-//   try {
-//     const { page = 1, limit = 10 } = req.query;
-
-//     // Chuyển đổi page và limit thành số nguyên
-//     const currentPage = parseInt(page, 10);
-//     const pageSize = parseInt(limit, 10);
-
-//     if (currentPage < 1 || pageSize < 1) {
-//       return res.status(400).json({ message: "Invalid page or limit value" });
-//     }
-
-//     const orders = await getAllOrders(currentPage, pageSize);
-
-//     return res.status(200).json({
-//       message: "Orders fetched successfully",
-//       data: orders,
-//       page: currentPage,
-//       limit: pageSize,
-//     });
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
-
 export const fetchAllOrders = async (req, res) => {
   try {
     const page = parseInt(req.query.page, 10) || 1;
@@ -88,5 +64,21 @@ export const fetchAllOrders = async (req, res) => {
       success: false,
       message: error.message,
     });
+  }
+};
+
+export const updateOrderController = async (req, res) => {
+  try {
+    const { id } = req.params; // Lấy ID từ params
+    const updateData = req.body; // Lấy dữ liệu cập nhật từ body
+    const updatedOrder = await updateOrder(id, updateData);
+    if (!updatedOrder) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found." });
+    }
+    res.status(200).json({ success: true, data: updatedOrder });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 };
