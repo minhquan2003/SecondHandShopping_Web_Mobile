@@ -15,7 +15,7 @@ const ProductCard1 = ({ id, name, description, price, quantity, media_url, partn
             <div className="bg-white h-full w-[95%] border shadow-md p-2 m-2 transition-shadow duration-300">
                 <div className="w-full h-[55%] overflow-hidden rounded-t-lg">
                     {isVideo ? (
-                        <video controls className="object-cover" style={{ width: '225px', height: '200px' }}>
+                        <video className="object-cover" style={{ width: '225px', height: '200px' }}>
                             <source src={media_url} type="video/mp4" />
                             Your browser does not support the video tag.
                         </video>

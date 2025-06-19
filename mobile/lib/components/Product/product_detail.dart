@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import '../../providers/login_info.dart';
 import 'package:http/http.dart' as http;
 import '../../config.dart';
+import '../Messenger/chat.dart';
 
 class ProductDetail extends StatefulWidget {
   final Map<String, dynamic> product;
@@ -29,6 +30,7 @@ class _ProductDetailState extends State<ProductDetail> {
   final TextEditingController _quantityController =
       TextEditingController(text: '1');
   late List<dynamic> comments = [];
+  late LoginInfo loginInfo;
 
   @override
   void initState() {
@@ -53,6 +55,12 @@ class _ProductDetailState extends State<ProductDetail> {
     });
     comments = [];
     fetchComments();
+  }
+
+   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    loginInfo = Provider.of<LoginInfo>(context);
   }
 
   @override
@@ -96,6 +104,89 @@ class _ProductDetailState extends State<ProductDetail> {
       throw error;
     }
   }
+
+  Future<void> handleTextToSeller() async {
+    // Kiểm tra xem người dùng có phải là người bán không
+    if (loginInfo.id != null && (product['user_id'] == loginInfo.id)) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Thông báo"),
+          content: Text("Đây là sản phẩm của bạn!"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text("OK"),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    // Lấy danh sách các cuộc hội thoại
+    final response = await http.get(Uri.parse('http://$ip:5555/conversations/${loginInfo.id}'));
+    
+    if (response.statusCode == 200) {
+      final conversations = json.decode(response.body);
+
+      // Kiểm tra xem đã có cuộc hội thoại nào giữa loginInfo.id và product.user_id chưa
+      final existingConversation = conversations.firstWhere(
+        (conversation) =>
+            (conversation['participant1'] == loginInfo.id && conversation['participant2'] == product['user_id']) ||
+            (conversation['participant1'] == product['user_id'] && conversation['participant2'] == loginInfo.id),
+        orElse: () => null,
+      );
+      
+      if (existingConversation != null) {
+        // Nếu có cuộc hội thoại, chuyển đến trang nhắn tin
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Chat(conversation: existingConversation,)),
+        );
+        // Navigator.pushNamed(context, '/message', arguments: {
+        //   'userId': loginInfo.id,
+        //   'conversationId': existingConversation['_id'],
+        // });
+      } else {
+        // Nếu không, tạo cuộc hội thoại mới
+        late String? lg = loginInfo.id;
+        final newConversation = await addConversation(lg!, product['user_id']);
+        
+        // Chuyển đến trang nhắn tin với cuộc hội thoại mới
+        Navigator.push(context,
+          MaterialPageRoute(builder: (context) => Chat(conversation: newConversation,)));
+        // Navigator.pushNamed(context, '/message', arguments: {
+        //   'userId': loginInfo.id,
+        //   'conversationId': newConversation['_id'],
+        // });
+      }
+    } else {
+      // Xử lý lỗi
+      print('Lỗi khi lấy danh sách cuộc hội thoại: ${response.statusCode}');
+    }
+  }
+
+  Future<Map<String, dynamic>> addConversation(String userId1, String userId2) async {
+  final response = await http.post(
+    Uri.parse('http://$ip:5555/conversations'),
+    headers: {'Content-Type': 'application/json'},
+    body: json.encode({
+      'participant1': userId1,
+      'participant2': userId2,
+    }),
+  );
+
+  if (response.statusCode == 201) {
+    try {
+      return json.decode(response.body); // Giải mã thành Map
+    } catch (e) {
+      throw Exception('Lỗi khi giải mã phản hồi: $e');
+    }
+  } else {
+    throw Exception('Không thể tạo cuộc hội thoại');
+  }
+}
 
   void addToCart(String ub, String us, String pid, String pn, int quantityMax,
       int pqs, int pp, String pu) async {
@@ -168,6 +259,20 @@ class _ProductDetailState extends State<ProductDetail> {
       print('Error delete product: $error');
       throw Exception('Không có sản phẩm nào.');
     }
+  }
+
+  void showSnackBar(BuildContext context) {
+    final snackBar = SnackBar(
+      content: Text(loginInfo.id!),
+      action: SnackBarAction(
+        label: 'ĐÓNG',
+        onPressed: () {
+          // Code để thực hiện khi nhấn nút "ĐÓNG"
+        },
+      ),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
@@ -264,20 +369,50 @@ class _ProductDetailState extends State<ProductDetail> {
                         hintText: 'Nhập số lượng',
                       ),
                     ),
+                    const SizedBox(height: 8,),
                     Center(
-                      child: ElevatedButton.icon(
-                        onPressed: () => {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SellerPage(
-                                      idSeller: product['user_id'],
-                                    )),
-                          )
-                        },
-                        label: Text('Xem trang người bán'),
-                      ),
-                    ),
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.center, // Căn giữa hàng
+    children: [
+      ElevatedButton.icon(
+        onPressed: () => {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SellerPage(
+                idSeller: product['user_id'],
+              ),
+            ),
+          )
+        },
+        icon: Icon(Icons.store), // Biểu tượng cho nút "Xem trang người bán"
+        label: Text('Trang người bán'),
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white, backgroundColor: Colors.green, // Màu chữ trắng
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8), // Bo tròn góc
+          ),
+          minimumSize: Size(150, 50), // Kích thước tối thiểu
+        ),
+      ),
+      SizedBox(width: 10), // Khoảng cách giữa hai nút
+      ElevatedButton.icon(
+        onPressed: () => {
+          handleTextToSeller()
+        },
+        icon: Icon(Icons.message), // Biểu tượng cho nút "Nhắn tin với người bán"
+        label: Text('Nhắn tin'),
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white, backgroundColor: Colors.green, // Màu chữ trắng
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8), // Bo tròn góc
+          ),
+          minimumSize: Size(100, 50), // Kích thước tối thiểu
+        ),
+      ),
+    ],
+  ),
+),
                     if (product['user_id'] == loginInfo.id)
                       Column(
                         children: [
@@ -324,6 +459,7 @@ class _ProductDetailState extends State<ProductDetail> {
                         ],
                       ),
                       child: Column(
+                        
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -380,7 +516,12 @@ class _ProductDetailState extends State<ProductDetail> {
                               }).toList(),
                             )
                           else
-                            Text('Chưa có đánh giá nào.'),
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.9,
+                            child: 
+                          Text('Chưa có đánh giá nào.')
+                          ,)
+                            
                         ],
                       ),
                     ),
@@ -440,6 +581,37 @@ class _ProductDetailState extends State<ProductDetail> {
                   flex: 2,
                   child: ElevatedButton(
                       onPressed: () {
+                        if ((loginInfo.id != null && (product['user_id'] == loginInfo.id))) {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text("Thông báo"),
+                              content: Text("Đây là sản phẩm của bạn!"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  child: Text("OK"),
+                                ),
+                              ],
+                            ),
+                          );
+                        return;}
+                        int quantity = int.tryParse(_quantityController.text) ?? 0;
+                        if (product['quantity'] < quantity) {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text("Thông báo"),
+                              content: Text("Bạn đã chọn quá số lượng còn lại của sản phẩm!"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  child: Text("OK"),
+                                ),
+                              ],
+                            ),
+                          );
+                        return;}
                         List<dynamic> product1 = [
                           {
                             'user_buyer': loginInfo.id ?? '',

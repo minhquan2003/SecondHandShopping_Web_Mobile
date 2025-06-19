@@ -22,6 +22,9 @@ const EditProfile = () => {
   const [provinceId, setProvinceId] = useState(userInfo.provinceId || "");
   const [districtId, setDistrictId] = useState(userInfo.districtId || "");
   const { provinces, districts } = useLocationAddress(provinceId);
+  const [bankName, setBankName] = useState(""); // State cho tên ngân hàng
+  const [cardHolderName, setCardHolderName] = useState(""); // State cho tên chủ tài khoản
+  const [accountNumber, setAccountNumber] = useState(""); // State cho số tài khoản
 
   const phoneInputRef = useRef(null);
 
@@ -33,6 +36,9 @@ const EditProfile = () => {
       setAddress(userInfo.address || "");
       setPhone(userInfo.phone || "");
       setQrUrl(userInfo.qrPayment || "");
+      setBankName(userInfo.bankName || ""); 
+      setCardHolderName(userInfo.cardHolderName || ""); 
+      setAccountNumber(userInfo.accountNumber || "");
     }
   }, []);
 
@@ -82,6 +88,9 @@ const EditProfile = () => {
       provinceId,
       districtId,
       qrPayment: qrUrl,
+      bankName, // Thêm bankName vào đối tượng cập nhật
+      cardHolderName, // Thêm cardHolderName vào đối tượng cập nhật
+      accountNumber,
     };
 
     try {
@@ -211,7 +220,7 @@ const EditProfile = () => {
             >
               Thay đổi hình đại diện
             </button>
-            <div className="flex-none text-center">
+            {/* <div className="flex-none text-center">
               <h2 className="text-xl font-semibold mt-4">Mã QR:</h2>
               {qrUrl ? (
                 <img
@@ -222,7 +231,7 @@ const EditProfile = () => {
               ) : (
                 <div className="text-xl font-bold mb-4">Chưa có</div>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="w-2/3 ml-4">
@@ -342,7 +351,47 @@ const EditProfile = () => {
                 required
               />
             </div>
-            <div className="mb-4">
+            <div className="flex mb-4">
+          <div className="w-1/2 pr-2">
+            <label className="block text-sm font-medium">Tên ngân hàng</label>
+            <input
+              type="text"
+              value={bankName}
+              onChange={(e) => setBankName(e.target.value)}
+              readOnly={!isEditing}
+              className={`mt-1 block w-full border rounded-md p-2 ${
+                isEditing ? "border-blue-500" : "bg-gray-200"
+              }`}
+            />
+          </div>
+          {/* Thêm input cho tên chủ tài khoản */}
+          <div className="w-1/2 pl-2">
+            <label className="block text-sm font-medium">Tên chủ tài khoản</label>
+            <input
+              type="text"
+              value={cardHolderName}
+              onChange={(e) => setCardHolderName(e.target.value)}
+              readOnly={!isEditing}
+              className={`mt-1 block w-full border rounded-md p-2 ${
+                isEditing ? "border-blue-500" : "bg-gray-200"
+              }`}
+            />
+          </div>
+        </div>
+
+        {/* Thêm input cho số tài khoản */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium">Số tài khoản</label>
+          <input
+            type="text"
+            value={accountNumber}
+            onChange={(e) => setAccountNumber(e.target.value)}
+            readOnly={!isEditing}
+            className={`mt-1 block w-full border rounded-md p-2 ${
+              isEditing ? "border-blue-500" : "bg-gray-200"
+            }`}/>
+        </div>
+            {/* <div className="mb-4">
               <label className="block text-sm font-medium">Mã QR</label>
               <input
                 type="file"
@@ -353,7 +402,7 @@ const EditProfile = () => {
                 }`}
                 disabled={!isEditing}
               />
-            </div>
+            </div> */}
             <div className="flex justify-end space-x-2">
               {!isEditing && (
                 <>
@@ -364,7 +413,7 @@ const EditProfile = () => {
                   >
                     Chỉnh sửa
                   </button>
-                  {userInfo.role === "user" ? (
+                  {/* {userInfo.role === "user" ? (
                     <button
                       type="button"
                       onClick={handleRegisterAsPartner}
@@ -388,7 +437,7 @@ const EditProfile = () => {
                     >
                       Xem lại quy định đối tác
                     </button>
-                  ) : null}
+                  ) : null} */}
                 </>
               )}
               {isEditing && (

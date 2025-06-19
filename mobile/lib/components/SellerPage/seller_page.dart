@@ -61,20 +61,19 @@ class _SellerPageState extends State<SellerPage> {
                           Row(
                             children: [
                               ClipOval(
-                                child: Image.network(
-                                  sellerInfo['avatar_url'],
-                                  width: 70.0,
-                                  height: 70.0,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Container(
-                                      width: 70.0,
-                                      height: 70.0,
-                                      color: Colors.grey, // Màu nền khi lỗi tải hình
-                                      child: Icon(Icons.error, color: Colors.white),
-                                    );
-                                  },
-                                ),
+                                child: sellerInfo['avatar_url'] != null
+                                    ? Image.network(
+                                        sellerInfo['avatar_url'],
+                                        width: 70.0,
+                                        height: 70.0,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Container(
+                                            width: 70.0,
+                                            height: 70.0,
+                                            color: Colors.grey, // Màu nền khi lỗi tải hình
+                                            child: Icon(Icons.error, color: Colors.white),
+                                          )
                               ),
                               SizedBox(width: 10), // Khoảng cách giữa avatar và tên
                               Column(

@@ -29,6 +29,7 @@ const SaleOrder = () => {
         Packaged: 'Đóng gói',
         Shipping: 'Đang giao',
         Success: 'Thành công',
+        Received: 'Đã nhận hàng',
         'Request Cancel': 'Yêu cầu hủy',
         Cancelled: 'Đã hủy',
     };

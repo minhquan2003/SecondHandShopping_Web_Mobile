@@ -5,6 +5,8 @@ import '../../providers/login_info.dart';
 import 'package:http/http.dart' as http;
 import '../../config.dart';
 import '../../utils/convert.dart';
+import './sale_order.dart';
+import 'package:intl/intl.dart';
 
 class SaleOrderDetail extends StatefulWidget {
   final Map<String, dynamic> order;
@@ -70,6 +72,11 @@ class _SaleOrderDetailState extends State<SaleOrderDetail> {
       );
     }
   }
+
+  String formatDate1(String dateString) {
+  DateTime dateTime = DateTime.parse(dateString); // Chuyển đổi chuỗi thành DateTime
+  return DateFormat('dd/MM/yyyy').format(dateTime); // Định dạng lại ngày
+}
 
   void handleCancel() async {
     final cancelReason = _cancelTextController.text;
@@ -171,8 +178,6 @@ class _SaleOrderDetailState extends State<SaleOrderDetail> {
                       child: Center(child: Text('${ordeR['status_order']}', style: TextStyle(fontSize: 18))),
                     ),
                     SizedBox(height: 16),
-                    Text('Thông tin sản phẩm', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 8),
                     Container(
                       height: 60,
                       child: GestureDetector(
@@ -199,6 +204,8 @@ class _SaleOrderDetailState extends State<SaleOrderDetail> {
                         ),
                       ),
                     ),
+                     Text('Thông tin sản phẩm', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 8),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: Image.network(
@@ -212,6 +219,7 @@ class _SaleOrderDetailState extends State<SaleOrderDetail> {
                     Text('${product?['name']}'),
                     Text('Đơn giá: ${formatPrice(product?['price'])} x${product?['quantity']}'),
                     Text('Thành tiền: ${formatPrice(ordeR['total_amount'])}'),
+                    Text('Ngày tạo đơn: ${formatDate1(ordeR['createdAt'])}'),
                     
                     // ElevatedButton(
                     //   onPressed: () {
@@ -219,7 +227,31 @@ class _SaleOrderDetailState extends State<SaleOrderDetail> {
                     //   },
                     //   child: Text('Xem trước khi lưu'),
                     // ),
+
                     SizedBox(height: 16),
+                    (ordeR['status_order'] == 'Success' || ordeR['status_order'] == 'Request Cancel'
+                    || ordeR['status_order'] == 'Cancelled') ?
+                    SizedBox.shrink()
+                    : ElevatedButton(
+                        onPressed: () {
+                          handleChangeStatusOrder();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white, backgroundColor: Colors.green, // Màu chữ
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0), // Bo góc nhẹ
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min, // Để không chiếm quá nhiều không gian
+                          children: [
+                            Icon(Icons.check, color: Colors.white), // Thêm icon
+                            SizedBox(width: 8), // Khoảng cách giữa icon và chữ
+                            Text('Xác nhận đơn hàng'),
+                          ],
+                        ),
+                      ),
+                    SizedBox(height: 6),
                     (ordeR['status_order'] == 'Pending' || ordeR['status_order'] == 'Confirmed')
                     ? Column(
                         children: [
@@ -233,40 +265,44 @@ class _SaleOrderDetailState extends State<SaleOrderDetail> {
                                 labelText: 'Nguyên nhân muốn huỷ đơn hàng',
                                 border: OutlineInputBorder(),
                               ),
-                              maxLines: 2,
+                              maxLines: 1,
                             ),
                           ),
                           ElevatedButton(
-                            onPressed: (){
-                              if(_cancelTextController.text.isNotEmpty){
+                            onPressed: () {
+                              if (_cancelTextController.text.isNotEmpty) {
                                 handleCancel();
-                              }else{
+                              } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(content: Text('Vui lòng nhập nguyên nhân huỷ đơn!')),
                                 );
                               }
-                            },
-                            child: Text('Huỷ đơn hàng'),
-                          ),
+                              },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white, backgroundColor: Colors.red, // Màu chữ
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0), // Bo góc nhẹ
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min, // Để không chiếm quá nhiều không gian
+                                children: [
+                                  Icon(Icons.cancel, color: Colors.white), // Thêm icon
+                                  SizedBox(width: 8), // Khoảng cách giữa icon và chữ
+                                  Text('Huỷ đơn hàng'),
+                                ],
+                              ),
+                            ),
                         ],
                       )
                     : ordeR['status_order'] == 'Request Cancel' ?
                     ElevatedButton(
                       onPressed: (){
-                        
+                        handleChangeStatusOrder();
                       },
                       child: Text('Xác nhận huỷ'),
                     )
                     : SizedBox.shrink(),
-                    (ordeR['status_order'] == 'Success' || ordeR['status_order'] == 'Request Cancel'
-                    || ordeR['status_order'] == 'Cancelled') ?
-                    SizedBox.shrink()
-                    : ElevatedButton(
-                      onPressed: (){
-                        handleChangeStatusOrder();
-                      },
-                      child: Text('Xác nhận đơn hàng'),
-                    ),
                   ],
                 ),
               ),

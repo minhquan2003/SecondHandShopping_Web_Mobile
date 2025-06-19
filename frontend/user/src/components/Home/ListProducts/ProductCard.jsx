@@ -24,8 +24,8 @@ const ProductCard = ({
   return (
     <Link
       to={`/product/${id}`}
-      className="flex mt-2 mb-2 justify-center items-center hover:bg-gray-200"
-      style={{ width: "245px", height: "350px", textDecoration: "none" }}
+      className="flex w-[20%] mt-2 mb-2 justify-center items-center hover:bg-gray-200"
+      style={{ height: "350px", textDecoration: "none" }}
     >
       <div className="bg-white h-full w-[95%] border shadow-md p-2 m-2 transition-shadow duration-300">
         <div className="w-full h-[55%] overflow-hidden rounded-t-lg">

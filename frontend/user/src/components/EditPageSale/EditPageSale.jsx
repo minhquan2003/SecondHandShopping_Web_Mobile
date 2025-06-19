@@ -37,7 +37,7 @@ const EditSalePage = () => {
                 <div className="bg-white h-full border rounded-lg shadow-md p-2 m-2 transition-shadow duration-300">
                     <div className="w-full h-[55%] overflow-hidden rounded-t-lg">
                         {isVideo ? (
-                            <video controls className="object-cover w-full h-full">
+                            <video className="object-cover w-full h-full">
                                 <source src={media_url} type="video/mp4" />
                                 Your browser does not support the video tag.
                             </video>
@@ -98,7 +98,7 @@ const EditSalePage = () => {
                         <p className="mt-2 ml-4">Địa chỉ: {sellerInfo.address}</p>
                         <p className="mt-2 ml-4">Email: {sellerInfo.email}</p>
                     </div>
-                    <div className="flex flex-col justify-center items-center text-center">
+                    {/* <div className="flex flex-col justify-center items-center text-center">
                         <h2 className="text-xl font-semibold mt-4">Mã QR thanh toán</h2>
                         {sellerInfo.qrPayment ? (
                             <img 
@@ -109,10 +109,10 @@ const EditSalePage = () => {
                         ) : (
                             <div className="text-xl font-bold mb-2">Chưa có</div>
                         )}
-                    </div>
+                    </div> */}
                     <button 
                         onClick={() => navigate(`/profile/${sellerId}`)}
-                        className="bg-gray-100 ml-4 border border-blue-500 text-blue-600 underline rounded p-2 hover:bg-gray-300 transition duration-300"
+                        className="bg-gray-100 border border-blue-500 text-blue-600 underline rounded p-2 hover:bg-gray-300 transition duration-300"
                     >
                         Cập nhật thông tin cá nhân
                     </button>

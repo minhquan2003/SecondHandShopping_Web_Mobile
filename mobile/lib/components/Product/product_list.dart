@@ -25,41 +25,54 @@ class _ProductListState extends State<ProductList> {
   }
 
   Future<void> fetchProducts() async {
-    final response = await http.get(Uri.parse(widget.urlBase));
+    setState(() {
+      isLoading = true; // Bắt đầu quá trình tải
+    });
 
-    if (response.statusCode == 200) {
+    // Tạo một Future cho việc tải dữ liệu và khoảng thời gian chờ
+    final response = await Future.wait([
+      http.get(Uri.parse(widget.urlBase)),
+      Future.delayed(Duration(seconds: 2)), // Khoảng thời gian chờ 3 giây
+    ]);
+
+    // Kiểm tra phản hồi từ API
+    if (response[0].statusCode == 200) {
       setState(() {
-        products = json.decode(response.body);
-        isLoading = false;
+        products = json.decode(response[0].body);
+        isLoading = false; // Dữ liệu đã được tải thành công
       });
     } else {
+      setState(() {
+        isLoading = false; // Không có dữ liệu hoặc có lỗi
+      });
       throw Exception('Failed to load products');
     }
   }
-
   @override
   Widget build(BuildContext context) {
-    return isLoading
-        ? const Center(child: CircularProgressIndicator())
-        : Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.8,
-                crossAxisSpacing: 4,
-                mainAxisSpacing: 4,
-              ),
-              itemCount: products.length,
-              // Xóa dòng này để cho phép cuộn
-              // physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                final product = products[index];
-                return ProductCard(
-                  product: product, // Truyền toàn bộ đối tượng sản phẩm
-                );
-              },
-            ),
-          );
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (products.isEmpty) {
+      return const Center(child: Text('Không có sản phẩm cho trang này.'));
+    } else {
+      return Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 0.8,
+            crossAxisSpacing: 4,
+            mainAxisSpacing: 4,
+          ),
+          itemCount: products.length,
+          itemBuilder: (context, index) {
+            final product = products[index];
+            return ProductCard(
+              product: product, // Truyền toàn bộ đối tượng sản phẩm
+            );
+          },
+        ),
+      );
+    }
   }
 }
