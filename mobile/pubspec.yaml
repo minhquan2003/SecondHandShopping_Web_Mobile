@@ -48,7 +48,6 @@ dependencies:
   url_launcher: ^6.3.0
   socket_io_client: ^1.0.0
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
