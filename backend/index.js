@@ -14,7 +14,7 @@ import orderDetailRoute from "./User/routes/orderDetailRoutes.js";
 import cartRoute from "./User/routes/cartRoute.js";
 import mongoose from "mongoose";
 import cors from "cors";
-import adminRouter from "./Admin/routes/Adminroute.js";
+import adminRouter from "./Admin/routes/adminRoute.js";
 import paymentRoutes from "./User/routes/payment.js";
 import mailRoute from "./User/routes/mailRoute.js";
 import messageRouter from "./User/routes/messageRoutes.js";
