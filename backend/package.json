@@ -31,7 +31,6 @@
   "scripts": {
     "start": "index.js",
     "dev": "nodemon index.js",
-    "postinstall": "npx patch-package"
   },
   "author": "",
   "license": "ISC",
