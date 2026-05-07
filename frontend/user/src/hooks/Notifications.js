@@ -3,7 +3,7 @@ import { IP } from "../config";
 
 const updateNotification = async (notificationId, readed) => {
     try {
-        const response = await axios.put(`http://${IP}/notifications/update`, { notificationId, readed });
+        const response = await axios.put(`${IP}/notifications/update`, { notificationId, readed });
         const data = response.data;
         return data;
     } catch (error) {
@@ -14,7 +14,7 @@ const updateNotification = async (notificationId, readed) => {
 
 const createNotification = async (notification) => {
     try {
-        const response = await axios.post(`http://${IP}/notifications`, notification);
+        const response = await axios.post(`${IP}/notifications`, notification);
         const data = response.data;
         return data;
     } catch (error) {
