@@ -6,7 +6,7 @@ import {
   deleteUser,
   getAllUsers,
 } from "../services/userService.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { validationResult } from "express-validator";
 
 const addUser = async (req, res) => {
