@@ -10,7 +10,7 @@ const getProducts = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`http://${IP}/products`);
+        const response = await axios.get(`${IP}/products`);
         setProducts(response.data);
       } catch (err) {
         console.error("Có lỗi trong quá trình tải sản phẩm:", err);
@@ -34,7 +34,7 @@ const getVideoProducts = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`http://${IP}/products/video`);
+        const response = await axios.get(`${IP}/products/video`);
         setVProducts(response.data);
       } catch (err) {
         console.error("Có lỗi trong quá trình tải sản phẩm:", err);
@@ -59,7 +59,7 @@ const getProductsByIdSeller = (idSeller) => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(
-          `http://${IP}/products/user/${idSeller}`
+          `${IP}/products/user/${idSeller}`
         );
         setProducts(response.data);
       } catch (err) {
@@ -85,7 +85,7 @@ const getProductsNotApproveByIdSeller = (idSeller) => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(
-          `http://${IP}/products/notapprove/user/${idSeller}`
+          `${IP}/products/notapprove/user/${idSeller}`
         );
         setProducts(response.data);
       } catch (err) {
@@ -110,7 +110,7 @@ const getProductsSoldOutByIdSeller = (idSeller) => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(
-          `http://${IP}/products/soldout/user/${idSeller}`
+          `${IP}/products/soldout/user/${idSeller}`
         );
         setProducts(response.data);
       } catch (err) {
@@ -135,7 +135,7 @@ const useProduct = (id) => {
     const fetchProduct = async () => {
       setLoading(true); // Bắt đầu loading
       try {
-        const response = await axios.get(`http://${IP}/products/${id}`, {
+        const response = await axios.get(`${IP}/products/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -157,7 +157,7 @@ const useProduct = (id) => {
 //Error: Failed to load products. Please try again later.
 const updateProduct = async ({ id, quanlity }) => {
   try {
-    const response = await axios.put(`http://${IP}/products/quanlity`, {
+    const response = await axios.put(`${IP}/products/quanlity`, {
       id,
       quanlity,
     });
@@ -172,7 +172,7 @@ const updateProduct = async ({ id, quanlity }) => {
 const updateOneProduct = async (id, product) => {
   try {
     const response = await axios.put(
-      `http://${IP}/products/${id}`,
+      `${IP}/products/${id}`,
       product
     );
     const data = response.data;
@@ -185,7 +185,7 @@ const updateOneProduct = async (id, product) => {
 
 const addProduct = async (product) => {
   try {
-    const response = await axios.post(`http://${IP}/products`, product);
+    const response = await axios.post(`${IP}/products`, product);
     const data = response.data;
     return data;
   } catch (error) {
@@ -203,7 +203,7 @@ const getProductByCategory = (id) => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(
-          `http://${IP}/products/category/${id}`
+          `${IP}/products/category/${id}`
         );
         setProducts(response.data);
       } catch (err) {
@@ -228,14 +228,14 @@ const getProductByCategory1 = (id) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`http://${IP}/products/${id}`, {
+        const response = await axios.get(`${IP}/products/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
         const pro = response.data;
         const response1 = await axios.get(
-          `http://${IP}/products/category/${pro.category_id}`
+          `${IP}/products/category/${pro.category_id}`
         );
         setProducts(response1.data);
       } catch (err) {
@@ -254,7 +254,7 @@ const getProductByCategory1 = (id) => {
 
 const getProductById = async (id) => {
   try {
-    const response = await axios.get(`http://${IP}/products/${id}`);
+    const response = await axios.get(`${IP}/products/${id}`);
     const product = response.data;
     return product; // Trả về sản phẩm
   } catch (err) {
@@ -265,7 +265,7 @@ const getProductById = async (id) => {
 
 const deleteProductById = async (id) => {
   try {
-    const response = await axios.delete(`http://${IP}/products/${id}`);
+    const response = await axios.delete(`${IP}/products/${id}`);
     const product = response.data;
     return product; // Trả về sản phẩm
   } catch (err) {
@@ -283,7 +283,7 @@ const getProductByName = (product) => {
     console.log("Fetching products for:", product); // Ghi nhận giá trị của product
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`http://${IP}/products/search`, {
+        const response = await axios.get(`${IP}/products/search`, {
           params: { name: product },
         });
         setProducts(response.data.data); // Đảm bảo rằng response.data.data là chính xác
@@ -318,7 +318,7 @@ const useSearchProducts = (brand, categoryId) => {
       try {
         // Tạo URL tìm kiếm với query parameters
         const response = await axios.get(
-          `http://${IP}/products/product/search`,
+          `${IP}/products/product/search`,
           {
             params: {
               brand,
@@ -347,7 +347,7 @@ const useSearchProducts = (brand, categoryId) => {
 
 const getAllCountries = async () => {
   try {
-    const response = await axios.get(`http://${IP}/countries`);
+    const response = await axios.get(`${IP}/countries`);
     const countries = response.data;
     return countries; // Trả về sản phẩm
   } catch (err) {
