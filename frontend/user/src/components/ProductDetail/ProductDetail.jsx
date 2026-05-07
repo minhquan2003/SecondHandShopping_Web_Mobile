@@ -12,7 +12,7 @@
 // import { addConversation, addMessage } from "../../hooks/Message";
 // import { IP } from "../../config";
 
-// const socket = io(`http://localhost`);
+// const socket = io(`https://secondhandshopping-web-mobile.onrender.com`);
 
 // const ProductDisplay = () => {
 //   const userInfoString = sessionStorage.getItem("userInfo");
@@ -293,7 +293,7 @@ import ListProductCard from "../Home/ListProducts/ListProductCard";
 import { getProductByCategory1 } from "../../hooks/Products";
 import { FiShoppingCart, FiCheckCircle, FiMessageCircle, FiStar, FiClipboard, FiUser} from 'react-icons/fi';
 
-const socket = io(`http://localhost`);
+const socket = io(`https://secondhandshopping-web-mobile.onrender.com`);
 
 const ProductDisplay = () => {
     const userInfoString = sessionStorage.getItem('userInfo');
