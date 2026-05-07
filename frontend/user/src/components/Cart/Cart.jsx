@@ -7,7 +7,7 @@ import io from 'socket.io-client';
 import { IP } from '../../config';
 import { FiShoppingCart } from 'react-icons/fi';
 
-const socket = io(`http://localhost:5555`);
+const socket = io(`http://localhost`);
 
 const Cart = () => {
     const userInfoString = sessionStorage.getItem('userInfo');
