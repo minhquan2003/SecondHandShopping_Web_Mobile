@@ -3,7 +3,7 @@ import { IP } from "../config";
 
 const getAllRegulation = async () =>{
     try{
-        const regulation = await axios.get(`http://${IP}/regulations`);
+        const regulation = await axios.get(`${IP}/regulations`);
         return regulation.data
     }catch(err){
         console.error('Error get regulation:', err);
