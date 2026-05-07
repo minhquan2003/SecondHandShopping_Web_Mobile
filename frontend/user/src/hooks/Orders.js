@@ -3,7 +3,7 @@ import { IP } from "../config";
 
 const createOrder = async (info) => {
   try {
-    const response = await axios.post(`http://${IP}/orders`, info);
+    const response = await axios.post(`${IP}/orders`, info);
     const data = response.data;
     return data;
   } catch (error) {
@@ -14,7 +14,7 @@ const createOrder = async (info) => {
 
 const updateStatusOrder = async (id, status_order) => {
   try {
-    const response = await axios.put(`http://${IP}/orders/${id}`, {
+    const response = await axios.put(`${IP}/orders/${id}`, {
       status_order,
     });
     const data = response.data;
@@ -27,7 +27,7 @@ const updateStatusOrder = async (id, status_order) => {
 
 const updateOrder = async (id, order) => {
   try {
-    const response = await axios.put(`http://${IP}/orders/${id}`, order);
+    const response = await axios.put(`${IP}/orders/${id}`, order);
     const data = response.data;
     return data;
   } catch (error) {
