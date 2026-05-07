@@ -12,7 +12,7 @@
 // import { addConversation, addMessage } from "../../hooks/Message";
 // import { IP } from "../../config";
 
-// const socket = io(`http://localhost:5555`);
+// const socket = io(`http://localhost`);
 
 // const ProductDisplay = () => {
 //   const userInfoString = sessionStorage.getItem("userInfo");
@@ -70,7 +70,7 @@
 
 //     // Lấy danh sách các cuộc hội thoại
 //     const response = await axios.get(
-//       `http://${IP}:5555/conversations/${userInfo._id}`
+//       `http://${IP}/conversations/${userInfo._id}`
 //     );
 //     const conversations = response.data;
 
@@ -293,7 +293,7 @@ import ListProductCard from "../Home/ListProducts/ListProductCard";
 import { getProductByCategory1 } from "../../hooks/Products";
 import { FiShoppingCart, FiCheckCircle, FiMessageCircle, FiStar, FiClipboard, FiUser} from 'react-icons/fi';
 
-const socket = io(`http://localhost:5555`);
+const socket = io(`http://localhost`);
 
 const ProductDisplay = () => {
     const userInfoString = sessionStorage.getItem('userInfo');
@@ -359,7 +359,7 @@ const ProductDisplay = () => {
 
     // Lấy danh sách các cuộc hội thoại
     const response = await axios.get(
-      `http://${IP}:5555/conversations/${userInfo._id}`
+      `http://${IP}/conversations/${userInfo._id}`
     );
     const conversations = response.data;
 
