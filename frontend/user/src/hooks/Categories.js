@@ -10,7 +10,7 @@ const getCategories = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await axios.get(`http://${IP}:5555/categories`);
+                const response = await axios.get(`http://${IP}/categories`);
                 setCategories(response.data);
             } catch (err) {
                 console.error("Error fetching products:", err);
@@ -34,7 +34,7 @@ const getCategoryDetailByCategoryId = (categoryId) => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await axios.get(`http://${IP}:5555/categoryDetails/parent/${categoryId}`);
+                const response = await axios.get(`http://${IP}/categoryDetails/parent/${categoryId}`);
                 setCategoryDetail(response.data);
             } catch (err) {
                 console.error("Error fetching products:", err);
@@ -52,7 +52,7 @@ const getCategoryDetailByCategoryId = (categoryId) => {
 
 const fetchSubcategories = async (categoryId) => {
     if (categoryId) {
-        const response = await axios.get(`http://${IP}:5555/categoryDetails/parent/${categoryId}`);
+        const response = await axios.get(`http://${IP}/categoryDetails/parent/${categoryId}`);
         const subcategoryData = response.data;
         return subcategoryData; // Lưu danh mục con vào state
     } else {
@@ -61,7 +61,7 @@ const fetchSubcategories = async (categoryId) => {
 };
 
 const fetchOrigin = async () => {
-    const response = await axios.get(`http://${IP}:5555/countries`);
+    const response = await axios.get(`http://${IP}/countries`);
     const countries = response.data;
     return countries; 
 };
