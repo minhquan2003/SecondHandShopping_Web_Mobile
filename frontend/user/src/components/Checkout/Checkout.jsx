@@ -21,7 +21,7 @@ import {
 import { createVNPayPayment } from "../../hooks/VNPay";
 import { v4 as uuidv4 } from "uuid";
 
-const socket = io(`http://localhost:5555`);
+const socket = io(`http://localhost`);
 
 const Checkout = () => {
   const userInfoString = sessionStorage.getItem("userInfo");
@@ -139,7 +139,7 @@ const Checkout = () => {
 
           try {
             const response = await axios.post(
-              "http://localhost:5555/orders/getShippingPrices",
+              "http://localhost/orders/getShippingPrices",
               {
                 SENDER_PROVINCE: Number(sellerInfo.provinceId) || 2,
                 SENDER_DISTRICT: Number(sellerInfo.districtId) || 1231,
