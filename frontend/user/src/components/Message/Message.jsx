@@ -6,7 +6,7 @@ import axios from 'axios';
 import io from 'socket.io-client';
 import { IP } from '../../config';
 
-const socket = io(`http://localhost`);
+const socket = io(`https://secondhandshopping-web-mobile.onrender.com`);
 
 const Message = () => {
     const { userId, conversationId } = useParams(); // Lấy userId và conversationId từ URL
