@@ -4,7 +4,7 @@ import axios from "axios";
 const getRecommendationProduct = async (user_id) => {
   try {
     const response = await axios.get(
-      `http://localhost:5000/recommend?user_id=${user_id}`
+      `https://secondhandshopping-web-mobile.onrender.com/recommend?user_id=${user_id}`
     );
     const data = response.data;
     return data;
