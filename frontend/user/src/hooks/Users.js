@@ -4,7 +4,7 @@ import { IP } from "../config";
 
 const updateProfile = async (id, info) => {
   try {
-    const response = await axios.put(`http://${IP}/users/${id}`, info, {
+    const response = await axios.put(`${IP}/users/${id}`, info, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -36,7 +36,7 @@ const useUserById = (id) => {
   useEffect(() => {
     const fetchSellerInfo = async () => {
       try {
-        const response = await axios.get(`http://${IP}/users/${id}`);
+        const response = await axios.get(`${IP}/users/${id}`);
         setSellerInfo(response.data);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -94,7 +94,7 @@ const useUsersByIds = (ids) => {
       try {
         const responses = await Promise.all(
           ids.map((id) =>
-            axios.get(`http://${IP}/users/${id}`).then((res) => res.data)
+            axios.get(`${IP}/users/${id}`).then((res) => res.data)
           )
         );
         setUsersInfo(responses);
