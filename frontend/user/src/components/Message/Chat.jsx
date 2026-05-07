@@ -10,7 +10,7 @@ import {
   FiSend 
 } from "react-icons/fi";
 
-const socket = io(`http://localhost`);
+const socket = io(`https://secondhandshopping-web-mobile.onrender.com`);
 
 const Chat = () => {
     const { userId, conversationId } = useParams();
