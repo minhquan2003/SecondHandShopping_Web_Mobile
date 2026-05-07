@@ -36,13 +36,13 @@ const ChangePassword = () => {
         }
 
         try {
-            const response = await axios.post(`http://${IP}:5555/users/comparePassword`, {
+            const response = await axios.post(`http://${IP}/users/comparePassword`, {
                 id: userInfo._id,
                 password: oldPassword
             });
 
             if (response.data.valid) {
-                await axios.put(`http://${IP}:5555/users/${userInfo._id}`, {
+                await axios.put(`http://${IP}/users/${userInfo._id}`, {
                     password: newPassword
                 });
                 setSuccess("Mật khẩu đã được cập nhật thành công!");
