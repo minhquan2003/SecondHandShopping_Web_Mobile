@@ -10,7 +10,7 @@ const useReviews = (productId) => {
     useEffect(() => {
         const fetchReviews = async () => {
             try {
-                const response = await axios.get(`http://${IP}:5555/reviews/product/${productId}`); // Thay đổi với endpoint phù hợp
+                const response = await axios.get(`http://${IP}/reviews/product/${productId}`); // Thay đổi với endpoint phù hợp
                 setReviews(response.data);
             } catch (error) {
                 console.error('Error fetching reviews:', error);
@@ -30,7 +30,7 @@ const useReviews = (productId) => {
 
 const addReview = async (review) => {
     try {
-        const response = await axios.post(`http://${IP}:5555/reviews`, review);
+        const response = await axios.post(`http://${IP}/reviews`, review);
         const data = response.data;
         return data;
     } catch (error) {
