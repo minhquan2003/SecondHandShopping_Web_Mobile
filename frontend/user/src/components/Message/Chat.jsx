@@ -10,7 +10,7 @@ import {
   FiSend 
 } from "react-icons/fi";
 
-const socket = io(`http://localhost:5555`);
+const socket = io(`http://localhost`);
 
 const Chat = () => {
     const { userId, conversationId } = useParams();
@@ -42,16 +42,16 @@ const Chat = () => {
 
     const fetchMessages = async () => {
         try {
-            const response1 = await axios.get(`http://${IP}:5555/conversations/byId/${conversationId}`);
+            const response1 = await axios.get(`http://${IP}/conversations/byId/${conversationId}`);
             const conversationData = response1.data;
             setConversation(conversationData);
 
             const u = userId === conversationData.participant1 ? conversationData.participant2 : conversationData.participant1;
 
-            const response = await axios.get(`http://${IP}:5555/messages/${conversationData._id}`);
+            const response = await axios.get(`http://${IP}/messages/${conversationData._id}`);
             setMessages(response.data);
 
-            const response2 = await axios.get(`http://${IP}:5555/users/${u}`);
+            const response2 = await axios.get(`http://${IP}/users/${u}`);
             setUser(response2.data);
         } catch (error) {
             console.error('Error fetching messages:', error);
