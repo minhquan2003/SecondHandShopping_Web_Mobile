@@ -5,7 +5,7 @@ import NotificationPopup from './NotificationPopup.jsx'; // Đường dẫn đ�
 import io from 'socket.io-client';
 import { IP } from '../../config.js';
 
-const socket = io(`http://localhost`); // Đảm bảo cổng đúng
+const socket = io(`https://secondhandshopping-web-mobile.onrender.com`); // Đảm bảo cổng đúng
 
 const NotificationIcon = ({ userId }) => {
     const userInfoString = sessionStorage.getItem('userInfo');
