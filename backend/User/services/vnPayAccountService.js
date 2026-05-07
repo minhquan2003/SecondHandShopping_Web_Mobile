@@ -1,5 +1,5 @@
 import VNPayAccounts from '../models/VnPayAccounts.js';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 const registerUser = async (data) => {
     const { username, password, vnPayAccount, user_id } = data;
