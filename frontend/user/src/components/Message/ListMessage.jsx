@@ -5,7 +5,7 @@ import io from 'socket.io-client';
 import { IP } from '../../config';
 import nonAvata from "../../assets/img/nonAvata.jpg";
 
-const socket = io(`http://localhost`);
+const socket = io(`https://secondhandshopping-web-mobile.onrender.com`);
 
 const ListMessage = () => {
     const { userId} = useParams();
