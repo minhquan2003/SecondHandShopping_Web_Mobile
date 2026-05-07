@@ -4,7 +4,7 @@ import io from 'socket.io-client';
 import { IP } from '../../config';
 import { FiX } from 'react-icons/fi';
 
-const socket = io(`http://localhost`);
+const socket = io(`https://secondhandshopping-web-mobile.onrender.com`);
 
 const NotificationPopup = ({ notifications, onClose }) => {
 
