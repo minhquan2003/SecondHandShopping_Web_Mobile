@@ -3,7 +3,7 @@ import { IP } from '../config';
 
 const addConversation = async (participant1, participant2) => {
     try{
-        const response = await axios.post(`http://${IP}:5555/conversations`, {participant1, participant2});
+        const response = await axios.post(`http://${IP}/conversations`, {participant1, participant2});
         const data = response.data;
         return data;
     }catch(error){
@@ -14,7 +14,7 @@ const addConversation = async (participant1, participant2) => {
 
 const addMessage = async (conversationId, content, senderId, receiverId) => {
     try{
-        const response = await axios.post(`http://${IP}:5555/messages`, {conversationId, content, senderId, receiverId});
+        const response = await axios.post(`http://${IP}/messages`, {conversationId, content, senderId, receiverId});
         const data = response.data;
         return data;
     }catch(error){
