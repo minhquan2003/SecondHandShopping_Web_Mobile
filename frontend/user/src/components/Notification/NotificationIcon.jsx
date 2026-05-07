@@ -36,7 +36,7 @@ const NotificationIcon = ({ userId }) => {
 
     const fetchNotifications = async (userId) => {
         try {
-            const response = await axios.get(`http://${IP}/notifications/user/${userId}`);
+            const response = await axios.get(`${IP}/notifications/user/${userId}`);
             const data = response.data;
 
             // Sắp xếp thông báo theo thứ tự gần nhất
