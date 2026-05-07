@@ -43,19 +43,19 @@ const SaleOrder = () => {
         setIsLoading(true);
 
         try {
-            const buyResponse = await axios.get(`http://${IP}:5555/orders/seller1/page?page=${currentPage}&limit=${limit}&userId=${userInfo._id}`);
+            const buyResponse = await axios.get(`http://${IP}/orders/seller1/page?page=${currentPage}&limit=${limit}&userId=${userInfo._id}`);
             
             if (buyResponse.status === 200) {
                 const purchaseOrders = buyResponse.data.data;
 
                 const ordersWithDetails = await Promise.all(purchaseOrders.map(async (order) => {
-                    const orderDetailResponse = await axios.get(`http://${IP}:5555/orderDetails/order/${order._id}`);
+                    const orderDetailResponse = await axios.get(`http://${IP}/orderDetails/order/${order._id}`);
                     
                     if (orderDetailResponse.status === 200) {
                         const orderDetail = orderDetailResponse.data.data?.[0] || null;
 
                         if (orderDetail) {
-                            const productResponse = await axios.get(`http://${IP}:5555/products/${orderDetail.product_id}`);
+                            const productResponse = await axios.get(`http://${IP}/products/${orderDetail.product_id}`);
                             
                             if (productResponse.status === 200) {
                                 return {
