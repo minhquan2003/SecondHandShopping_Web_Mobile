@@ -18,7 +18,7 @@ const ReGetPassword = () => {
     // Hàm kiểm tra người dùng
     const checkUser = async () => {
         try {
-            const response = await axios.post(`http://${IP}:5555/users/email`, { email });
+            const response = await axios.post(`http://${IP}/users/email`, { email });
             if (response.data._id) {
                 setUserId(response.data._id); // Lưu ID người dùng
             } else {
