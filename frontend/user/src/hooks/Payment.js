@@ -3,7 +3,7 @@ import { IP } from "../config";
 
 const createPayment = async (pay) => {
   try {
-    const response = await axios.post(`http://${IP}/payments`, pay);
+    const response = await axios.post(`${IP}/payments`, pay);
     const data = response.data;
     return data;
   } catch (error) {
