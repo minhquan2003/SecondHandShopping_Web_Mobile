@@ -5,7 +5,7 @@ import NotificationPopup from './NotificationPopup.jsx'; // Đường dẫn đ�
 import io from 'socket.io-client';
 import { IP } from '../../config.js';
 
-const socket = io(`http://localhost:5555`); // Đảm bảo cổng đúng
+const socket = io(`http://localhost`); // Đảm bảo cổng đúng
 
 const NotificationIcon = ({ userId }) => {
     const userInfoString = sessionStorage.getItem('userInfo');
@@ -36,7 +36,7 @@ const NotificationIcon = ({ userId }) => {
 
     const fetchNotifications = async (userId) => {
         try {
-            const response = await axios.get(`http://${IP}:5555/notifications/user/${userId}`);
+            const response = await axios.get(`http://${IP}/notifications/user/${userId}`);
             const data = response.data;
 
             // Sắp xếp thông báo theo thứ tự gần nhất
