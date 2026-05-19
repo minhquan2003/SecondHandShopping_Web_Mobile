@@ -12,8 +12,9 @@ import { getCartItemsByUserId } from "../../../../hooks/Carts.js";
 import logo from '../../../../assets/img/logo.png';
 import io from 'socket.io-client';
 import MessageIcon from "../../../Message/MessageIcon.jsx";
+import { sock } from "../../../../config.js"
 
-const socket = io("http://localhost:5555");
+const socket = io(`${sock}`);
 
 const Header = () => {
   const userInfoString = sessionStorage.getItem('userInfo');

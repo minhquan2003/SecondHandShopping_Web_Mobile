@@ -4,10 +4,10 @@ import {useNavigate } from 'react-router-dom';
 import { FaTrash } from 'react-icons/fa';
 import BackButton from '../../commons/BackButton';
 import io from 'socket.io-client';
-import { IP } from '../../config';
+import { IP, sock } from '../../config';
 import { FiShoppingCart } from 'react-icons/fi';
 
-const socket = io(`https://secondhandshopping-web-mobile.onrender.com`);
+const socket = io(`${sock}`);
 
 const Cart = () => {
     const userInfoString = sessionStorage.getItem('userInfo');

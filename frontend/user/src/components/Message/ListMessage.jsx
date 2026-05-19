@@ -5,7 +5,7 @@ import io from 'socket.io-client';
 import { IP } from '../../config';
 import nonAvata from "../../assets/img/nonAvata.jpg";
 
-const socket = io(`https://secondhandshopping-web-mobile.onrender.com`);
+const socket = io(`${sock}`);
 
 const ListMessage = () => {
     const { userId} = useParams();
@@ -27,7 +27,7 @@ const ListMessage = () => {
     };
 
     const unReadMess = async (idConver, user) => {
-        const response = await axios.get(`http://${IP}/messages/${idConver}`);
+        const response = await axios.get(`${IP}/messages/${idConver}`);
         const messages = response.data; // Lấy dữ liệu tin nhắn
 
         // Sử dụng reduce để đếm số tin nhắn có trạng thái 'sent'
@@ -53,7 +53,7 @@ const ListMessage = () => {
 
     const fetchConversations = async () => {
             try {
-                const response = await axios.get(`http://${IP}/conversations/${userId}`);
+                const response = await axios.get(`${IP}/conversations/${userId}`);
                 
 
                 const conversa = await Promise.all(response.data.map(async (conversation) => {
@@ -72,7 +72,7 @@ const ListMessage = () => {
                 );
 
                 // Gọi API để lấy thông tin người dùng
-                const userPromises = participantIds.map(id => axios.get(`http://${IP}/users/${id}`));
+                const userPromises = participantIds.map(id => axios.get(`${IP}/users/${id}`));
                 const userResponses = await Promise.all(userPromises);
 
                 // Lưu thông tin người dùng vào mảng
@@ -88,7 +88,7 @@ const ListMessage = () => {
         const userSend = conversation.participant1 === userId ? conversation.participant2 : conversation.participant1;
         const senderId = userSend;
         const id = conversation._id;
-        const aa = await axios.post(`http://${IP}/messages/read/${id}`, { senderId });
+        const aa = await axios.post(`${IP}/messages/read/${id}`, { senderId });
         navigate(`/message/${userId}/${conversation._id}`);
     };
 

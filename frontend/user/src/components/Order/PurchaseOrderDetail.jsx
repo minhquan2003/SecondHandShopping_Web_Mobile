@@ -7,10 +7,10 @@ import { addReview } from '../../hooks/Review';
 import { updateStatusOrder } from '../../hooks/Orders';
 import { createNotification } from '../../hooks/Notifications';
 import io from 'socket.io-client';
-import { IP } from '../../config';
+import { IP, sock } from '../../config';
 import { FiArrowDownRight, FiArrowRight, FiCheckCircle, FiCheckSquare, FiInfo, FiPackage, FiSend, FiShoppingCart, FiStar, FiUser, FiXCircle } from 'react-icons/fi';
 
-const socket = io(`https://secondhandshopping-web-mobile.onrender.com`);
+const socket = io(`${sock}`);
 
 const PurchaseOrderDetail = () => {
     const { orderId } = useParams(); // Lấy mã đơn hàng từ URL
@@ -98,17 +98,17 @@ const PurchaseOrderDetail = () => {
         const fetchOrderData = async () => {
             try {
                 // Lấy thông tin đơn hàng
-                const orderResponse = await axios.get(`http://${IP}/orders/${orderId}`);
+                const orderResponse = await axios.get(`${IP}/orders/${orderId}`);
                 setOrder(orderResponse.data.data);
 
-                const sellerResponse = await axios.get(`http://${IP}/users/${orderResponse.data.data.user_id_seller}`);
+                const sellerResponse = await axios.get(`${IP}/users/${orderResponse.data.data.user_id_seller}`);
                 setSeller(sellerResponse.data);
 
-                const paymentRe = await axios.get(`http://${IP}/payments/order/${orderId}`);
+                const paymentRe = await axios.get(`${IP}/payments/order/${orderId}`);
                 setPayment(paymentRe.data.data);
 
                 // Lấy thông tin chi tiết đơn hàng
-                const detailsResponse = await axios.get(`http://${IP}/orderDetails/order/${orderId}`);
+                const detailsResponse = await axios.get(`${IP}/orderDetails/order/${orderId}`);
                 const detailsData = detailsResponse.data.data;
 
                 // Nếu có dữ liệu, lấy sản phẩm đầu tiên

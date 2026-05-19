@@ -1,10 +1,10 @@
 import React from 'react';
 import { updateNotification } from '../../hooks/Notifications';
 import io from 'socket.io-client';
-import { IP } from '../../config';
+import { IP, sock } from '../../config';
 import { FiX } from 'react-icons/fi';
 
-const socket = io(`https://secondhandshopping-web-mobile.onrender.com`);
+const socket = io(`${sock}`);
 
 const NotificationPopup = ({ notifications, onClose }) => {
 

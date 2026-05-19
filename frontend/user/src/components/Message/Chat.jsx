@@ -3,14 +3,14 @@ import axios from 'axios';
 import { addMessage } from '../../hooks/Message';
 import { useParams } from 'react-router-dom';
 import io from 'socket.io-client';
-import { IP } from '../../config';
+import { IP, sock } from '../../config';
 import nonAvata from "../../assets/img/nonAvata.jpg";
 import {
   FiPaperclip, // Nhập biểu tượng kẹp giấy
   FiSend 
 } from "react-icons/fi";
 
-const socket = io(`https://secondhandshopping-web-mobile.onrender.com`);
+const socket = io(`${sock}`);
 
 const Chat = () => {
     const { userId, conversationId } = useParams();
@@ -42,16 +42,16 @@ const Chat = () => {
 
     const fetchMessages = async () => {
         try {
-            const response1 = await axios.get(`http://${IP}/conversations/byId/${conversationId}`);
+            const response1 = await axios.get(`${IP}/conversations/byId/${conversationId}`);
             const conversationData = response1.data;
             setConversation(conversationData);
 
             const u = userId === conversationData.participant1 ? conversationData.participant2 : conversationData.participant1;
 
-            const response = await axios.get(`http://${IP}/messages/${conversationData._id}`);
+            const response = await axios.get(`${IP}/messages/${conversationData._id}`);
             setMessages(response.data);
 
-            const response2 = await axios.get(`http://${IP}/users/${u}`);
+            const response2 = await axios.get(`${IP}/users/${u}`);
             setUser(response2.data);
         } catch (error) {
             console.error('Error fetching messages:', error);

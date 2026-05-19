@@ -6,10 +6,10 @@ import { getProductById } from '../../hooks/Products';
 import { updateStatusOrder } from '../../hooks/Orders';
 import { createNotification } from '../../hooks/Notifications';
 import io from 'socket.io-client';
-import { IP } from '../../config';
+import { IP, sock } from '../../config';
 import { FiInfo, FiPackage,FiCheck , FiXCircle, FiCheckCircle, FiArrowRight } from 'react-icons/fi';
 
-const socket = io(`https://secondhandshopping-web-mobile.onrender.com`); // Đảm bảo cổng đúng
+const socket = io(`${sock}`);
 
 const SalesOrderDetail = () => {
     const { orderId } = useParams();
@@ -29,13 +29,13 @@ const SalesOrderDetail = () => {
     useEffect(() => {
         const fetchOrderData = async () => {
             try {
-                const orderResponse = await axios.get(`http://${IP}/orders/${orderId}`);
+                const orderResponse = await axios.get(`${IP}/orders/${orderId}`);
                 setOrder(orderResponse.data.data);
 
-                const paymentRe = await axios.get(`http://${IP}/payments/order/${orderId}`);
+                const paymentRe = await axios.get(`${IP}/payments/order/${orderId}`);
                 setPayment(paymentRe.data.data);
 
-                const detailsResponse = await axios.get(`http://${IP}/orderDetails/order/${orderId}`);
+                const detailsResponse = await axios.get(`${IP}/orderDetails/order/${orderId}`);
                 const detailsData = detailsResponse.data.data;
 
                 if (detailsData.length > 0) {

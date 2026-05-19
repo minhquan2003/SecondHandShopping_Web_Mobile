@@ -3,9 +3,9 @@ import axios from 'axios';
 import { FiBell } from 'react-icons/fi';
 import NotificationPopup from './NotificationPopup.jsx'; // Đường dẫn đến NotificationPopup
 import io from 'socket.io-client';
-import { IP } from '../../config.js';
+import { IP, sock } from '../../config.js';
 
-const socket = io(`https://secondhandshopping-web-mobile.onrender.com`); // Đảm bảo cổng đúng
+const socket = io(`${sock}`);
 
 const NotificationIcon = ({ userId }) => {
     const userInfoString = sessionStorage.getItem('userInfo');

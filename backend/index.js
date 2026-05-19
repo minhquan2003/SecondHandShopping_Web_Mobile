@@ -1,5 +1,5 @@
 import express from "express";
-import { PORT, mongodbconn } from "./config.js";
+import { PORT, mongodbconn, IP } from "./config.js";
 import userRoute from "./User/routes/userRoute.js";
 import authRoute from "./User/routes/authRoute.js";
 import productRoute from "./User/routes/productRoute.js";
@@ -104,7 +104,7 @@ mongoose
     console.log(`MongoDB Connected: ${conn.connection.host}`);
     server.listen(PORT, "0.0.0.0", () => {
       // Lắng nghe từ tất cả các địa chỉ IP
-      console.log(`Server is running on http://localhost:${PORT}`);
+      console.log(`Server is running on ${IP}`);
     });
   })
   .catch((error) => {

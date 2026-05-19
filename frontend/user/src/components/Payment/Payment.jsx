@@ -8,7 +8,7 @@ const PaymentForm = () => {
 
     const handlePayment = async () => {
         try {
-            const response = await axios.post(`http://${IP}/payment/momo`, {
+            const response = await axios.post(`${IP}/payment/momo`, {
                 amount,
                 orderInfo,
             });

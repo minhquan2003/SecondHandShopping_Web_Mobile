@@ -41,20 +41,20 @@ const PurchaseOrder = () => {
             const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
 
             // Fetch purchase orders
-            const buyResponse = await axios.get(`http://${IP}/orders/buyer1/page?page=${currentPage}&limit=${limit}&userId=${userInfo._id}`);
+            const buyResponse = await axios.get(`${IP}/orders/buyer1/page?page=${currentPage}&limit=${limit}&userId=${userInfo._id}`);
             
             if (buyResponse.status === 200) {
                 const purchaseOrders = buyResponse.data.data;
 
                 // Process each purchase order
                 const ordersWithDetails = await Promise.all(purchaseOrders.map(async (order) => {
-                    const orderDetailResponse = await axios.get(`http://${IP}/orderDetails/order/${order._id}`);
+                    const orderDetailResponse = await axios.get(`${IP}/orderDetails/order/${order._id}`);
                     
                     if (orderDetailResponse.status === 200) {
                         const orderDetail = orderDetailResponse.data.data?.[0] || null;
 
                         if (orderDetail) {
-                            const productResponse = await axios.get(`http://${IP}/products/${orderDetail.product_id}`);
+                            const productResponse = await axios.get(`${IP}/products/${orderDetail.product_id}`);
                             
                             if (productResponse.status === 200) {
                                 return {

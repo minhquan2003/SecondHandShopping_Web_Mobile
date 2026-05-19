@@ -4,10 +4,10 @@ import { useUserById } from '../../hooks/Users';
 import { createNotification } from '../../hooks/Notifications';
 import { createPayment } from '../../hooks/Payment'; 
 import io from 'socket.io-client';
-import { IP } from '../../config';
+import { IP , sock} from '../../config';
 import { FiCheckCircle } from 'react-icons/fi';
 
-const socket = io(`https://secondhandshopping-web-mobile.onrender.com`);
+const socket = io(`${sock}`);
 
 const PaymentInfo = () => {
     const location = useLocation();

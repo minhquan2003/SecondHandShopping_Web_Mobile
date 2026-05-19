@@ -70,7 +70,7 @@
 
 //     // Lấy danh sách các cuộc hội thoại
 //     const response = await axios.get(
-//       `http://${IP}/conversations/${userInfo._id}`
+//       `${IP}/conversations/${userInfo._id}`
 //     );
 //     const conversations = response.data;
 
@@ -288,12 +288,12 @@ import { getCartItemsByUserId } from "../../hooks/Carts";
 import io from "socket.io-client";
 import axios from "axios";
 import { addConversation, addMessage } from "../../hooks/Message";
-import { IP } from "../../config";
+import { IP, sock } from "../../config";
 import ListProductCard from "../Home/ListProducts/ListProductCard";
 import { getProductByCategory1 } from "../../hooks/Products";
 import { FiShoppingCart, FiCheckCircle, FiMessageCircle, FiStar, FiClipboard, FiUser} from 'react-icons/fi';
 
-const socket = io(`https://secondhandshopping-web-mobile.onrender.com`);
+const socket = io(`${sock}`);
 
 const ProductDisplay = () => {
     const userInfoString = sessionStorage.getItem('userInfo');
@@ -359,7 +359,7 @@ const ProductDisplay = () => {
 
     // Lấy danh sách các cuộc hội thoại
     const response = await axios.get(
-      `http://${IP}/conversations/${userInfo._id}`
+      `${IP}/conversations/${userInfo._id}`
     );
     const conversations = response.data;
 
