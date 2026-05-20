@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import io from 'socket.io-client';
-import { IP } from '../../config';
+import { IP, sock } from '../../config';
 import nonAvata from "../../assets/img/nonAvata.jpg";
 
 const socket = io(`${sock}`);

@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { IP } from "../config";
 
-axios.defaults.baseURL = `localhost`;
+axios.defaults.baseURL = `${IP}`;
 
 export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
