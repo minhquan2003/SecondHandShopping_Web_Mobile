@@ -1,7 +1,7 @@
 
-export const sock = "http://localhost:5555"
-export const IP = "http://192.168.2.225:5555" || "https://secondhandshopping-web-mobile.onrender.com/";
+export const sock = "https://secondhandshopping-web-mobile.onrender.com/"
+export const IP =  "https://secondhandshopping-web-mobile.onrender.com/";
 // 192.168.2.247
 //192.168.1.119
-//192.168.1.60
+//192.168.1.60 "http://192.168.2.225:5555" ||
 
