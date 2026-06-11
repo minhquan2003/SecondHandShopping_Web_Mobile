@@ -31,7 +31,9 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: [ "https://second-hand-shopping-web-mobile.vercel.app",
+              "http://localhost:5173",
+              "http://localhost:5174"],
     methods: ["GET", "POST"],
   },
 });
@@ -39,6 +41,7 @@ const io = new Server(server, {
 // CORS Options
 const corsOptions = {
   origin: [
+    "https://second-hand-shopping-web-mobile.vercel.app",
     "http://localhost:5173",
     "http://localhost:5174",
     "http://10.0.2.2:5555",
